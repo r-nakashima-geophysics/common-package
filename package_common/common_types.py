@@ -10,7 +10,7 @@ Examples
 """
 
 from multiprocessing import shared_memory
-from typing import Callable, Final, TypeVar
+from typing import Callable, Final, Self, TypeVar
 
 import numpy as np
 import numpy.typing as npt
