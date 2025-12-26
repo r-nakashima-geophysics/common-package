@@ -218,7 +218,6 @@ def create_plotter(nrows: Literal[1],
 def create_plotter(nrows: int,
                    ncols: int,
                    **kwargs) -> DefaultGridPlotter:
-
     ...
 
 
