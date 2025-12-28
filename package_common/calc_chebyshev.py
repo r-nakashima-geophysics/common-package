@@ -8,7 +8,6 @@ Corporation, (2001).
 """
 
 import numpy as np
-
 from package_common.common_types import TypeVarFloatComplex
 
 

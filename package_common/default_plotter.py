@@ -16,7 +16,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
 from matplotlib import axes, collections, colorbar, figure, legend
-
 from package_common.default_logger import DefaultLogger
 
 type Figure = figure.Figure

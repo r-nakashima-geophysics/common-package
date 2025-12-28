@@ -6,7 +6,6 @@ from multiprocessing import shared_memory
 
 import numpy as np
 import psutil
-
 from package_common.common_types import ArrayAny, SharedMemory
 from package_common.default_logger import DefaultLogger
 from package_common.utils_name import create_function_name_logger

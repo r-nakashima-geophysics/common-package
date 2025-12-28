@@ -3,7 +3,6 @@
 import sys
 
 import numpy as np
-
 from package_common.common_types import ArrayAny, ArrayBool, ArrayComplex
 from package_common.default_logger import DefaultLogger
 from package_common.utils_name import create_function_name_logger
