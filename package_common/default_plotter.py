@@ -9,6 +9,7 @@ The use of `create_plotter` function is recommended.
 
 import os
 import shutil
+import sys
 from pathlib import Path
 from typing import Literal, overload
 
@@ -18,6 +19,7 @@ import numpy.typing as npt
 from matplotlib import axes, collections, colorbar, figure, legend
 
 from package_common.default_logger import DefaultLogger
+from package_common.utils_name import create_function_name_logger
 
 type Figure = figure.Figure
 type Axes = axes.Axes
@@ -242,12 +244,23 @@ def create_plotter(nrows: int = 1,
         The instance of the DefaultPlotter class or DefaultGridPlotter
         class.
 
+    Warnings
+    --------
+    Invalid argument
+        If the arguments are invalid.
+
     Examples
     --------
     >>> from package_common.default_plotter import create_plotter
     >>> plotter = create_plotter()
     >>> grid_plotter = create_plotter(2, 2)
     """
+
+    logger: DefaultLogger = create_function_name_logger()
+
+    if (nrows <= 0) or (ncols <= 0):
+        logger.error('Invalid argument')
+        sys.exit(1)
 
     if (nrows == 1) and (ncols == 1):
         return DefaultPlotter(**kwargs)
