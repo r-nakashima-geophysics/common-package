@@ -7,7 +7,7 @@ from multiprocessing import shared_memory
 import numpy as np
 import psutil
 
-from package_common.common_types import ArrayAny, SharedMemory
+from package_common.common_types import ArrayAny, SharedInfo, SharedMemory
 from package_common.default_logger import DefaultLogger
 from package_common.utils_name import create_function_name_logger
 
@@ -78,9 +78,7 @@ def set_num_process() -> int:
 
 def create_shared_arrays(*arrays) \
         -> tuple[tuple[SharedMemory, ...],
-                 list[tuple[str,
-                      tuple[int, ...],
-                      np.dtype]]]:
+                 SharedInfo]:
     """Create some shared memory arrays.
 
     Parameters
@@ -92,7 +90,7 @@ def create_shared_arrays(*arrays) \
     -------
     tuple_shm : tuple[SharedMemory, ...]
         The tuple of shared memories.
-    shared_info : list[tuple[str, tuple[int, ...], np.dtype]]
+    shared_info : SharedInfo
         The list of the information of the shared memory arrays.
 
     Warnings
@@ -103,15 +101,15 @@ def create_shared_arrays(*arrays) \
     Examples
     --------
     In the main process:
-        >>> from package_common.utils_parallel import
-        create_shared_arrays
+        >>> from package_common.utils_parallel import \
+        ...     create_shared_arrays
         >>> shm, info = create_shared_arrays(np.array([1, 2, 3]))
     """
 
     logger: DefaultLogger = create_function_name_logger()
 
     shms: list[SharedMemory] = []
-    shared_info: list[tuple[str, tuple[int, ...], np.dtype]] = []
+    shared_info: SharedInfo = []
 
     shm: SharedMemory
     shared_array: ArrayAny
@@ -135,16 +133,14 @@ def create_shared_arrays(*arrays) \
     return tuple_shm, shared_info
 
 
-def attach_shared_arrays(shared_info: list[tuple[str,
-                                                 tuple[int, ...],
-                                                 np.dtype]]) \
+def attach_shared_arrays(shared_info: SharedInfo) \
         -> tuple[tuple[SharedMemory, ...],
                  tuple[ArrayAny, ...]]:
     """Attach the shared memories in a subprocess.
 
     Parameters
     ----------
-    shared_info : list[tuple[str, tuple[int, ...], np.dtype]]
+    shared_info : SharedInfo
         The list of the information of the shared memory arrays.
 
     Returns
@@ -157,8 +153,8 @@ def attach_shared_arrays(shared_info: list[tuple[str,
     Examples
     --------
     In a subprocess:
-        >>> from package_common.utils_parallel import
-        attach_shared_arrays
+        >>> from package_common.utils_parallel import \
+        ...     attach_shared_arrays
         >>> shm, array = attach_shared_arrays(info)
     """
 
@@ -201,12 +197,12 @@ def detach_shared_arrays(*shms,
     Examples
     --------
     In a subprocess:
-        >>> from package_common.utils_parallel import
-        detach_shared_arrays
+        >>> from package_common.utils_parallel import \
+        ...     detach_shared_arrays
         >>> detach_shared_arrays(shm)
     In the main process:
-        >>> from package_common.utils_parallel import
-        detach_shared_arrays
+        >>> from package_common.utils_parallel import \
+        ...     detach_shared_arrays
         >>> detach_shared_arrays(shm, unlink=True)
     """
 

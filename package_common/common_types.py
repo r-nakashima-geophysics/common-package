@@ -16,6 +16,7 @@ import numpy as np
 import numpy.typing as npt
 
 type SharedMemory = shared_memory.SharedMemory
+type SharedInfo = list[tuple[str, tuple[int, ...], np.dtype]]
 
 type ArrayInt = npt.NDArray[np.int_]
 type ArrayFloat = npt.NDArray[np.float64]
