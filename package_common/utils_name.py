@@ -32,7 +32,7 @@ def get_current_function_name(frame: FrameType | None = None) -> str:
     If a frame is not input in the argument of this function, the name
     of the function which calls this function will be returned. If a
     frame is input, the name of the function which calls the function
-    obtaining the frame will be returned.
+    obtaining the frame will be returned. Otherwise, 'Unknown' will be returned.
 
     Examples
     --------
@@ -51,6 +51,8 @@ def get_current_function_name(frame: FrameType | None = None) -> str:
     this_name: str
     if this_frame is not None:
         this_name = this_frame.f_code.co_name
+    else:
+        this_name = 'Unknown'
     logger: DefaultLogger = DefaultLogger(this_name)
     if not isinstance(frame, FrameType):
         logger.error('Invalid type of the argument')
@@ -79,8 +81,8 @@ def create_function_name_logger(level: int | str = logging.INFO) \
 
     Examples
     --------
-    >>> from package_common.utils_name import
-    create_function_name_logger
+    >>> from package_common.utils_name import \
+    ...     create_function_name_logger
     >>> logger = create_function_name_logger()
     """
 
@@ -105,8 +107,8 @@ def create_function_name_progress_bar(num_calc: int) -> ProgressBar:
 
     Examples
     --------
-    >>> from package_common.progress_bar import
-    create_function_name_progress_bar
+    >>> from package_common.utils_name import \
+    ...     create_function_name_progress_bar
     >>> progress_bar = create_function_name_progress_bar(100)
     """
 
