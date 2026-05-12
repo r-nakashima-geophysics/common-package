@@ -29,10 +29,10 @@ def get_current_function_name(frame: FrameType | None = None) -> str:
 
     Notes
     -----
-    If a frame is not input in the argument of this function, the name
-    of the function which calls this function will be returned. If a
-    frame is input, the name of the function which calls the function
-    obtaining the frame will be returned. Otherwise, 'Unknown' will be returned.
+    If a frame is not input in the argument of this function, the name of the
+    function which calls this function will be returned. If a frame is input,
+    the name of the function which calls the function obtaining the frame will
+    be returned. Otherwise, 'Unknown' will be returned.
 
     Examples
     --------
