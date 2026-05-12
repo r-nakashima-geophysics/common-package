@@ -8,9 +8,11 @@ Corporation, (2001).
 """
 
 import math
+
 import numpy as np
 
 from package_common.common_types import TypeVarFloatComplex
+
 
 def chebyshev(n_degree: int,
               s_pos: TypeVarFloatComplex) -> TypeVarFloatComplex:
@@ -63,12 +65,11 @@ def chebyshev_d(n_degree: int,
     4.2423009548996277e-16
     """
 
-    if not math.isclose(abs(s_pos), 1.0): 
+    if not math.isclose(abs(s_pos), 1.0):
         t: TypeVarFloatComplex = np.acos(s_pos)
         return n_degree * np.sin(n_degree*t) / np.sin(t)
-    else:
-        return (s_pos**(n_degree+1)) * n_degree**2
 
+    return (s_pos**(n_degree+1)) * n_degree**2
 
 
 def chebyshev_d2(n_degree: int,
@@ -101,10 +102,10 @@ def chebyshev_d2(n_degree: int,
         return (
             (-(n_degree**2) * np.cos(n_degree*t)
                 + chebyshev_d(n_degree, s_pos) * np.cos(t)
-            ) / (np.sin(t)**2)
+             ) / (np.sin(t)**2)
         )
-    else:
-        return s_pos * chebyshev_d(n_degree, s_pos) * (n_degree**2-1)/3
+
+    return s_pos * chebyshev_d(n_degree, s_pos) * (n_degree**2-1)/3
 
 
 def chebyshev_d3(n_degree: int,
@@ -137,7 +138,7 @@ def chebyshev_d3(n_degree: int,
         return (
             ((1-(n_degree**2)) * chebyshev_d(n_degree, s_pos)
                 + 3 * chebyshev_d2(n_degree, s_pos) * np.cos(t)
-            ) / (np.sin(t)**2)
+             ) / (np.sin(t)**2)
         )
-    else:
-        return s_pos * chebyshev_d2(n_degree, s_pos) * (n_degree**2-4)/5
+
+    return s_pos * chebyshev_d2(n_degree, s_pos) * (n_degree**2-4)/5

@@ -10,7 +10,7 @@ Examples
 """
 
 from multiprocessing import shared_memory
-from typing import Callable, Final, Self, TypeVar
+from typing import Any, Callable, Final, Self, TypeVar
 
 import numpy as np
 import numpy.typing as npt
@@ -22,7 +22,7 @@ type ArrayFloat = npt.NDArray[np.float64]
 type ArrayComplex = npt.NDArray[np.complex128]
 type ArrayBool = npt.NDArray[np.bool_]
 type ArrayStr = npt.NDArray[np.str_]
-type ArrayAny = npt.NDArray[np.object_]
+type ArrayAny = npt.NDArray[Any]
 
 type ComplexFunc = Callable[[complex], complex]
 
