@@ -11,8 +11,12 @@ doi: 10.1016/0003-4916(89)90166-8
 Corporation, (2001).
 """
 
+import sys
+
 from package_common.background_field import BackgroundField
 from package_common.common_types import ComplexFunc
+from package_common.default_logger import DefaultLogger
+from package_common.utils_name import create_function_name_logger
 
 
 class ComplexCoordinate(BackgroundField):
@@ -24,7 +28,7 @@ class ComplexCoordinate(BackgroundField):
     name : str
         The name of the complex coordinate transformation.
     value : ComplexFunc
-         The profile of the complex coordinate transformation.
+        The profile of the complex coordinate transformation.
     value_d : ComplexFunc | None
         The first derivative of the profile of the complex coordinate
         transformation.
@@ -73,8 +77,20 @@ class ComplexCoordinate(BackgroundField):
                          value_d2=value_d2,
                          tex=tex)
 
+    def check_spectral_deform(self) -> bool:
+        """Check whether the spectral deformation method is used or not.
 
-def init_complex_coordinate(
+        Returns
+        -------
+        check : bool
+            The boolean value to check whether the spectral deformation
+            method is used or not.
+        """
+
+        return any(value != 0 for value in self.params.values())
+
+
+def init_complex_coordinate_simple(
         y_start: float,
         y_end: float,
         *,
@@ -82,8 +98,8 @@ def init_complex_coordinate(
         beta_0: float,
         beta_1: float) -> ComplexCoordinate:
     """Construct an instance of the ComplexCoordinate class for the
-    complex coordinate transformation, y = y(s), in the spectral
-    deformation method.
+    simple complex coordinate transformation, e.g. y = s + i(1-s^2), in the
+    spectral deformation method.
 
     Parameters
     ----------
@@ -101,11 +117,22 @@ def init_complex_coordinate(
     Returns
     -------
     ComplexCoordinate
-        The instance of the ComplexCoordinate class for the
-        transformation to complex coordinates.
+        The instance of the ComplexCoordinate class for the transformation to
+        complex coordinates.
+
+    Warnings
+    --------
+    Invalid argument
+        If the arguments are invalid.
     """
 
-    name: str = f'[a{alpha}b{beta_0}b{beta_1}]'
+    logger: DefaultLogger = create_function_name_logger()
+
+    if y_start == y_end:
+        logger.error('Invalid argument')
+        sys.exit(1)
+
+    name: str = f'[simple_a={alpha}_b0={beta_0}_b1={beta_1}]'
 
     params: dict[str, float] = {
         "alpha": alpha,
@@ -135,30 +162,3 @@ def init_complex_coordinate(
                              value_d=y_complex_d,
                              value_d2=y_complex_d2,
                              params=params)
-
-
-def check_spectral_deform(complex_coordinate: ComplexCoordinate) \
-        -> bool:
-    """Check whether the spectral deformation method is used or not.
-
-    Parameters
-    ----------
-    complex_coordinate : ComplexCoordinate
-        The instance of the ComplexCoordinate class.
-
-    Returns
-    -------
-    check : bool
-        The boolean value to check whether the spectral deformation
-        method is used or not.
-    """
-
-    params: dict[str, float] = complex_coordinate.params
-
-    check: bool = False
-    for value in params.values():
-        if value != 0:
-            check = True
-            break
-
-    return check
