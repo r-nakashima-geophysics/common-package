@@ -91,8 +91,11 @@ class ProgressBar:
             If `start()` has not been called before `update()` is called.
         """
 
-        if (self.__num_calc <= 0) or (i_calc < 0) or (
-                i_calc + 1 > self.__num_calc):
+        if (i_calc < 0) or (i_calc + 1 > self.__num_calc):
+            self.__logger.error('Invalid argument')
+            sys.exit(1)
+
+        if num_process <= 0:
             self.__logger.error('Invalid argument')
             sys.exit(1)
 
@@ -103,7 +106,8 @@ class ProgressBar:
             if lap_time is None:
                 self.__logger.warning(
                     'Progress bar has not been started.')
-                self.start()
+                sys.exit(1)
+
             else:
                 remaining_hours: float \
                     = (self.__num_calc-i_calc-1) * lap_time / 3600 \
