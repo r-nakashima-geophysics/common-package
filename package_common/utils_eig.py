@@ -4,7 +4,8 @@ import sys
 
 import numpy as np
 
-from package_common.common_types import ArrayAny, ArrayBool, ArrayComplex
+from package_common.common_types import (ArrayAny, ArrayBool, ArrayComplex,
+                                         ArrayInt)
 from package_common.default_logger import DefaultLogger
 from package_common.utils_name import create_function_name_logger
 
@@ -34,23 +35,15 @@ def sort_eig(eigenvalues: ArrayComplex,
 
     size_matrix: int = len(eigenvalues)
 
-    tmp: ArrayComplex = np.empty(
-        (2*size_matrix+2, size_matrix), dtype=np.complex128)
-    tmp[0*size_matrix:1*size_matrix, :] = eigenvectors.real
-    tmp[1*size_matrix:2*size_matrix, :] = eigenvectors.imag
-    tmp[2*size_matrix, :] = eigenvalues.real
-    tmp[2*size_matrix+1, :] = eigenvalues.imag
-    tmp_sorted: list[ArrayComplex] \
-        = sorted(tmp.T, key=lambda x: x[2*size_matrix])
-    tmp = np.array(tmp_sorted).T
+    idx: ArrayInt = np.argsort(eigenvalues.real)
+    eigenvalues_sorted: ArrayComplex = eigenvalues[idx]
+    eigenvectors_sorted: ArrayComplex = eigenvectors[:, idx]
 
     matrix_eig: ArrayComplex = np.empty(
         (size_matrix+1, size_matrix), dtype=np.complex128)
     matrix_eig[0*size_matrix:1*size_matrix, :] \
-        = tmp[0*size_matrix:1*size_matrix, :] \
-        + 1j*tmp[1*size_matrix:2*size_matrix, :]
-    matrix_eig[size_matrix, :] \
-        = tmp[2*size_matrix, :] + 1j*tmp[2*size_matrix+1, :]
+        = eigenvectors_sorted
+    matrix_eig[size_matrix, :] = eigenvalues_sorted
 
     return matrix_eig
 
@@ -107,12 +100,10 @@ def screening_eig(matrix_eig: ArrayComplex,
 
     list_phys_qtys: list[ArrayAny] = list(phys_qtys)
 
-    for i_mode in range(size_mat):
-        if not check[i_mode]:
-            matrix_eig[:, i_mode] = np.nan
-
-            for phys_qty in list_phys_qtys:
-                phys_qty[i_mode] = np.nan
+    invalid: ArrayBool = np.logical_not(check)
+    matrix_eig[:, invalid] = np.nan
+    for phys_qty in list_phys_qtys:
+        phys_qty[invalid] = np.nan
 
     phys_qtys = tuple(list_phys_qtys)
 
