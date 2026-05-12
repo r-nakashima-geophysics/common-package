@@ -86,6 +86,8 @@ def input_value_within(min_value: TypeVarIntFloat,
 
     Warnings
     --------
+    Invalid argument
+        If the arguments are invalid.
     Quit
         If the character 'q' is input.
     Out of range
@@ -102,6 +104,10 @@ def input_value_within(min_value: TypeVarIntFloat,
     """
 
     logger: DefaultLogger = create_function_name_logger()
+
+    if min_value > max_value:
+        logger.error('Invalid argument')
+        sys.exit(1)
 
     input_str: str
     chosen_value: TypeVarIntFloat
