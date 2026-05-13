@@ -23,7 +23,7 @@ def set_num_threads(num_threads: int) -> None:
     Warnings
     --------
     Invalid argument
-        If the arguments are invalid.
+        If `num_threads` is not positive.
 
     Examples
     --------

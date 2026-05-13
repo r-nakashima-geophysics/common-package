@@ -123,7 +123,7 @@ def init_complex_coordinate_simple(
     Warnings
     --------
     Invalid argument
-        If the arguments are invalid.
+        If `y_start` and `y_end` are equal.
     """
 
     logger: DefaultLogger = create_function_name_logger()

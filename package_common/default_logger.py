@@ -35,7 +35,7 @@ class DefaultLogger:
 
         Warnings
         --------
-        Invalid input
+        Invalid argument
             If the input string in the (optional) second argument is not
             either 'DEBUG', 'INFO', 'WARNING', 'ERROR', or 'CRITICAL'.
         """
@@ -45,7 +45,7 @@ class DefaultLogger:
                 level = getattr(logging, level.upper())
             except AttributeError:
                 print(f'/ERROR/ {self.__class__.__name__}'
-                      + ': Invalid input')
+                      + ': Invalid argument')
                 sys.exit(1)
 
         self.__logger: logging.Logger = logging.getLogger(name)

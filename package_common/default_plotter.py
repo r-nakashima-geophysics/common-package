@@ -247,7 +247,7 @@ def create_plotter(nrows: int = 1,
     Warnings
     --------
     Invalid argument
-        If the arguments are invalid.
+        If `nrows` and `ncols` are not positive.
 
     Examples
     --------

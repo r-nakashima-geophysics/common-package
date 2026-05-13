@@ -41,7 +41,7 @@ class ProgressBar:
         Warnings
         --------
         Invalid argument
-            If the arguments are invalid.
+            If `num_calc` is not positive.
         """
 
         self.__name: str = name
@@ -86,7 +86,8 @@ class ProgressBar:
         Warnings
         --------
         Invalid argument
-            If the arguments are invalid.
+            If `i_calc` and `num_process` are not positive or exceed the total
+            iteration number.
         Progress bar has not been started.
             If `start()` has not been called before `update()` is called.
         """

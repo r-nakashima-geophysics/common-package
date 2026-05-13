@@ -87,7 +87,7 @@ def input_value_within(min_value: TypeVarIntFloat,
     Warnings
     --------
     Invalid argument
-        If the arguments are invalid.
+        If `min_value` is greater than `max_value`.
     Quit
         If the character 'q' is input.
     Out of range
