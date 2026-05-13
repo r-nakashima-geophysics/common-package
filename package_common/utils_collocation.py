@@ -33,9 +33,10 @@ def calc_collocation_point(i_l: int,
         If the input value is not within [0, num_point].
     """
 
-    logger: DefaultLogger = create_function_name_logger()
     if 0 <= i_l <= num_point:
         return -np.cos(i_l*np.pi/num_point)
+
+    logger: DefaultLogger = create_function_name_logger()
 
     logger.error('Invalid argument')
     sys.exit(1)
