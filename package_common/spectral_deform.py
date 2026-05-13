@@ -119,7 +119,7 @@ class ComplexCoordinate(BackgroundField):
         sol = optimize.root(_residual, init_guess, jac=_jacobian)
 
         if not sol.success:
-            self.__logger.warning('Not converge')
+            self.__logger.warning(f'Not converge at y = {y_pos}')
 
         return sol.x[0] + 1j*sol.x[1]
 
