@@ -134,6 +134,6 @@ class DefaultLogger:
 
         self.__logger.info('----- Parameters -----')
         for parameter in args:
-            parameter = str(parameter).replace('=', ' = ')
+            parameter = str(parameter).replace('=', ' = ', 1)
             self.__logger.info(parameter)
         self.__logger.info('----------------------')
