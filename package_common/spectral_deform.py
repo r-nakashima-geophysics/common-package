@@ -107,9 +107,16 @@ class ComplexCoordinate(BackgroundField):
             residual: complex = self.value(s_pos) - y_pos
             return np.array([residual.real, residual.imag], dtype=np.float64)
 
+        def _jacobian(s_vec: ArrayFloat) -> ArrayFloat:
+            s_pos: complex = s_vec[0] + 1j*s_vec[1]
+            dy: complex = self.value_d(s_pos)
+            return np.array([[np.real(dy), np.real(dy*1j)],
+                             [np.imag(dy), np.imag(dy*1j)]],
+                            dtype=np.float64)
+
         init_guess: ArrayFloat \
             = np.array([y_pos.real, y_pos.imag], dtype=np.float64)
-        sol = optimize.root(_residual, init_guess)
+        sol = optimize.root(_residual, init_guess, jac=_jacobian)
 
         if not sol.success:
             self.__logger.warning('Not converge')
