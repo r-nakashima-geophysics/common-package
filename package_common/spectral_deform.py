@@ -13,8 +13,11 @@ Corporation, (2001).
 
 import sys
 
+import numpy as np
+from scipy import optimize
+
 from package_common.background_field import BackgroundField
-from package_common.common_types import ComplexFunc
+from package_common.common_types import ArrayFloat, ComplexFunc
 from package_common.default_logger import DefaultLogger
 from package_common.utils_name import create_function_name_logger
 
@@ -76,6 +79,42 @@ class ComplexCoordinate(BackgroundField):
                          value_d=value_d,
                          value_d2=value_d2,
                          tex=tex)
+
+        self.__logger: DefaultLogger = DefaultLogger(self.name)
+
+    def inverse(self,
+                y_pos: complex) -> complex:
+        """Solve y = y(s) for s numerically.
+
+        Parameters
+        ----------
+        y_pos : complex
+            The target value in the complex coordinate.
+
+        Returns
+        -------
+        complex
+            A numerical solution of y = y(s) for s.
+
+        Warnings
+        --------
+        Not converge
+            If no solution converges to the target value.
+        """
+
+        def _residual(s_vec: ArrayFloat) -> ArrayFloat:
+            s_pos: complex = s_vec[0] + 1j*s_vec[1]
+            residual: complex = self.value(s_pos) - y_pos
+            return np.array([residual.real, residual.imag], dtype=np.float64)
+
+        init_guess: ArrayFloat \
+            = np.array([y_pos.real, y_pos.imag], dtype=np.float64)
+        sol = optimize.root(_residual, init_guess)
+
+        if not sol.success:
+            self.__logger.warning('Not converge')
+
+        return sol.x[0] + 1j*sol.x[1]
 
     def check_spectral_deform(self) -> bool:
         """Check whether the spectral deformation method is used or not.
