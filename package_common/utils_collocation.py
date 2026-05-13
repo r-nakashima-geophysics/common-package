@@ -137,7 +137,7 @@ def chebyshev_gauss_quad(
 def spherical_laplacian_heinrichs(
         m_order: int,
         n_degree: int,
-        s_pos: float,
+        s_pos: float | complex,
         mu_complex: ComplexCoordinate) -> float | complex:
     """Calculate the spherical horizontal Laplacian of the Heinrichs
     basis at a given point.
@@ -148,7 +148,7 @@ def spherical_laplacian_heinrichs(
         The zonal wavenumber (order).
     n_degree : int
         The degree of the Heinrichs basis.
-    s_pos : float
+    s_pos : float | complex
         The position of the point.
     mu_complex : ComplexCoordinate
         The complex coordinate for spectral deformation.
