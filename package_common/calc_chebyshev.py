@@ -3,8 +3,8 @@ polynomials.
 
 References
 ----------
-[1] John P. Boyd, Chebyshev and Fourier Spectral Methods. Courier
-Corporation, (2001).
+[1] John P. Boyd, Chebyshev and Fourier Spectral Methods. Courier Corporation,
+(2001).
 """
 
 import numpy as np
@@ -53,8 +53,8 @@ def chebyshev_d(n_degree: int,
     Returns
     -------
     TypeVarFloatComplex
-        The value of the first derivative of the Chebyshev polynomial at
-        the point.
+        The value of the first derivative of the Chebyshev polynomial at the
+        point.
 
     Examples
     --------
@@ -85,8 +85,8 @@ def chebyshev_d2(n_degree: int,
     Returns
     -------
     TypeVarFloatComplex
-        The value of the second derivative of the Chebyshev polynomial
-        at the point.
+        The value of the second derivative of the Chebyshev polynomial at the
+        point.
 
     Examples
     --------
@@ -121,8 +121,8 @@ def chebyshev_d3(n_degree: int,
     Returns
     -------
     TypeVarFloatComplex
-        The value of the third derivative of the Chebyshev polynomial at
-        the point.
+        The value of the third derivative of the Chebyshev polynomial at the
+        point.
 
     Examples
     --------

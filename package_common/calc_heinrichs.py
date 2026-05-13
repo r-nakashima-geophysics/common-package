@@ -3,8 +3,8 @@
 
 References
 ----------
-[1] John P. Boyd, Chebyshev and Fourier Spectral Methods. Courier
-Corporation, (2001).
+[1] John P. Boyd, Chebyshev and Fourier Spectral Methods. Courier Corporation,
+(2001).
 """
 
 from package_common.calc_chebyshev import (chebyshev, chebyshev_d,
@@ -53,8 +53,7 @@ def heinrichs_d(n_degree: int,
     Returns
     -------
     TypeVarFloatComplex
-        The value of the first derivative of the Heinrichs basis at the
-        point.
+        The value of the first derivative of the Heinrichs basis at the point.
 
     Examples
     --------
@@ -84,8 +83,7 @@ def heinrichs_d2(n_degree: int,
     Returns
     -------
     TypeVarFloatComplex
-        The value of the second derivative of the Heinrichs basis at the
-        point.
+        The value of the second derivative of the Heinrichs basis at the point.
 
     Examples
     --------
@@ -116,8 +114,7 @@ def heinrichs_d3(n_degree: int,
     Returns
     -------
     TypeVarFloatComplex
-        The value of the third derivative of the Heinrichs basis at the
-        point.
+        The value of the third derivative of the Heinrichs basis at the point.
 
     Examples
     --------

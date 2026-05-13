@@ -2,9 +2,9 @@
 
 Notes
 -----
-The Initializers of the DefaultPlotter class and the DefaultGridPlotter
-class should not be used to create instances of these classes directly.
-The use of `create_plotter` function is recommended.
+The Initializers of the DefaultPlotter class and the DefaultGridPlotter class
+should not be used to create instances of these classes directly. The use of
+`create_plotter` function is recommended.
 """
 
 import os
@@ -101,8 +101,7 @@ class DefaultPlotter:
         dpi : int, optional, default 300
             The resolution of the figure.
         switch_tight_layout : bool, optional, default True
-            The boolean value to switch whether to use tight layout or
-            not.
+            The boolean value to switch whether to use tight layout or not.
         """
 
         if not isinstance(self.leg, np.ndarray):
@@ -241,8 +240,7 @@ def create_plotter(nrows: int = 1,
     Returns
     -------
     DefaultPlotter | DefaultGridPlotter
-        The instance of the DefaultPlotter class or DefaultGridPlotter
-        class.
+        The instance of the DefaultPlotter class or DefaultGridPlotter class.
 
     Warnings
     --------

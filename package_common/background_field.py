@@ -82,8 +82,8 @@ class BackgroundField:
         Parameters
         ----------
         x : float | int
-            The (real) point at which the value of the background field
-            is evaluated.
+            The (real) point at which the value of the background field is
+            evaluated.
 
         Returns
         -------
@@ -132,14 +132,14 @@ class BackgroundField:
         Parameters
         ----------
         x : float | int
-            The (real) point at which the value of the first derivative
-            of the profile of the background field is evaluated.
+            The (real) point at which the value of the first derivative of the
+            profile of the background field is evaluated.
 
         Returns
         -------
         float
-            The value of the first derivative of the profile of the
-            background field at the point.
+            The value of the first derivative of the profile of the background
+            field at the point.
 
         Warnings
         --------
@@ -161,8 +161,7 @@ class BackgroundField:
         Returns
         -------
         ComplexFunc
-            The second derivative of the profile of the background
-            field.
+            The second derivative of the profile of the background field.
 
         Warnings
         --------
@@ -184,14 +183,14 @@ class BackgroundField:
         Parameters
         ----------
         x : float | int
-            The (real) point at which the value of the second derivative
-            of the profile of the background field is evaluated.
+            The (real) point at which the value of the second derivative of the
+            profile of the background field is evaluated.
 
         Returns
         -------
         float
-            The value of the second derivative of the profile of the
-            background field at the point.
+            The value of the second derivative of the profile of the background
+            field at the point.
 
         Warnings
         --------

@@ -36,8 +36,8 @@ class DefaultLogger:
         Warnings
         --------
         Invalid argument
-            If the input string in the (optional) second argument is not
-            either 'DEBUG', 'INFO', 'WARNING', 'ERROR', or 'CRITICAL'.
+            If the input string in the (optional) second argument is not either
+            'DEBUG', 'INFO', 'WARNING', 'ERROR', or 'CRITICAL'.
         """
 
         if isinstance(level, str):

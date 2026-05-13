@@ -125,8 +125,7 @@ def create_shared_arrays(*arrays) \
         shared_array[:] = array[:]
 
         shms.append(shm)
-        shared_info.append(
-            (shm.name, shared_array.shape, shared_array.dtype))
+        shared_info.append((shm.name, shared_array.shape, shared_array.dtype))
 
     tuple_shm: tuple[SharedMemory, ...] = tuple(shms)
 
@@ -165,8 +164,7 @@ def attach_shared_arrays(shared_info: SharedInfo) \
     shared_array: ArrayAny
     for name, shape, dtype in shared_info:
         shm = shared_memory.SharedMemory(name=name)
-        shared_array \
-            = np.ndarray(shape=shape, dtype=dtype, buffer=shm.buf)
+        shared_array = np.ndarray(shape=shape, dtype=dtype, buffer=shm.buf)
 
         shms.append(shm)
         shared_arrays.append(shared_array)
@@ -186,8 +184,8 @@ def detach_shared_arrays(*shms,
     *shms
         The tuple of the shared memories.
     unlink : bool, optional, default False
-        The boolean value to switch whether to unlink the shared
-        memories or not.
+        The boolean value to switch whether to unlink the shared memories or
+        not.
 
     Warnings
     --------
@@ -215,5 +213,4 @@ def detach_shared_arrays(*shms,
             try:
                 shm.unlink()
             except FileNotFoundError:
-                logger.warning(
-                    'Shared memory has already been unlinked')
+                logger.warning('Shared memory has already been unlinked')

@@ -12,8 +12,7 @@ def input_value(default: TypeVarIntFloat,
         -> TypeVarIntFloat:
     """Input a value from the command line or use a default value.
 
-    When there is a command line argument, it overrides the default
-    value.
+    When there is a command line argument, it overrides the default value.
 
     Parameters
     ----------

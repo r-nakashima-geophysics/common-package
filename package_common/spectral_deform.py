@@ -2,13 +2,12 @@
 
 References
 ----------
-[1] John D. Crawford and Peter D. Hislop, Application of the method of
-spectral deformation to the Vlasov-Poisson system. Annals of Physics
-189, 265-317 (1989).
-doi: 10.1016/0003-4916(89)90166-8
+[1] John D. Crawford and Peter D. Hislop, Application of the method of spectral
+deformation to the Vlasov-Poisson system. Annals of Physics 189, 265-317
+(1989). doi: 10.1016/0003-4916(89)90166-8
 
-[2] John P. Boyd, Chebyshev and Fourier Spectral Methods. Courier
-Corporation, (2001).
+[2] John P. Boyd, Chebyshev and Fourier Spectral Methods. Courier Corporation,
+(2001).
 """
 
 import sys
@@ -61,11 +60,11 @@ class ComplexCoordinate(BackgroundField):
         value : ComplexFunc
             The profile of the complex coordinate transformation.
         value_d : ComplexFunc | None, optional, default None
-            The first derivative of the profile of the complex
-            coordinate transformation.
+            The first derivative of the profile of the complex coordinate
+            transformation.
         value_d2 : ComplexFunc | None, optional, default None
-            The second derivative of the profile of the complex
-            coordinate transformation.
+            The second derivative of the profile of the complex coordinate
+            transformation.
         tex : str | None, optional, default None
             The LaTeX text of the complex coordinate transformation.
         params : dict[str, float]
@@ -111,8 +110,7 @@ class ComplexCoordinate(BackgroundField):
             s_pos: complex = s_vec[0] + 1j*s_vec[1]
             dy: complex = self.value_d(s_pos)
             return np.array([[np.real(dy), np.real(dy*1j)],
-                             [np.imag(dy), np.imag(dy*1j)]],
-                            dtype=np.float64)
+                             [np.imag(dy), np.imag(dy*1j)]], dtype=np.float64)
 
         init_guess: ArrayFloat \
             = np.array([y_pos.real, y_pos.imag], dtype=np.float64)
@@ -129,8 +127,8 @@ class ComplexCoordinate(BackgroundField):
         Returns
         -------
         check : bool
-            The boolean value to check whether the spectral deformation
-            method is used or not.
+            The boolean value to check whether the spectral deformation method
+            is used or not.
         """
 
         return any(value != 0 for value in self.params.values())

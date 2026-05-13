@@ -1,6 +1,5 @@
 """A Python module to provide the utilities for collocation methods."""
 
-
 import sys
 
 import numpy as np
@@ -156,8 +155,8 @@ def spherical_laplacian_heinrichs(
     Returns
     -------
     float | complex
-        The value of the spherical horizontal Laplacian of the Heinrichs
-        basis at the point.
+        The value of the spherical horizontal Laplacian of the Heinrichs basis
+        at the point.
     """
 
     mu: float | complex

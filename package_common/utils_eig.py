@@ -41,8 +41,7 @@ def sort_eig(eigenvalues: ArrayComplex,
 
     matrix_eig: ArrayComplex = np.empty(
         (size_matrix+1, size_matrix), dtype=np.complex128)
-    matrix_eig[0*size_matrix:1*size_matrix, :] \
-        = eigenvectors_sorted
+    matrix_eig[0*size_matrix:1*size_matrix, :] = eigenvectors_sorted
     matrix_eig[size_matrix, :] = eigenvalues_sorted
 
     return matrix_eig
@@ -80,8 +79,7 @@ def screening_eig(matrix_eig: ArrayComplex,
     >>> from package_common.utils_eig import sort_eig, screening_eig
     >>> eigenvalues, eigenvectors = np.linalg.eig(matrix)
     >>> matrix_eig = sort_eig(eigenvalues, eigenvectors)
-    >>> matrix_eig, phys_qtys = screening_eig(matrix_eig, check,
-    phys_qtys)
+    >>> matrix_eig, phys_qtys = screening_eig(matrix_eig, check, phys_qtys)
     """
 
     logger: DefaultLogger = create_function_name_logger()

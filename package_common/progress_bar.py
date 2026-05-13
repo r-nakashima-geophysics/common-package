@@ -105,8 +105,7 @@ class ProgressBar:
 
             lap_time: float | None = self.__timer.lap()
             if lap_time is None:
-                self.__logger.warning(
-                    'Progress bar has not been started.')
+                self.__logger.warning('Progress bar has not been started.')
                 sys.exit(1)
 
             else:
@@ -128,7 +127,6 @@ class ProgressBar:
                 elif i_calc + 1 == self.__num_calc:
                     len_text: int = len(text)
                     text = f'{i_calc+1}/{self.__num_calc}: Finished'
-                    print(
-                        f'\r{self.__print_name} [{p_bar}] '
-                        + f'{text:<{len_text}}', flush=True)
+                    print(f'\r{self.__print_name} [{p_bar}] '
+                          + f'{text:<{len_text}}', flush=True)
                     self.__logger.info('End')
