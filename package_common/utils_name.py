@@ -6,6 +6,7 @@ import sys
 from types import FrameType
 
 from package_common.default_logger import DefaultLogger
+from package_common.default_timer import DefaultTimer
 from package_common.progress_bar import ProgressBar
 
 
@@ -90,6 +91,27 @@ def create_function_name_logger(level: int | str = logging.INFO) \
     function_name: str = get_current_function_name(frame)
 
     return DefaultLogger(function_name, level=level)
+
+
+def create_function_name_timer() -> DefaultTimer:
+    """Create a timer with the name of the current function.
+
+    Returns
+    -------
+    DefaultTimer
+        The timer instance.
+
+    Examples
+    --------
+    >>> from package_common.utils_name import \
+    ...     create_function_name_timer
+    >>> timer = create_function_name_timer()
+    """
+
+    frame: FrameType | None = inspect.currentframe()
+    function_name: str = get_current_function_name(frame)
+
+    return DefaultTimer(function_name)
 
 
 def create_function_name_progress_bar(num_calc: int) -> ProgressBar:
