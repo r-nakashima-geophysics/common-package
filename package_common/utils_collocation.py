@@ -144,6 +144,10 @@ class ChebyshevGaussQuad:
                 (self.__num_degree, self.__num_point), dtype=np.complex128)
             self.__array_func_2 = np.empty(
                 (self.__num_degree, self.__num_point), dtype=np.complex128)
+            self.__array_func_3 = np.empty(
+                (self.__num_degree, self.__num_point), dtype=np.complex128)
+            self.__array_func_4 = np.empty(
+                (self.__num_degree, self.__num_point), dtype=np.complex128)
 
             y_pos: complex
             s_pos: complex
