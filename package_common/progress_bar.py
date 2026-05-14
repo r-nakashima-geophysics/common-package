@@ -4,6 +4,7 @@ import sys
 
 from package_common.default_logger import DefaultLogger
 from package_common.default_timer import DefaultTimer
+from package_common.common_types import Self
 
 
 class ProgressBar:
@@ -26,7 +27,7 @@ class ProgressBar:
     __mark_filled: str = '█'
     __max_length_print_name: int = 15
 
-    def __init__(self,
+    def __init__(self: Self,
                  name: str,
                  num_calc: int) -> None:
         """Initialize an instance of the ProgressBar class.
@@ -71,7 +72,7 @@ class ProgressBar:
         print(f'{self.__print_name} [{p_bar}] {text}',
               end='', flush=True)
 
-    def update(self,
+    def update(self: Self,
                i_calc: int,
                num_process: int = 1) -> None:
         """Measure calculation times and update the progress bar.

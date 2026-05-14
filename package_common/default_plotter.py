@@ -18,6 +18,7 @@ import numpy as np
 import numpy.typing as npt
 from matplotlib import axes, collections, colorbar, figure, legend
 
+from package_common.common_types import Self
 from package_common.default_logger import DefaultLogger
 from package_common.utils_name import create_function_name_logger
 
@@ -61,7 +62,7 @@ class DefaultPlotter:
 
     __set_latex: bool = False
 
-    def __init__(self,
+    def __init__(self: Self,
                  **kwargs) -> None:
         """Initialize an instance of the DefaultPlotter class.
 
@@ -84,7 +85,7 @@ class DefaultPlotter:
         self.axes.set_axisbelow(True)
         self.axes.minorticks_on()
 
-    def save(self,
+    def save(self: Self,
              path_dir: Path,
              filename: str,
              dpi: int = 300,
@@ -171,7 +172,7 @@ class DefaultGridPlotter(DefaultPlotter):
         >>> grid_plotter.axes[0, 0].plot(x, y)
     """
 
-    def __init__(self,
+    def __init__(self: Self,
                  nrows: int = 1,
                  ncols: int = 1,
                  **kwargs) -> None:

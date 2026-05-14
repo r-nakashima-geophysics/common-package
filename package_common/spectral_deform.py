@@ -16,7 +16,7 @@ import numpy as np
 from scipy import optimize
 
 from package_common.background_field import BackgroundField
-from package_common.common_types import ArrayFloat, ComplexFunc
+from package_common.common_types import ArrayFloat, ComplexFunc, Self
 from package_common.default_logger import DefaultLogger
 from package_common.utils_name import create_function_name_logger
 
@@ -43,7 +43,7 @@ class ComplexCoordinate(BackgroundField):
         The parameters for the complex coordinate transformation.
     """
 
-    def __init__(self,
+    def __init__(self: Self,
                  name: str,
                  *,
                  value: ComplexFunc,
@@ -81,7 +81,7 @@ class ComplexCoordinate(BackgroundField):
 
         self.__logger: DefaultLogger = DefaultLogger(self.name)
 
-    def inverse(self,
+    def inverse(self: Self,
                 y_pos: complex) -> complex:
         """Solve y = y(s) for s numerically.
 

@@ -13,6 +13,7 @@ from time import perf_counter
 from types import ModuleType
 
 from package_common.default_logger import DefaultLogger
+from package_common.common_types import Self
 
 
 class DefaultTimer:
@@ -31,7 +32,7 @@ class DefaultTimer:
 
     __import_caffeine: bool = False
 
-    def __init__(self,
+    def __init__(self: Self,
                  name: str) -> None:
         """Initialize an instance of the DefaultTimer class.
 

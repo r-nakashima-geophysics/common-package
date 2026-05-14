@@ -2,7 +2,7 @@
 
 import sys
 
-from package_common.common_types import ComplexFunc
+from package_common.common_types import ComplexFunc, Self
 from package_common.default_logger import DefaultLogger
 
 
@@ -14,7 +14,7 @@ class BackgroundField:
     name : str
         The name of the background field.
     value : ComplexFunc
-         The profile of the background field.
+         The profile of the background fieldself
     value_d : ComplexFunc | None
         The first derivative of the profile of the background field.
     value_d2 : ComplexFunc | None
@@ -38,7 +38,7 @@ class BackgroundField:
     2.0
     """
 
-    def __init__(self,
+    def __init__(self: Self,
                  name: str,
                  *,
                  value: ComplexFunc,
@@ -74,7 +74,7 @@ class BackgroundField:
 
         self.__logger: DefaultLogger = DefaultLogger(self.name)
 
-    def r_value(self,
+    def r_value(self: Self,
                 x: float | int) -> float:
         """Return the value of the background field at a given (real)
         point.
@@ -103,7 +103,7 @@ class BackgroundField:
         return self.value(complex(x, 0)).real
 
     @property
-    def value_d(self) -> ComplexFunc:
+    def value_d(self: Self) -> ComplexFunc:
         """Return the first derivative of the profile of the background
         field.
 
@@ -124,7 +124,7 @@ class BackgroundField:
         self.__logger.error('This attribute has not been set.')
         sys.exit(1)
 
-    def r_value_d(self,
+    def r_value_d(self: Self,
                   x: float | int) -> float:
         """Return the value of the first derivative of the profile of
         the background field at a given (real) point.
@@ -154,7 +154,7 @@ class BackgroundField:
         return self.value_d(complex(x, 0)).real
 
     @property
-    def value_d2(self) -> ComplexFunc:
+    def value_d2(self: Self) -> ComplexFunc:
         """Return the second derivative of the profile of the background
         field.
 
@@ -175,7 +175,7 @@ class BackgroundField:
         self.__logger.error('This attribute has not been set.')
         sys.exit(1)
 
-    def r_value_d2(self,
+    def r_value_d2(self: Self,
                    x: float | int) -> float:
         """Return the value of the second derivative of the profile of
         the background field at a given (real) point.

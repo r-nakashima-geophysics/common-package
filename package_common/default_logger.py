@@ -2,6 +2,7 @@
 
 import logging
 import sys
+from package_common.common_types import Self
 
 
 class DefaultLogger:
@@ -21,7 +22,7 @@ class DefaultLogger:
     >>> logger.show_params(f'{param1=}', f'{param2=}')
     """
 
-    def __init__(self,
+    def __init__(self: Self,
                  name: str,
                  level: int | str = logging.INFO) -> None:
         """Initialize an instance of the DefaultLogger class.
@@ -62,7 +63,7 @@ class DefaultLogger:
             handler.setFormatter(formatter)
             self.__logger.addHandler(handler)
 
-    def debug(self,
+    def debug(self: Self,
               message: str) -> None:
         """Log a debug message.
 
@@ -74,7 +75,7 @@ class DefaultLogger:
 
         self.__logger.debug(message)
 
-    def info(self,
+    def info(self: Self,
              message: str) -> None:
         """Log an information message.
 
@@ -86,7 +87,7 @@ class DefaultLogger:
 
         self.__logger.info(message)
 
-    def warning(self,
+    def warning(self: Self,
                 message: str) -> None:
         """Log a warning message.
 
@@ -98,7 +99,7 @@ class DefaultLogger:
 
         self.__logger.warning(message)
 
-    def error(self,
+    def error(self: Self,
               message: str) -> None:
         """Log an error message.
 
@@ -110,7 +111,7 @@ class DefaultLogger:
 
         self.__logger.error(message)
 
-    def critical(self,
+    def critical(self: Self,
                  message: str) -> None:
         """Log a critical message.
 
@@ -122,7 +123,7 @@ class DefaultLogger:
 
         self.__logger.critical(message)
 
-    def show_params(self,
+    def show_params(self: Self,
                     *args) -> None:
         """Show the parameters.
 
