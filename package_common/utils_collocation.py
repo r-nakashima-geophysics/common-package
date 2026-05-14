@@ -85,6 +85,7 @@ class ChebyshevGaussQuad:
             self.__num_mode: int = ChebyshevGaussQuad.__num_mode
             self.__num_degree: int = ChebyshevGaussQuad.__num_degree
             self.__num_point: int = ChebyshevGaussQuad.__num_point
+            self.__point_array: ArrayFloat = ChebyshevGaussQuad.__point_array
 
         self.__array_func_1: ArrayFloat | ArrayComplex
         self.__array_func_2: ArrayFloat | ArrayComplex
@@ -99,7 +100,7 @@ class ChebyshevGaussQuad:
             self.__array_func_2 = np.empty(
                 (self.__num_degree, self.__num_point), dtype=np.float64)
 
-            for i_pos, pos in enumerate(ChebyshevGaussQuad.__point_array):
+            for i_pos, pos in enumerate(self.__point_array):
 
                 self.__array_weight[i_pos] \
                     = weight_func(pos) / np.sqrt(1-(pos**2))
