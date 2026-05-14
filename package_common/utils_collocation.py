@@ -10,7 +10,6 @@ from package_common.common_types import (ArrayComplex, ArrayFloat, Callable,
 from package_common.default_logger import DefaultLogger
 from package_common.spectral_deform import ComplexCoordinate
 from package_common.utils_name import create_function_name_logger
-from package_common.utils_parallel import set_num_process
 
 
 class ChebyshevGaussQuad:
@@ -78,12 +77,11 @@ class ChebyshevGaussQuad:
             If `set_class_variable` class method has not been executed.
         """
 
-        if set_num_process() > 1:
-            if not ChebyshevGaussQuad.__flag:
-                ChebyshevGaussQuad.__logger.error(
-                    '`set_class_variable` class method has not been executed.')
-                sys.exit(1)
-
+        if not ChebyshevGaussQuad.__flag:
+            ChebyshevGaussQuad.__logger.error(
+                '`set_class_variable` class method has not been executed.')
+            sys.exit(1)
+        else:
             self.__num_mode: int = ChebyshevGaussQuad.__num_mode
             self.__num_degree: int = ChebyshevGaussQuad.__num_degree
             self.__num_point: int = ChebyshevGaussQuad.__num_point
