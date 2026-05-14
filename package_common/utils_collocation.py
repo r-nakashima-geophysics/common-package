@@ -5,10 +5,147 @@ import sys
 import numpy as np
 
 from package_common.calc_heinrichs import heinrichs, heinrichs_d, heinrichs_d2
-from package_common.common_types import ArrayComplex, ArrayFloat, Callable
+from package_common.common_types import (ArrayComplex, ArrayFloat, Callable,
+                                         Self)
 from package_common.default_logger import DefaultLogger
 from package_common.spectral_deform import ComplexCoordinate
 from package_common.utils_name import create_function_name_logger
+
+
+class ChebyshevGaussQuad:
+    """Class to perform the Chebyshev-Gauss quadrature"""
+
+    __num_mode: int
+    __num_degree: int
+    __num_point: int
+    __point_array: ArrayFloat
+
+    @classmethod
+    def set_class_variable(cls: type[Self],
+                           num_mode: int,
+                           num_degree: int) -> None:
+        """Set the class variables.
+
+        Parameters
+        ----------
+        num_mode : int
+            The number of the eigenmodes.
+        num_degree : int
+            The number of the degree.
+        """
+
+        cls.__num_mode = num_mode
+        cls.__num_degree = num_degree
+        cls.__num_point: int = 3 * cls.__num_degree
+
+        cls.__point_array: ArrayFloat = np.array(
+            [calc_collocation_point(2*i_l-1, 2*cls.__num_point)
+             for i_l in range(1, cls.__num_point+1)]
+        )
+
+    def __init__(self: Self,
+                 *,
+                 func_1: Callable[[int, float | complex], float | complex],
+                 func_2: Callable[[int, float | complex],
+                                  float | complex] = lambda ix, x: 1,
+                 weight_func: Callable[[float], float] = lambda x: 1,
+                 y_complex: ComplexCoordinate) -> None:
+        """Initialize an instance of the ChebyshevGaussQuad class.
+
+        Parameters
+        ----------
+        num_mode : int
+            The number of the eigenmodes.
+        func_1 : Callable[[int, float | complex], float | complex]
+            The function associated with the first vector.
+        func_2 : Callable[[int, float | complex], float | complex], optional,
+        default lambda ix, x: 1
+            The function associated with the second vector.
+        weight_func : Callable[[float], float], optional, default lambda x: 1
+            The weight function for the quadrature except for the factor
+            1/sqrt(1-x^2).
+        y_complex : ComplexCoordinate
+            The complex coordinate for spectral deformation.
+        """
+
+        self.__array_func_1: ArrayFloat | ArrayComplex
+        self.__array_func_2: ArrayFloat | ArrayComplex
+        self.__array_weight: ArrayFloat
+
+        self.__array_weight = np.empty(self.__num_point, dtype=np.float64)
+
+        if not y_complex.check_spectral_deform():
+
+            self.__array_func_1 = np.empty(
+                (self.__num_degree, self.__num_point), dtype=np.float64)
+            self.__array_func_2 = np.empty(
+                (self.__num_degree, self.__num_point), dtype=np.float64)
+
+            for i_pos, pos in enumerate(ChebyshevGaussQuad.__point_array):
+
+                self.__array_weight[i_pos] \
+                    = weight_func(pos) / np.sqrt(1-(pos**2))
+
+                for i_n in range(self.__num_degree):
+                    self.__array_func_1[i_n, i_pos] = func_1(i_n, pos)
+                    self.__array_func_2[i_n, i_pos] = func_2(i_n, pos)
+
+        else:
+
+            self.__array_func_1 = np.empty(
+                (self.__num_degree, self.__num_point), dtype=np.complex128)
+            self.__array_func_2 = np.empty(
+                (self.__num_degree, self.__num_point), dtype=np.complex128)
+
+            y_pos: complex
+            s_pos: complex
+
+            for i_pos, pos in enumerate(ChebyshevGaussQuad.__point_array):
+
+                self.__array_weight[i_pos] \
+                    = weight_func(pos) / np.sqrt(1-(pos**2))
+
+                y_pos = y_complex.value(pos)
+                s_pos = y_complex.inverse(y_pos)
+
+                for i_n in range(self.__num_degree):
+                    self.__array_func_1[i_n, i_pos] = func_1(i_n, s_pos)
+                    self.__array_func_2[i_n, i_pos] = func_2(i_n, s_pos)
+
+    def quad(self: Self,
+             vec_1: ArrayComplex,
+             vec_2: ArrayComplex,) -> ArrayComplex:
+        """Calculate the integrals of conj(field_1) * field_2 * weight_func /
+        sqrt(1-x ^ 2) using the Chebyshev-Gauss quadrature for all eigenmodes,
+        where field_1 = sum(vec_1 * func_1) and field_2 = sum(vec_2 * func_2).
+
+        Parameters
+        ----------
+        vec_1: ArrayComplex
+            The first vector.
+        vec_2: ArrayComplex
+            The second vector.
+
+        Returns
+        -------
+        integral: ArrayComplex
+            The result of the Chebyshev-Gauss quadrature.
+        """
+
+        integral: ArrayComplex = np.zeros(
+            ChebyshevGaussQuad.__num_mode, dtype=np.complex128)
+
+        for i_pos in range(len(ChebyshevGaussQuad.__point_array)):
+
+            field_1 = self.__array_func_1[:, i_pos] @ vec_1
+            field_2 = self.__array_func_2[:, i_pos] @ vec_2
+            weight = self.__array_weight[i_pos]
+
+            integral += weight * np.conj(field_1) * field_2
+
+        integral *= np.pi / ChebyshevGaussQuad.__num_point
+
+        return integral
 
 
 def calc_collocation_point(i_l: int,
@@ -40,97 +177,6 @@ def calc_collocation_point(i_l: int,
 
     logger.error('Invalid argument')
     sys.exit(1)
-
-
-def chebyshev_gauss_quad(
-        num_mode: int,
-        *,
-        vec_1: ArrayComplex,
-        func_1: Callable[[int, float | complex], float | complex],
-        vec_2: ArrayComplex,
-        func_2: Callable[[int, float | complex], float | complex],
-        weight_func: Callable[[float], float] = lambda x: 1,
-        y_complex: ComplexCoordinate) -> ArrayComplex:
-    """Calculate the integrals of conj(field_1) * field_2 * weight_func /
-    sqrt(1-x^2) using the Chebyshev-Gauss quadrature for all eigenmodes, where
-    field_1 = sum(vec_1 * func_1) and field_2 = sum(vec_2 * func_2).
-
-    Parameters
-    ----------
-    vec_1 : ArrayComplex
-        The first vector.
-    func_1 : Callable[[int, float | complex], float | complex]
-        The function associated with the first vector.
-    vec_2 : ArrayComplex
-        The second vector.
-    func_2 : Callable[[int, float | complex], float | complex]
-        The function associated with the second vector.
-    weight_func : Callable[[float], float]
-        The weight function for the quadrature except for the factor
-        1/sqrt(1-x^2).
-    y_complex : ComplexCoordinate
-        The complex coordinate for spectral deformation.
-
-    Returns
-    -------
-    integral : ArrayComplex
-        The result of the Chebyshev-Gauss quadrature.
-    """
-
-    s_pos: float | complex
-
-    num_degree: int = vec_1.shape[0]
-    num_point: int = 3 * num_degree
-
-    weight: float
-
-    func_1_s: ArrayFloat | ArrayComplex
-    func_2_s: ArrayFloat | ArrayComplex
-    field_1: ArrayComplex
-    field_2: ArrayComplex
-    integral: ArrayComplex = np.zeros(num_mode, dtype=np.complex128)
-
-    if not y_complex.check_spectral_deform():
-
-        for i_s in range(1, num_point+1):
-            s_pos = calc_collocation_point(2*i_s-1, 2*num_point)
-
-            func_1_s = np.array(
-                [func_1(i_n, s_pos) for i_n in range(num_degree)])
-            func_2_s = np.array(
-                [func_2(i_n, s_pos) for i_n in range(num_degree)])
-
-            field_1 = func_1_s @ vec_1
-            field_2 = func_2_s @ vec_2
-            weight = weight_func(s_pos) / np.sqrt(1-(s_pos**2))
-
-            integral += weight * np.conj(field_1) * field_2
-
-        integral *= np.pi / num_point
-
-    else:
-
-        norm_y_pos: float
-        y_pos: complex
-        for i_y in range(1, num_point+1):
-            norm_y_pos = calc_collocation_point(2*i_y-1, 2*num_point)
-            y_pos = y_complex.value(norm_y_pos).real
-            s_pos = y_complex.inverse(y_pos)
-
-            func_1_s = np.array(
-                [func_1(i_n, s_pos) for i_n in range(num_degree)])
-            func_2_s = np.array(
-                [func_2(i_n, s_pos) for i_n in range(num_degree)])
-
-            field_1 = func_1_s @ vec_1
-            field_2 = func_2_s @ vec_2
-            weight = weight_func(y_pos) / np.sqrt(1-(y_pos**2))
-
-            integral += weight * np.conj(field_1) * field_2
-
-        integral *= np.pi / num_point
-
-    return integral
 
 
 def spherical_laplacian_heinrichs(
