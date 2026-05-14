@@ -12,8 +12,8 @@ import sys
 from time import perf_counter
 from types import ModuleType
 
-from package_common.default_logger import DefaultLogger
 from package_common.common_types import Self
+from package_common.default_logger import DefaultLogger
 
 
 class DefaultTimer:
