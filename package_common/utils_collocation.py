@@ -10,6 +10,7 @@ from package_common.common_types import (ArrayComplex, ArrayFloat, Callable,
 from package_common.default_logger import DefaultLogger
 from package_common.spectral_deform import ComplexCoordinate
 from package_common.utils_name import create_function_name_logger
+from package_common.utils_parallel import set_num_process
 
 
 class ChebyshevGaussQuad:
@@ -19,6 +20,9 @@ class ChebyshevGaussQuad:
     __num_degree: int
     __num_point: int
     __point_array: ArrayFloat
+
+    __flag: bool = False
+    __logger: DefaultLogger = DefaultLogger(__name__)
 
     @classmethod
     def set_class_variable(cls: type[Self],
@@ -37,6 +41,7 @@ class ChebyshevGaussQuad:
         cls.__num_mode = num_mode
         cls.__num_degree = num_degree
         cls.__num_point: int = 3 * cls.__num_degree
+        cls.__flag = True
 
         cls.__point_array: ArrayFloat = np.array(
             [calc_collocation_point(2*i_l-1, 2*cls.__num_point)
@@ -66,13 +71,28 @@ class ChebyshevGaussQuad:
             1/sqrt(1-x^2).
         y_complex : ComplexCoordinate
             The complex coordinate for spectral deformation.
+
+        Warnings
+        --------
+        `set_class_variable` class method has not been executed.
+             If `set_class_variable` class method has not been executed.
         """
+
+        if set_num_process() > 1:
+            if not ChebyshevGaussQuad.__flag:
+                ChebyshevGaussQuad.__logger.error(
+                    '`set_class_variable` class method has not been executed.')
+                sys.exit(1)
+
+            self.__num_mode: int = ChebyshevGaussQuad.__num_mode
+            self.__num_degree: int = ChebyshevGaussQuad.__num_degree
+            self.__num_point: int = ChebyshevGaussQuad.__num_point
 
         self.__array_func_1: ArrayFloat | ArrayComplex
         self.__array_func_2: ArrayFloat | ArrayComplex
-        self.__array_weight: ArrayFloat
 
-        self.__array_weight = np.empty(self.__num_point, dtype=np.float64)
+        self.__array_weight: ArrayFloat \
+            = np.empty(self.__num_point, dtype=np.float64)
 
         if not y_complex.check_spectral_deform():
 
@@ -130,12 +150,15 @@ class ChebyshevGaussQuad:
         -------
         integral : ArrayComplex
             The result of the Chebyshev-Gauss quadrature.
+
+        Notes
+        -----
+        This method may run inside multiprocessing workers.
         """
 
-        integral: ArrayComplex = np.zeros(
-            ChebyshevGaussQuad.__num_mode, dtype=np.complex128)
+        integral: ArrayComplex = np.zeros(self.__num_mode, dtype=np.complex128)
 
-        for i_pos in range(len(ChebyshevGaussQuad.__point_array)):
+        for i_pos in range(len(self.__point_array)):
 
             field_1 = self.__array_func_1[:, i_pos] @ vec_1
             weight = self.__array_weight[i_pos]
@@ -147,7 +170,7 @@ class ChebyshevGaussQuad:
 
             integral += weight * np.conj(field_1) * field_2
 
-        integral *= np.pi / ChebyshevGaussQuad.__num_point
+        integral *= np.pi / self.__num_point
 
         return integral
 
