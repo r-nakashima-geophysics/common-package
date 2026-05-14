@@ -47,7 +47,7 @@ class ChebyshevGaussQuad:
                  *,
                  func_1: Callable[[int, float | complex], float | complex],
                  func_2: Callable[[int, float | complex],
-                                  float | complex] = lambda ix, x: 1,
+                                  float | complex] = lambda n, x: 1,
                  weight_func: Callable[[float], float] = lambda x: 1,
                  y_complex: ComplexCoordinate) -> None:
         """Initialize an instance of the ChebyshevGaussQuad class.
@@ -59,7 +59,7 @@ class ChebyshevGaussQuad:
         func_1 : Callable[[int, float | complex], float | complex]
             The function associated with the first vector.
         func_2 : Callable[[int, float | complex], float | complex], optional,
-        default lambda ix, x: 1
+        default lambda n, x: 1
             The function associated with the second vector.
         weight_func : Callable[[float], float], optional, default lambda x: 1
             The weight function for the quadrature except for the factor
@@ -112,9 +112,9 @@ class ChebyshevGaussQuad:
                     self.__array_func_1[i_n, i_pos] = func_1(i_n, s_pos)
                     self.__array_func_2[i_n, i_pos] = func_2(i_n, s_pos)
 
-    def quad(self: Self,
-             vec_1: ArrayComplex,
-             vec_2: ArrayComplex,) -> ArrayComplex:
+    def quadrature(self: Self,
+                   vec_1: ArrayComplex,
+                   vec_2: ArrayComplex,) -> ArrayComplex:
         """Calculate the integrals of conj(field_1) * field_2 * weight_func /
         sqrt(1-x ^ 2) using the Chebyshev-Gauss quadrature for all eigenmodes,
         where field_1 = sum(vec_1 * func_1) and field_2 = sum(vec_2 * func_2).
