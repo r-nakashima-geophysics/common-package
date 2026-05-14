@@ -104,9 +104,10 @@ class ChebyshevGaussQuad:
                 self.__array_weight[i_pos] \
                     = weight_func(pos) / np.sqrt(1-(pos**2))
 
-                for i_n in range(self.__num_degree):
-                    self.__array_func_1[i_n, i_pos] = func_1(i_n, pos)
-                    self.__array_func_2[i_n, i_pos] = func_2(i_n, pos)
+                self.__array_func_1[:, i_pos] = [
+                    func_1(i_n, pos) for i_n in range(self.__num_degree)]
+                self.__array_func_2[:, i_pos] = [
+                    func_2(i_n, pos) for i_n in range(self.__num_degree)]
 
         else:
 
@@ -126,9 +127,10 @@ class ChebyshevGaussQuad:
                 y_pos = y_complex.value(pos)
                 s_pos = y_complex.inverse(y_pos)
 
-                for i_n in range(self.__num_degree):
-                    self.__array_func_1[i_n, i_pos] = func_1(i_n, s_pos)
-                    self.__array_func_2[i_n, i_pos] = func_2(i_n, s_pos)
+                self.__array_func_1[:, i_pos] = [
+                    func_1(i_n, s_pos) for i_n in range(self.__num_degree)]
+                self.__array_func_2[:, i_pos] = [
+                    func_2(i_n, s_pos) for i_n in range(self.__num_degree)]
 
     def quadrature(self: Self,
                    vec_1: ArrayComplex,
