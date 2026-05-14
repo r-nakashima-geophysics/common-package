@@ -116,7 +116,7 @@ class ComplexCoordinate(BackgroundField):
             = np.array([y_pos.real, y_pos.imag], dtype=np.float64)
         sol = optimize.root(_residual, init_guess, jac=_jacobian)
 
-        if not sol.success:
+        if (not sol.success) and (not np.allclose(sol.fun, [0, 0])):
             self.__logger.warning(f'Not converge at y = {y_pos}')
 
         return sol.x[0] + 1j*sol.x[1]
