@@ -14,7 +14,7 @@ class BackgroundField:
     name : str
         The name of the background field.
     value : ComplexFunc
-         The profile of the background field.
+        The profile of the background field.
     value_d : ComplexFunc | None
         The first derivative of the profile of the background field.
     value_d2 : ComplexFunc | None

@@ -75,7 +75,7 @@ class ChebyshevGaussQuad:
         Warnings
         --------
         `set_class_variable` class method has not been executed.
-             If `set_class_variable` class method has not been executed.
+            If `set_class_variable` class method has not been executed.
         """
 
         if set_num_process() > 1:
