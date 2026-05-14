@@ -13,7 +13,7 @@ from package_common.utils_name import create_function_name_logger
 
 
 class ChebyshevGaussQuad:
-    """Class to perform the Chebyshev-Gauss quadrature"""
+    """Class to perform the Chebyshev-Gauss quadrature."""
 
     __num_mode: int
     __num_degree: int
@@ -114,21 +114,21 @@ class ChebyshevGaussQuad:
 
     def quadrature(self: Self,
                    vec_1: ArrayComplex,
-                   vec_2: ArrayComplex,) -> ArrayComplex:
+                   vec_2: ArrayComplex | None = None) -> ArrayComplex:
         """Calculate the integrals of conj(field_1) * field_2 * weight_func /
         sqrt(1-x ^ 2) using the Chebyshev-Gauss quadrature for all eigenmodes,
         where field_1 = sum(vec_1 * func_1) and field_2 = sum(vec_2 * func_2).
 
         Parameters
         ----------
-        vec_1: ArrayComplex
+        vec_1 : ArrayComplex
             The first vector.
-        vec_2: ArrayComplex
+        vec_2 : ArrayComplex, optional, default None
             The second vector.
 
         Returns
         -------
-        integral: ArrayComplex
+        integral : ArrayComplex
             The result of the Chebyshev-Gauss quadrature.
         """
 
@@ -138,8 +138,12 @@ class ChebyshevGaussQuad:
         for i_pos in range(len(ChebyshevGaussQuad.__point_array)):
 
             field_1 = self.__array_func_1[:, i_pos] @ vec_1
-            field_2 = self.__array_func_2[:, i_pos] @ vec_2
             weight = self.__array_weight[i_pos]
+
+            if vec_2 is None:
+                field_2 = 1
+            else:
+                field_2 = self.__array_func_2[:, i_pos] @ vec_2
 
             integral += weight * np.conj(field_1) * field_2
 
