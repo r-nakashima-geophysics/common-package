@@ -41,10 +41,10 @@ class ChebyshevGaussQuad:
 
         cls.__num_mode = num_mode
         cls.__num_degree = num_degree
-        cls.__num_point: int = 3 * cls.__num_degree
+        cls.__num_point = 3 * cls.__num_degree
         cls.__flag = True
 
-        cls.__point_array: ArrayFloat = np.array(
+        cls.__point_array = np.array(
             [calc_collocation_point(2*i_l-1, 2*cls.__num_point)
              for i_l in range(1, cls.__num_point+1)]
         )
@@ -95,11 +95,11 @@ class ChebyshevGaussQuad:
             self.__num_point: int = ChebyshevGaussQuad.__num_point
             self.__point_array: ArrayFloat = ChebyshevGaussQuad.__point_array
 
-        self.__func_1b = func_1b
-        self.__func_2a = func_2a
-        self.__func_2b = func_2b
-        self.__weight_1 = weight_1
-        self.__weight_2 = weight_2
+        self.__func_1b: Func4Quad | None = func_1b
+        self.__func_2a: Func4Quad | None = func_2a
+        self.__func_2b: Func4Quad | None = func_2b
+        self.__weight_1: FloatFunc | None = weight_1
+        self.__weight_2: FloatFunc | None = weight_2
 
         self.__array_func_1a: ArrayFloat | ArrayComplex
         self.__array_func_1b: ArrayFloat | ArrayComplex
@@ -185,6 +185,7 @@ class ChebyshevGaussQuad:
                         = weight_2(pos) / np.sqrt(1-(pos**2))
 
     def quadrature(self: Self,
+                   *,
                    vec_1a: ArrayComplex,
                    vec_1b: ArrayComplex | None = None,
                    vec_2a: ArrayComplex | None = None,
@@ -216,34 +217,32 @@ class ChebyshevGaussQuad:
         This method may run inside multiprocessing workers.
         """
 
+        field_1a: ArrayComplex = np.empty(self.__num_mode, dtype=np.complex128)
+        field_1b: ArrayComplex = np.ones(self.__num_mode, dtype=np.complex128)
+        field_2a: ArrayComplex = np.zeros(self.__num_mode, dtype=np.complex128)
+        field_2b: ArrayComplex = np.ones(self.__num_mode, dtype=np.complex128)
+
+        weight_1: ArrayFloat = np.ones(self.__num_mode, dtype=np.float64)
+        weight_2: ArrayFloat = np.ones(self.__num_mode, dtype=np.float64)
+
         integral: ArrayComplex = np.zeros(self.__num_mode, dtype=np.complex128)
 
         for i_pos in range(len(self.__point_array)):
 
             field_1a = self.__array_func_1a[:, i_pos] @ vec_1a
 
-            if (self.__func_1b is None) or (vec_1b is None):
-                field_1b = 1
-            else:
+            if (self.__func_1b is not None) and (vec_1b is not None):
                 field_1b = self.__array_func_1b[:, i_pos] @ vec_1b
 
-            if (self.__func_2a is None) or (vec_2a is None):
-                field_2a = 0
-            else:
+            if (self.__func_2a is not None) and (vec_2a is not None):
                 field_2a = self.__array_func_2a[:, i_pos] @ vec_2a
 
-            if (self.__func_2b is None) or (vec_2b is None):
-                field_2b = 1
-            else:
+            if (self.__func_2b is not None) and (vec_2b is not None):
                 field_2b = self.__array_func_2b[:, i_pos] @ vec_2b
 
-            if self.__weight_1 is None:
-                weight_1 = 1
-            else:
+            if self.__weight_1 is not None:
                 weight_1 = self.__array_weight_1[i_pos]
-            if self.__weight_2 is None:
-                weight_2 = 1
-            else:
+            if self.__weight_2 is not None:
                 weight_2 = self.__array_weight_2[i_pos]
 
             integral += weight_1 * np.conj(field_1a) * field_1b
@@ -319,9 +318,10 @@ def spherical_laplacian_heinrichs(
         mu_d = mu_complex.value_d(s_pos)
         mu_d2 = mu_complex.value_d2(s_pos)
     else:
-        mu = mu_complex.r_value(s_pos)
-        mu_d = mu_complex.r_value_d(s_pos)
-        mu_d2 = mu_complex.r_value_d2(s_pos)
+        s_pos_real: float = s_pos.real
+        mu = mu_complex.r_value(s_pos_real)
+        mu_d = mu_complex.r_value_d(s_pos_real)
+        mu_d2 = mu_complex.r_value_d2(s_pos_real)
 
     sin2: float | complex = 1 - (mu**2)
 
