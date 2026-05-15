@@ -95,11 +95,11 @@ class ChebyshevGaussQuad:
             self.__num_point: int = ChebyshevGaussQuad.__num_point
             self.__point_array: ArrayFloat = ChebyshevGaussQuad.__point_array
 
-        self.__func_1b: Func4Quad | None = func_1b
-        self.__func_2a: Func4Quad | None = func_2a
-        self.__func_2b: Func4Quad | None = func_2b
-        self.__weight_1: FloatFunc | None = weight_1
-        self.__weight_2: FloatFunc | None = weight_2
+        self.__frag_func_1b: bool = (func_1b is not None)
+        self.__frag_func_2a: bool = (func_2a is not None)
+        self.__frag_func_2b: bool = (func_2b is not None)
+        self.__frag_weight_1: bool = (weight_1 is not None)
+        self.__frag_weight_2: bool = (weight_2 is not None)
 
         self.__array_func_1a: ArrayFloat | ArrayComplex
         self.__array_func_1b: ArrayFloat | ArrayComplex
@@ -231,18 +231,18 @@ class ChebyshevGaussQuad:
 
             field_1a = self.__array_func_1a[:, i_pos] @ vec_1a
 
-            if (self.__func_1b is not None) and (vec_1b is not None):
+            if (self.__frag_func_1b) and (vec_1b is not None):
                 field_1b = self.__array_func_1b[:, i_pos] @ vec_1b
 
-            if (self.__func_2a is not None) and (vec_2a is not None):
+            if (self.__frag_func_2a) and (vec_2a is not None):
                 field_2a = self.__array_func_2a[:, i_pos] @ vec_2a
 
-            if (self.__func_2b is not None) and (vec_2b is not None):
+            if (self.__frag_func_2b) and (vec_2b is not None):
                 field_2b = self.__array_func_2b[:, i_pos] @ vec_2b
 
-            if self.__weight_1 is not None:
+            if self.__frag_weight_1:
                 weight_1 = self.__array_weight_1[i_pos]
-            if self.__weight_2 is not None:
+            if self.__frag_weight_2:
                 weight_2 = self.__array_weight_2[i_pos]
 
             integral += weight_1 * np.conj(field_1a) * field_1b
