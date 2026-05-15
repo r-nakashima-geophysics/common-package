@@ -217,7 +217,7 @@ class ChebyshevGaussQuad:
         This method may run inside multiprocessing workers.
         """
 
-        field_1a: ArrayComplex = np.empty(self.__num_mode, dtype=np.complex128)
+        field_1a: ArrayComplex
         field_1b: ArrayComplex = np.ones(self.__num_mode, dtype=np.complex128)
         field_2a: ArrayComplex = np.zeros(self.__num_mode, dtype=np.complex128)
         field_2b: ArrayComplex = np.ones(self.__num_mode, dtype=np.complex128)
