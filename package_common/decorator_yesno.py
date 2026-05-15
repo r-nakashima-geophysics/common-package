@@ -40,7 +40,7 @@ def yes_exe_no_quit(func: Callable[..., None]) -> Callable[..., None]:
     ...     test()
     ...
     >>> wrapper()
-    Enter yes or no: yes
+    Enter 'yes' or 'no': yes
     test
     """
 

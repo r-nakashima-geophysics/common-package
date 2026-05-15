@@ -72,7 +72,7 @@ def create_function_name_logger(level: int | str = logging.INFO) \
 
     Parameters
     ----------
-    level : int, optional, default logging.INFO
+    level : int | str, optional, default logging.INFO
         The logging level.
 
     Returns

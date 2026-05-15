@@ -1,8 +1,8 @@
 """A Python module to define a class for measuring the computational
 time of a Python script.
 
-Note
-----
+Notes
+-----
 The caffeine module will be imported in the initializer of the DefaultTimer
 class when this class is used on macOS.
 """

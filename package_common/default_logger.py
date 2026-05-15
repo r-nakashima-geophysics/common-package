@@ -32,7 +32,7 @@ class DefaultLogger:
         ----------
         name : str
             The name of the logger.
-        level : int, optional, default logging.INFO
+        level : int | str, optional, default logging.INFO
             The logging level.
 
         Warnings
