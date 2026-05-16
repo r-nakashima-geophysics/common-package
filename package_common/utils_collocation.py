@@ -51,30 +51,20 @@ class ChebyshevGaussQuad:
 
     def __init__(self: Self,
                  *,
-                 func_1a: Func4Quad,
-                 func_1b: Func4Quad | None = None,
-                 func_2a: Func4Quad | None = None,
-                 func_2b: Func4Quad | None = None,
-                 weight_1: FloatFunc | None = None,
-                 weight_2: FloatFunc | None = None,
+                 func_1: Func4Quad,
+                 func_2: Func4Quad | None = None,
+                 weight: FloatFunc | None = None,
                  y_complex: ComplexCoordinate) -> None:
         """Initialize an instance of the ChebyshevGaussQuad class.
 
         Parameters
         ----------
-        func_1a : Func4Quad
-            The function associated with the first vector in the first term.
-        func_1b : Func4Quad, optional, default None
-            The function associated with the second vector in the first term.
-        func_2a : Func4Quad, optional, default None
-            The function associated with the first vector in the second term.
-        func_2b : Func4Quad, optional, default None
-            The function associated with the second vector in the second term.
-        weight_1 : FloatFunc, optional, default None
+        func_1 : Func4Quad
+            The function associated with the first vector.
+        func_2 : Func4Quad, optional, default None
+            The function associated with the second vector.
+        weight : FloatFunc, optional, default None
             The weight function for the quadrature of the first and second
-            vectors.
-        weight_2 : FloatFunc, optional, default None
-            The weight function for the quadrature of the third and fourth
             vectors.
         y_complex : ComplexCoordinate
             The complex coordinate for spectral deformation.
@@ -95,63 +85,38 @@ class ChebyshevGaussQuad:
             self.__num_point: int = ChebyshevGaussQuad.__num_point
             self.__point_array: ArrayFloat = ChebyshevGaussQuad.__point_array
 
-        self.__frag_func_1b: bool = (func_1b is not None)
-        self.__frag_func_2a: bool = (func_2a is not None)
-        self.__frag_func_2b: bool = (func_2b is not None)
-        self.__frag_weight_1: bool = (weight_1 is not None)
-        self.__frag_weight_2: bool = (weight_2 is not None)
+        self.__frag_func_2: bool = (func_2 is not None)
+        self.__frag_weight: bool = (weight is not None)
 
-        self.__array_func_1a: ArrayFloat | ArrayComplex
-        self.__array_func_1b: ArrayFloat | ArrayComplex
-        self.__array_func_2a: ArrayFloat | ArrayComplex
-        self.__array_func_2b: ArrayFloat | ArrayComplex
+        self.__array_func_1: ArrayFloat | ArrayComplex
+        self.__array_func_2: ArrayFloat | ArrayComplex
 
-        self.__array_weight_1: ArrayFloat \
-            = np.empty(self.__num_point, dtype=np.float64)
-        self.__array_weight_2: ArrayFloat \
+        self.__array_weight: ArrayFloat \
             = np.empty(self.__num_point, dtype=np.float64)
 
         if not y_complex.check_spectral_deform():
 
-            self.__array_func_1a = np.empty(
+            self.__array_func_1 = np.empty(
                 (self.__num_degree, self.__num_point), dtype=np.float64)
-            self.__array_func_1b = np.empty(
-                (self.__num_degree, self.__num_point), dtype=np.float64)
-            self.__array_func_2a = np.empty(
-                (self.__num_degree, self.__num_point), dtype=np.float64)
-            self.__array_func_2b = np.empty(
+            self.__array_func_2 = np.empty(
                 (self.__num_degree, self.__num_point), dtype=np.float64)
 
             for i_pos, pos in enumerate(self.__point_array):
 
-                self.__array_func_1a[:, i_pos] = [
-                    func_1a(i_n, pos) for i_n in range(self.__num_degree)]
-                if func_1b is not None:
-                    self.__array_func_1b[:, i_pos] = [
-                        func_1b(i_n, pos) for i_n in range(self.__num_degree)]
-                if func_2a is not None:
-                    self.__array_func_2a[:, i_pos] = [
-                        func_2a(i_n, pos) for i_n in range(self.__num_degree)]
-                if func_2b is not None:
-                    self.__array_func_2b[:, i_pos] = [
-                        func_2b(i_n, pos) for i_n in range(self.__num_degree)]
+                self.__array_func_1[:, i_pos] = [
+                    func_1(i_n, pos) for i_n in range(self.__num_degree)]
+                if func_2 is not None:
+                    self.__array_func_2[:, i_pos] = [
+                        func_2(i_n, pos) for i_n in range(self.__num_degree)]
 
-                if weight_1 is not None:
-                    self.__array_weight_1[i_pos] \
-                        = weight_1(pos) / np.sqrt(1-(pos**2))
-                if weight_2 is not None:
-                    self.__array_weight_2[i_pos] \
-                        = weight_2(pos) / np.sqrt(1-(pos**2))
-
+                if weight is not None:
+                    self.__array_weight[i_pos] \
+                        = weight(pos) * np.sqrt(1-(pos**2))
         else:
 
-            self.__array_func_1a = np.empty(
+            self.__array_func_1 = np.empty(
                 (self.__num_degree, self.__num_point), dtype=np.complex128)
-            self.__array_func_1b = np.empty(
-                (self.__num_degree, self.__num_point), dtype=np.complex128)
-            self.__array_func_2a = np.empty(
-                (self.__num_degree, self.__num_point), dtype=np.complex128)
-            self.__array_func_2b = np.empty(
+            self.__array_func_2 = np.empty(
                 (self.__num_degree, self.__num_point), dtype=np.complex128)
 
             y_pos: complex
@@ -162,50 +127,30 @@ class ChebyshevGaussQuad:
                 y_pos = y_complex.value(pos)
                 s_pos = y_complex.inverse(y_pos)
 
-                self.__array_func_1a[:, i_pos] = [
-                    func_1a(i_n, s_pos) for i_n in range(self.__num_degree)]
-                if func_1b is not None:
-                    self.__array_func_1b[:, i_pos] = [
-                        func_1b(i_n, s_pos)
-                        for i_n in range(self.__num_degree)]
-                if func_2a is not None:
-                    self.__array_func_2a[:, i_pos] = [
-                        func_2a(i_n, s_pos)
-                        for i_n in range(self.__num_degree)]
-                if func_2b is not None:
-                    self.__array_func_2b[:, i_pos] = [
-                        func_2b(i_n, s_pos)
-                        for i_n in range(self.__num_degree)]
+                self.__array_func_1[:, i_pos] = [
+                    func_1(i_n, s_pos) for i_n in range(self.__num_degree)]
+                if func_2 is not None:
+                    self.__array_func_2[:, i_pos] = [
+                        func_2(i_n, s_pos) for i_n in range(self.__num_degree)]
 
-                if weight_1 is not None:
-                    self.__array_weight_1[i_pos] \
-                        = weight_1(pos) / np.sqrt(1-(pos**2))
-                if weight_2 is not None:
-                    self.__array_weight_2[i_pos] \
-                        = weight_2(pos) / np.sqrt(1-(pos**2))
+                if weight is not None:
+                    self.__array_weight[i_pos] \
+                        = weight(pos) * np.sqrt(1-(pos**2))
 
     def quadrature(self: Self,
                    *,
-                   vec_1a: ArrayComplex,
-                   vec_1b: ArrayComplex | None = None,
-                   vec_2a: ArrayComplex | None = None,
-                   vec_2b: ArrayComplex | None = None) -> ArrayComplex:
-        """Calculate the integrals of (conj(field_1a) * field_1b * weight_1
-        + conj(field_2a) * field_2b * weight_2) using the Chebyshev-Gauss
-        quadrature for all eigenmodes, where field_1a = sum(vec_1a * func_1a),
-        field_1b = sum(vec_1b * func_1b), field_2a = sum(vec_2a * func_2a), and
-        field_2b = sum(vec_2b * func_2b).
+                   vec_1: ArrayComplex,
+                   vec_2: ArrayComplex | None = None) -> ArrayComplex:
+        """Calculate the integrals of conj(field_1) * field_2 * weight using
+        the Chebyshev-Gauss quadrature for all eigenmodes, where field_1 =
+        sum(vec_1 * func_1) and field_2 = sum(vec_2 * func_2).
 
         Parameters
         ----------
-        vec_1a : ArrayComplex
+        vec_1 : ArrayComplex
             The first vector.
-        vec_1b : ArrayComplex, optional, default None
+        vec_2 : ArrayComplex, optional, default None
             The second vector.
-        vec_2a : ArrayComplex, optional, default None
-            The third vector.
-        vec_2b : ArrayComplex, optional, default None
-            The fourth vector.
 
         Returns
         -------
@@ -217,36 +162,24 @@ class ChebyshevGaussQuad:
         This method may run inside multiprocessing workers.
         """
 
-        field_1a: ArrayComplex
-        field_1b: ArrayComplex = np.ones(self.__num_mode, dtype=np.complex128)
-        field_2a: ArrayComplex = np.zeros(self.__num_mode, dtype=np.complex128)
-        field_2b: ArrayComplex = np.ones(self.__num_mode, dtype=np.complex128)
+        field_1: ArrayComplex
+        field_2: ArrayComplex = np.zeros(self.__num_mode, dtype=np.complex128)
 
-        weight_1: ArrayFloat = np.ones(self.__num_mode, dtype=np.float64)
-        weight_2: ArrayFloat = np.ones(self.__num_mode, dtype=np.float64)
+        weight: ArrayFloat = np.ones(self.__num_mode, dtype=np.float64)
 
         integral: ArrayComplex = np.zeros(self.__num_mode, dtype=np.complex128)
 
         for i_pos in range(len(self.__point_array)):
 
-            field_1a = self.__array_func_1a[:, i_pos] @ vec_1a
+            field_1 = self.__array_func_1[:, i_pos] @ vec_1
 
-            if (self.__frag_func_1b) and (vec_1b is not None):
-                field_1b = self.__array_func_1b[:, i_pos] @ vec_1b
+            if (self.__frag_func_2) and (vec_2 is not None):
+                field_2 = self.__array_func_2[:, i_pos] @ vec_2
 
-            if (self.__frag_func_2a) and (vec_2a is not None):
-                field_2a = self.__array_func_2a[:, i_pos] @ vec_2a
+            if self.__frag_weight:
+                weight = self.__array_weight[i_pos]
 
-            if (self.__frag_func_2b) and (vec_2b is not None):
-                field_2b = self.__array_func_2b[:, i_pos] @ vec_2b
-
-            if self.__frag_weight_1:
-                weight_1 = self.__array_weight_1[i_pos]
-            if self.__frag_weight_2:
-                weight_2 = self.__array_weight_2[i_pos]
-
-            integral += weight_1 * np.conj(field_1a) * field_1b
-            integral += weight_2 * np.conj(field_2a) * field_2b
+            integral += weight * np.conj(field_1) * field_2
 
         integral *= np.pi / self.__num_point
 
