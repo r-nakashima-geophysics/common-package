@@ -73,6 +73,11 @@ class ChebyshevGaussQuad:
         --------
         `set_class_variable` class method has not been executed.
             If `set_class_variable` class method has not been executed.
+
+        Notes
+        -----
+        The weight 1/sqrt(1-x^2) for the Chebyshev-Gauss quadrature is included
+        in self.__array_weight automatically.
         """
 
         if not ChebyshevGaussQuad.__flag:
@@ -85,7 +90,7 @@ class ChebyshevGaussQuad:
             self.__num_point: int = ChebyshevGaussQuad.__num_point
             self.__point_array: ArrayFloat = ChebyshevGaussQuad.__point_array
 
-        self.__frag_func_2: bool = (func_2 is not None)
+        self.__flag_func_2: bool = (func_2 is not None)
 
         self.__array_func_1: ArrayFloat | ArrayComplex
         self.__array_func_2: ArrayFloat | ArrayComplex
@@ -171,7 +176,7 @@ class ChebyshevGaussQuad:
 
             field_1 = self.__array_func_1[:, i_pos] @ vec_1
 
-            if (self.__frag_func_2) and (vec_2 is not None):
+            if (self.__flag_func_2) and (vec_2 is not None):
                 field_2 = self.__array_func_2[:, i_pos] @ vec_2
 
             weight = self.__array_weight[i_pos]
@@ -185,7 +190,7 @@ class ChebyshevGaussQuad:
 
 def calc_collocation_point(i_l: int,
                            num_point: int) -> float:
-    """Calculate the Gauss-Lobatto collocation points.
+    """Calculate a Gauss-Lobatto collocation point.
 
     Parameters
     ----------
