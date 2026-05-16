@@ -2,7 +2,7 @@
 
 Notes
 -----
-The Initializers of the DefaultPlotter class and the DefaultGridPlotter class
+The initializers of the DefaultPlotter class and the DefaultGridPlotter class
 should not be used to create instances of these classes directly. The use of
 `create_plotter` function is recommended.
 """

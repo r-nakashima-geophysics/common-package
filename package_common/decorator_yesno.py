@@ -9,13 +9,13 @@ from package_common.utils_name import create_function_name_logger
 
 
 def yes_exe_no_quit(func: Callable[..., None]) -> Callable[..., None]:
-    """Decorator to execute a function when the character 'yes' is input
-    and to exit the script when the character 'no' is input.
+    """Decorator to execute a function when the character 'y' or 'yes' is
+    input and to exit the script when the character 'n' or 'no' is input.
 
     Parameters
     ----------
     func : Callable[..., None]
-        The function executed when the character 'yes' is input.
+        The function executed when the character 'y' or 'yes' is input.
 
     Returns
     -------
@@ -69,12 +69,12 @@ def yes_exe_no_quit(func: Callable[..., None]) -> Callable[..., None]:
 
 def exe_yes_continue(func: Callable[..., None]) -> Callable[..., None]:
     """Decorator to execute a function, and then to continue to execute
-    it while the character 'yes' is input.
+    it while the character 'y' or 'yes' is input.
 
     Parameters
     ----------
     func : Callable[..., None]
-        The function executed when the character 'yes' is input.
+        The function executed when the character 'y' or 'yes' is input.
 
     Returns
     -------
