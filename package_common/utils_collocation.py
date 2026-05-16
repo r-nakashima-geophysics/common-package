@@ -53,7 +53,7 @@ class ChebyshevGaussQuad:
                  *,
                  func_1: Func4Quad,
                  func_2: Func4Quad | None = None,
-                 weight: FloatFunc | None = None,
+                 weight: FloatFunc = lambda x: 1,
                  y_complex: ComplexCoordinate) -> None:
         """Initialize an instance of the ChebyshevGaussQuad class.
 
@@ -63,7 +63,7 @@ class ChebyshevGaussQuad:
             The function associated with the first vector.
         func_2 : Func4Quad, optional, default None
             The function associated with the second vector.
-        weight : FloatFunc, optional, default None
+        weight : FloatFunc, optional, default lambda x: 1
             The weight function for the quadrature of the first and second
             vectors.
         y_complex : ComplexCoordinate
@@ -86,7 +86,6 @@ class ChebyshevGaussQuad:
             self.__point_array: ArrayFloat = ChebyshevGaussQuad.__point_array
 
         self.__frag_func_2: bool = (func_2 is not None)
-        self.__frag_weight: bool = (weight is not None)
 
         self.__array_func_1: ArrayFloat | ArrayComplex
         self.__array_func_2: ArrayFloat | ArrayComplex
@@ -109,9 +108,8 @@ class ChebyshevGaussQuad:
                     self.__array_func_2[:, i_pos] = [
                         func_2(i_n, pos) for i_n in range(self.__num_degree)]
 
-                if weight is not None:
-                    self.__array_weight[i_pos] \
-                        = weight(pos) * np.sqrt(1-(pos**2))
+                self.__array_weight[i_pos] = weight(pos) * np.sqrt(1-(pos**2))
+
         else:
 
             self.__array_func_1 = np.empty(
@@ -133,9 +131,7 @@ class ChebyshevGaussQuad:
                     self.__array_func_2[:, i_pos] = [
                         func_2(i_n, s_pos) for i_n in range(self.__num_degree)]
 
-                if weight is not None:
-                    self.__array_weight[i_pos] \
-                        = weight(pos) * np.sqrt(1-(pos**2))
+                self.__array_weight[i_pos] = weight(pos) * np.sqrt(1-(pos**2))
 
     def quadrature(self: Self,
                    *,
@@ -143,7 +139,9 @@ class ChebyshevGaussQuad:
                    vec_2: ArrayComplex | None = None) -> ArrayComplex:
         """Calculate the integrals of conj(field_1) * field_2 * weight using
         the Chebyshev-Gauss quadrature for all eigenmodes, where field_1 =
-        sum(vec_1 * func_1) and field_2 = sum(vec_2 * func_2).
+        sum(vec_1 * func_1) and field_2 = sum(vec_2 * func_2). The weight
+        1/sqrt(1-x^2) for the Chebyshev-Gauss quadrature is included in
+        self.__array_weight automatically.
 
         Parameters
         ----------
@@ -176,8 +174,7 @@ class ChebyshevGaussQuad:
             if (self.__frag_func_2) and (vec_2 is not None):
                 field_2 = self.__array_func_2[:, i_pos] @ vec_2
 
-            if self.__frag_weight:
-                weight = self.__array_weight[i_pos]
+            weight = self.__array_weight[i_pos]
 
             integral += weight * np.conj(field_1) * field_2
 
