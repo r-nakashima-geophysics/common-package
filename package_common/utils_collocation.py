@@ -71,7 +71,7 @@ class ChebyshevGaussQuad:
 
         Warnings
         --------
-        `set_class_variable` class method has not been executed.
+        `set_class_variable` class method has not been executed
             If `set_class_variable` class method has not been executed.
 
         Notes
@@ -82,7 +82,7 @@ class ChebyshevGaussQuad:
 
         if not ChebyshevGaussQuad.__flag:
             ChebyshevGaussQuad.__logger.error(
-                '`set_class_variable` class method has not been executed.')
+                '`set_class_variable` class method has not been executed')
             sys.exit(1)
         else:
             self.__num_mode: int = ChebyshevGaussQuad.__num_mode
@@ -166,9 +166,8 @@ class ChebyshevGaussQuad:
         """
 
         field_1: ArrayComplex
-        field_2: ArrayComplex = np.zeros(self.__num_mode, dtype=np.complex128)
-
-        weight: ArrayFloat = np.ones(self.__num_mode, dtype=np.float64)
+        field_2: ArrayComplex = np.ones(self.__num_mode, dtype=np.complex128)
+        weight: float
 
         integral: ArrayComplex = np.zeros(self.__num_mode, dtype=np.complex128)
 
@@ -207,10 +206,11 @@ def calc_collocation_point(i_l: int,
     Warnings
     --------
     Invalid argument
-        If the input value is not within [0, num_point].
+        If the input value is not within [0, num_point], or if num_point is not
+        positive.
     """
 
-    if 0 <= i_l <= num_point:
+    if (0 <= i_l <= num_point) and (num_point > 0):
         return -np.cos(i_l*np.pi/num_point)
 
     logger: DefaultLogger = create_function_name_logger()

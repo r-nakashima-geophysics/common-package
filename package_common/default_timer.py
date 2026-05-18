@@ -69,13 +69,13 @@ class DefaultTimer:
 
         Warnings
         --------
-        Timer has not been started.
+        Timer has not been started
             If `start()` has not been called before `show()` or `end()` are
             called.
         """
 
         if self.__start_time is None:
-            self.__logger.warning('Timer has not been started.')
+            self.__logger.warning('Timer has not been started')
         else:
             self.__elapsed_time = perf_counter() - self.__start_time
             self.__logger.info(f'Elapsed time: {self.__elapsed_time:.1f} sec.')

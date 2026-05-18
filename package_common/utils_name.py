@@ -25,7 +25,7 @@ def get_current_function_name(frame: FrameType | None = None) -> str:
 
     Warnings
     --------
-    Invalid type of the argument.
+    Invalid type of the argument
         If the argument is not a FrameType.
 
     Notes

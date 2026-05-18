@@ -58,7 +58,7 @@ class ProgressBar:
         self.__timer: DefaultTimer = DefaultTimer(self.__name)
 
         if self.__num_calc <= 0:
-            self.__logger.warning('Invalid argument')
+            self.__logger.error('Invalid argument')
             sys.exit(1)
 
     def start(self) -> None:

@@ -131,7 +131,8 @@ class ComplexCoordinate(BackgroundField):
             is used or not.
         """
 
-        return any(value != 0 for value in self.params.values())
+        return any((not np.isclose(value, 0))
+                   for value in self.params.values())
 
 
 def init_complex_coordinate_simple(

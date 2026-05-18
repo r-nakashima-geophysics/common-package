@@ -65,7 +65,7 @@ def screening_eig(matrix_eig: ArrayComplex,
     Returns
     -------
     matrix_eig : ArrayComplex
-        The eigenvalues and normalized eigenvectors.
+        The eigenvalues and eigenvectors.
     phys_qtys : tuple[ArrayAny, ...]
         The physical quantities.
 
