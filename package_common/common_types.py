@@ -9,7 +9,7 @@ Examples
 [1. 2. 3.]
 """
 
-from typing import Any, Callable, Final, Self, TypeVar
+from typing import Any, Callable, Final, Self, TypeVar, cast
 
 import numpy as np
 import numpy.typing as npt
