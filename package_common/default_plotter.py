@@ -16,7 +16,7 @@ from typing import Literal, overload
 import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
-from matplotlib import axes, collections, colorbar, figure, legend
+from matplotlib import axes, collections, colorbar, contour, figure, legend
 
 from package_common.common_types import Self
 from package_common.default_logger import DefaultLogger
@@ -27,6 +27,7 @@ type Axes = axes.Axes
 type Legend = legend.Legend
 type PathCollection = collections.PathCollection
 type Colorbar = colorbar.Colorbar
+type QuadContourSet = contour.QuadContourSet
 
 type ArrayAxes = npt.NDArray[np.object_]
 type ArrayLegend = npt.NDArray[np.object_]
