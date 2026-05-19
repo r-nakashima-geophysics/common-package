@@ -9,14 +9,10 @@ Examples
 [1. 2. 3.]
 """
 
-from multiprocessing import shared_memory
 from typing import Any, Callable, Final, Self, TypeVar
 
 import numpy as np
 import numpy.typing as npt
-
-type SharedMemory = shared_memory.SharedMemory
-type SharedInfo = list[tuple[str, tuple[int, ...], np.dtype]]
 
 type ArrayInt = npt.NDArray[np.int_]
 type ArrayFloat = npt.NDArray[np.float64]

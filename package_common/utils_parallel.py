@@ -7,9 +7,12 @@ from multiprocessing import shared_memory
 import numpy as np
 import psutil
 
-from package_common.common_types import ArrayAny, SharedInfo, SharedMemory
+from package_common.common_types import ArrayAny
 from package_common.default_logger import DefaultLogger
 from package_common.utils_name import create_function_name_logger
+
+type SharedMemory = shared_memory.SharedMemory
+type SharedInfo = list[tuple[str, tuple[int, ...], np.dtype]]
 
 
 def set_num_threads(num_threads: int) -> None:
