@@ -129,7 +129,7 @@ class ChebyshevGaussQuad:
 
                 y_pos = y_complex.value_without_spectral_deform(pos)
                 if s_pos is None:
-                    s_pos = y_pos
+                    s_pos = pos + 1j * 0
                 s_pos = y_complex.inverse(y_pos, guess=s_pos)
 
                 self.__array_func_1[:, i_pos] = [
