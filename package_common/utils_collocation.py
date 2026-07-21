@@ -123,12 +123,14 @@ class ChebyshevGaussQuad:
                 (self.__num_degree, self.__num_point), dtype=np.complex128)
 
             y_pos: complex
-            s_pos: complex
+            s_pos: complex | None = None
 
             for i_pos, pos in enumerate(ChebyshevGaussQuad.__point_array):
 
                 y_pos = y_complex.value_without_spectral_deform(pos)
-                s_pos = y_complex.inverse(y_pos)
+                if s_pos is None:
+                    s_pos = y_pos
+                s_pos = y_complex.inverse(y_pos, guess=s_pos)
 
                 self.__array_func_1[:, i_pos] = [
                     func_1(i_n, s_pos) for i_n in range(self.__num_degree)]

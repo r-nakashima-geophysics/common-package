@@ -93,13 +93,17 @@ class ComplexCoordinate(BackgroundField):
         self.__logger: DefaultLogger = DefaultLogger(self.name)
 
     def inverse(self: Self,
-                y_pos: complex) -> complex:
+                y_pos: complex,
+                *,
+                guess: complex | None = None) -> complex:
         """Solve y = y(s) for s numerically.
 
         Parameters
         ----------
         y_pos : complex
             The target value in the complex coordinate.
+        guess : complex | None, optional, default None
+            The initial guess of s.
 
         Returns
         -------
@@ -123,8 +127,12 @@ class ComplexCoordinate(BackgroundField):
             return np.array([[np.real(dy), np.real(dy*1j)],
                              [np.imag(dy), np.imag(dy*1j)]], dtype=np.float64)
 
-        init_guess: ArrayFloat \
-            = np.array([y_pos.real, y_pos.imag], dtype=np.float64)
+        init_guess: ArrayFloat
+        if guess is None:
+            init_guess = np.array([y_pos.real, y_pos.imag], dtype=np.float64)
+        else:
+            init_guess = np.array([guess.real, guess.imag], dtype=np.float64)
+
         sol = optimize.root(_residual, init_guess, jac=_jacobian)
 
         if (not sol.success) and (not np.allclose(sol.fun, [0, 0])):
