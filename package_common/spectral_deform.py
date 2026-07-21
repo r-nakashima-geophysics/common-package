@@ -16,7 +16,8 @@ import numpy as np
 from scipy import optimize
 
 from package_common.background_field import BackgroundField
-from package_common.common_types import ArrayFloat, ComplexFunc, Self
+from package_common.common_types import (ArrayFloat, ComplexFunc, FloatFunc,
+                                         Self)
 from package_common.default_logger import DefaultLogger
 from package_common.utils_name import create_function_name_logger
 
@@ -41,6 +42,9 @@ class ComplexCoordinate(BackgroundField):
         The LaTeX text of the complex coordinate transformation.
     params : dict[str, float]
         The parameters for the complex coordinate transformation.
+    value_without_spectral_deform : FloatFunc
+        The profile of the coordinate transformation without the spectral
+        deformation method.
     """
 
     def __init__(self: Self,
@@ -50,7 +54,8 @@ class ComplexCoordinate(BackgroundField):
                  value_d: ComplexFunc,
                  value_d2: ComplexFunc | None = None,
                  tex: str | None = None,
-                 params: dict[str, float]) -> None:
+                 params: dict[str, float],
+                 value_without_spectral_deform: FloatFunc) -> None:
         """Initialize an instance of the ComplexCoordinate class.
 
         Parameters
@@ -69,6 +74,9 @@ class ComplexCoordinate(BackgroundField):
             The LaTeX text of the complex coordinate transformation.
         params : dict[str, float]
             The parameters for the complex coordinate transformation.
+        value_without_spectral_deform: FloatFunc
+            The profile of the coordinate transformation without the spectral
+            deformation.
         """
 
         self.params: dict[str, float] = params
@@ -78,6 +86,9 @@ class ComplexCoordinate(BackgroundField):
                          value_d=value_d,
                          value_d2=value_d2,
                          tex=tex)
+
+        self.value_without_spectral_deform: FloatFunc \
+            = value_without_spectral_deform
 
         self.__logger: DefaultLogger = DefaultLogger(self.name)
 
@@ -202,8 +213,15 @@ def init_complex_coordinate_simple(
             - 2 * (alpha+1j) * (3*beta_1*s_pos+beta_0)
         )
 
-    return ComplexCoordinate(name,
-                             value=y_complex,
-                             value_d=y_complex_d,
-                             value_d2=y_complex_d2,
-                             params=params)
+    def y_without_spectral_deform(s_pos: float) -> float:
+        return (
+            y_start + (y_end-y_start)*(s_pos+1)/2
+        )
+
+    return ComplexCoordinate(
+        name,
+        value=y_complex,
+        value_d=y_complex_d,
+        value_d2=y_complex_d2,
+        params=params,
+        value_without_spectral_deform=y_without_spectral_deform)

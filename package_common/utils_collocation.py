@@ -127,7 +127,7 @@ class ChebyshevGaussQuad:
 
             for i_pos, pos in enumerate(ChebyshevGaussQuad.__point_array):
 
-                y_pos = y_complex.value(pos)
+                y_pos = y_complex.value_without_spectral_deform(pos)
                 s_pos = y_complex.inverse(y_pos)
 
                 self.__array_func_1[:, i_pos] = [
