@@ -63,7 +63,7 @@ def chebyshev_d(n_degree: int,
     4.2423009548996277e-16
     """
 
-    if not np.isclose(abs(s_pos), 1.0):
+    if (not np.isclose(s_pos, 1.0)) and (not np.isclose(s_pos, -1.0)):
         t: TypeVarFloatComplex = np.acos(s_pos)
         return n_degree * np.sin(n_degree*t) / np.sin(t)
 
@@ -95,8 +95,8 @@ def chebyshev_d2(n_degree: int,
     12.000000000000002
     """
 
-    t: TypeVarFloatComplex = np.acos(s_pos)
-    if not np.isclose(abs(s_pos), 1.0):
+    if (not np.isclose(s_pos, 1.0)) and (not np.isclose(s_pos, -1.0)):
+        t: TypeVarFloatComplex = np.acos(s_pos)
         return (
             (-(n_degree**2) * np.cos(n_degree*t)
                 + chebyshev_d(n_degree, s_pos) * np.cos(t)
@@ -131,8 +131,8 @@ def chebyshev_d3(n_degree: int,
     24.000000000000007
     """
 
-    t: TypeVarFloatComplex = np.acos(s_pos)
-    if not np.isclose(abs(s_pos), 1.0):
+    if (not np.isclose(s_pos, 1.0)) and (not np.isclose(s_pos, -1.0)):
+        t: TypeVarFloatComplex = np.acos(s_pos)
         return (
             ((1-(n_degree**2)) * chebyshev_d(n_degree, s_pos)
                 + 3 * chebyshev_d2(n_degree, s_pos) * np.cos(t)
