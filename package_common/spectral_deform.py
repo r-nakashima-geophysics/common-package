@@ -47,7 +47,7 @@ class ComplexCoordinate(BackgroundField):
                  name: str,
                  *,
                  value: ComplexFunc,
-                 value_d: ComplexFunc | None = None,
+                 value_d: ComplexFunc,
                  value_d2: ComplexFunc | None = None,
                  tex: str | None = None,
                  params: dict[str, float]) -> None:
@@ -59,7 +59,7 @@ class ComplexCoordinate(BackgroundField):
             The name of the complex coordinate transformation.
         value : ComplexFunc
             The profile of the complex coordinate transformation.
-        value_d : ComplexFunc | None, optional, default None
+        value_d : ComplexFunc
             The first derivative of the profile of the complex coordinate
             transformation.
         value_d2 : ComplexFunc | None, optional, default None
@@ -173,7 +173,7 @@ def init_complex_coordinate_simple(
 
     logger: DefaultLogger = create_function_name_logger()
 
-    if y_start == y_end:
+    if np.isclose(y_start, y_end):
         logger.error('Invalid argument')
         sys.exit(1)
 
