@@ -27,6 +27,8 @@ class DefaultTimer:
     >>> timer.show()
     >>> _ = timer.lap()  # None
     >>> lap_time = timer.lap()
+    >>> timer.stop()
+    >>> timer.start()
     >>> timer.end()
     """
 
@@ -42,9 +44,11 @@ class DefaultTimer:
             The name of the timer.
         """
 
+        self.__running: bool = False
         self.__start_time: float | None = None
         self.__elapsed_time: float | None = None
         self.__split_time: float | None = None
+        self.__net_time: float | None = None
 
         self.__logger: DefaultLogger = DefaultLogger(name)
 
@@ -56,13 +60,14 @@ class DefaultTimer:
             DefaultTimer.__import_caffeine = True
 
     def start(self) -> None:
-        """Start the timer."""
+        """(Re)start the timer."""
 
-        self.__elapsed_time = None
-        self.__split_time = None
-
-        self.__logger.info('Start')
-        self.__start_time = perf_counter()
+        if self.__start_time is None:
+            self.__logger.info('Start')
+            self.__start_time = perf_counter()
+        elif not self.__running:
+            self.__start_time = perf_counter()
+        self.__running = True
 
     def show(self) -> None:
         """Show the elapsed time.
@@ -76,15 +81,43 @@ class DefaultTimer:
 
         if self.__start_time is None:
             self.__logger.warning('Timer has not been started')
-        else:
+        elif self.__net_time is None:
             self.__elapsed_time = perf_counter() - self.__start_time
             self.__logger.info(f'Elapsed time: {self.__elapsed_time:.1f} sec.')
+        else:
+            if self.__running:
+                self.stop()
+                self.start()
+            self.__logger.info(f'Net time: {self.__net_time:.1f} sec.')
 
     def end(self) -> None:
         """End the timer."""
 
         self.show()
         self.__logger.info('End')
+        self.__running = False
+        self.__start_time = None
+        self.__elapsed_time = None
+        self.__split_time = None
+        self.__net_time = None
+
+    def stop(self) -> None:
+        """Stop the timer.
+
+        Warnings
+        --------
+        Timer has not been (re)started
+            If `start()` has not been called before `stop()` is called.
+        """
+
+        now: float = perf_counter()
+        if (self.__start_time is None) or (not self.__running):
+            self.__logger.warning('Timer has not been (re)started')
+        elif self.__net_time is None:
+            self.__net_time = now - self.__start_time
+        elif self.__net_time is not None:
+            self.__net_time += now - self.__start_time
+        self.__running = False
 
     def lap(self) -> float | None:
         """Measure the lap time.
