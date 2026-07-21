@@ -84,15 +84,15 @@ def screening_eig(matrix_eig: ArrayComplex,
 
     logger: DefaultLogger = create_function_name_logger()
 
-    size_mat: int = matrix_eig.shape[1]
+    size_matrix: int = matrix_eig.shape[1]
 
-    if (matrix_eig.shape[0] != size_mat + 1) \
-            or (len(check.ravel()) != size_mat):
+    if (matrix_eig.shape[0] != size_matrix + 1) \
+            or (len(check.ravel()) != size_matrix):
         logger.error('Invalid shape of the input arrays')
         sys.exit(1)
 
     for phys_qty in phys_qtys:
-        if len(phys_qty.ravel()) != size_mat:
+        if len(phys_qty.ravel()) != size_matrix:
             logger.error('Invalid shape of the input arrays')
             sys.exit(1)
 
