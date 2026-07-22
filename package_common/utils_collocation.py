@@ -1,7 +1,5 @@
 """A Python module to provide the utilities for collocation methods."""
 
-import sys
-
 import numpy as np
 
 from package_common.calc_heinrichs import heinrichs, heinrichs_d, heinrichs_d2
@@ -43,7 +41,7 @@ class ChebyshevGaussQuad:
 
         cls.__num_degree = num_degree
         cls.__num_point = 3 * cls.__num_degree
-        cls.__spectral_deform: bool = y_complex.check_spectral_deform()
+        cls.__spectral_deform = y_complex.check_spectral_deform()
         cls.__flag = True
 
         cls.__point_array = np.array(
