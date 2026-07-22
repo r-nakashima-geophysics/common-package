@@ -112,7 +112,7 @@ class ComplexCoordinate(BackgroundField):
 
         Warnings
         --------
-        Not converge
+        Did not converge
             If no solution converges to the target value.
         """
 
@@ -136,7 +136,7 @@ class ComplexCoordinate(BackgroundField):
         sol = optimize.root(_residual, init_guess, jac=_jacobian)
 
         if (not sol.success) and (not np.allclose(sol.fun, [0, 0])):
-            self.__logger.warning(f'Not converge at y = {y_pos}')
+            self.__logger.warning(f'Did not converge at y = {y_pos}')
 
         return sol.x[0] + 1j*sol.x[1]
 
@@ -187,12 +187,18 @@ def init_complex_coordinate_simple(
     Warnings
     --------
     Invalid argument
-        If `y_start` and `y_end` are equal.
+        If `y_start` and `y_end` are equal, or if `alpha` is not zero when both
+        `beta_0` and `beta_1` are zero.
     """
 
     logger: DefaultLogger = create_function_name_logger()
 
     if np.isclose(y_start, y_end):
+        logger.error('Invalid argument')
+        sys.exit(1)
+
+    if (not np.isclose(alpha, 0)) \
+            and np.isclose(beta_0, 0) and np.isclose(beta_1, 0):
         logger.error('Invalid argument')
         sys.exit(1)
 
