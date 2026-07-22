@@ -3,7 +3,7 @@
 import logging
 import sys
 
-from package_common.common_types import Self
+from package_common.common_types import NoReturn, Self
 
 
 class DefaultLogger:
@@ -101,7 +101,7 @@ class DefaultLogger:
         self.__logger.warning(message)
 
     def error(self: Self,
-              message: str) -> None:
+              message: str) -> NoReturn:
         """Log an error message.
 
         Parameters
@@ -114,7 +114,7 @@ class DefaultLogger:
         sys.exit(1)
 
     def critical(self: Self,
-                 message: str) -> None:
+                 message: str) -> NoReturn:
         """Log a critical message.
 
         Parameters
@@ -124,6 +124,7 @@ class DefaultLogger:
         """
 
         self.__logger.critical(message)
+        sys.exit(1)
 
     def show_params(self: Self,
                     *args) -> None:

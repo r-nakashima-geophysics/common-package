@@ -99,7 +99,7 @@ class ChebyshevGaussQuad:
             self.__num_degree: int = ChebyshevGaussQuad.__num_degree
             self.__num_point: int = ChebyshevGaussQuad.__num_point
 
-        self.__flag_func_2: bool = (func_2 is not None)
+        self.__flag_func_2: bool = func_2 is not None
 
         self.__array_func_1: ArrayFloat | ArrayComplex
         self.__array_func_2: ArrayFloat | ArrayComplex
