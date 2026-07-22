@@ -5,6 +5,8 @@ description = "These Python scripts are used as modules in the repositories r-na
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
+    "autopep8>=2.3.2",
+    "isort>=8.0.1",
     "matplotlib>=3.11.1",
     "mypy>=2.3.0",
     "numpy>=2.5.1",
