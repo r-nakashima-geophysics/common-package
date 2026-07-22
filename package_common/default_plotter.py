@@ -9,7 +9,6 @@ should not be used to create instances of these classes directly. The use of
 
 import os
 import shutil
-import sys
 from pathlib import Path
 from typing import Literal, overload
 

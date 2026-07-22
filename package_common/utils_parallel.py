@@ -1,7 +1,6 @@
 """A Python module to provide the utilities for parallel processing."""
 
 import os
-import sys
 from multiprocessing import shared_memory
 
 import numpy as np

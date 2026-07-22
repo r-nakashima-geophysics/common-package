@@ -2,7 +2,6 @@
 
 import inspect
 import logging
-import sys
 from types import FrameType
 
 from package_common.default_logger import DefaultLogger

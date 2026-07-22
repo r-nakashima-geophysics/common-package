@@ -1,7 +1,5 @@
 """A Python module to provide the utilities for eigenvalue problems."""
 
-import sys
-
 import numpy as np
 
 from package_common.common_types import (ArrayAny, ArrayBool, ArrayComplex,

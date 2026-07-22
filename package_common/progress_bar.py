@@ -1,7 +1,5 @@
 """A Python module to define a class for displaying the progress bar."""
 
-import sys
-
 from package_common.common_types import Self
 from package_common.default_logger import DefaultLogger
 from package_common.default_timer import DefaultTimer

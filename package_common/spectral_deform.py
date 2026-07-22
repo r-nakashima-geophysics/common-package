@@ -10,8 +10,6 @@ deformation to the Vlasov-Poisson system. Annals of Physics 189, 265-317
 (2001).
 """
 
-import sys
-
 import numpy as np
 from scipy import optimize
 

@@ -1,7 +1,5 @@
 """A Python module to define a class for handling background fields."""
 
-import sys
-
 from package_common.common_types import ComplexFunc, Self
 from package_common.default_logger import DefaultLogger
 
