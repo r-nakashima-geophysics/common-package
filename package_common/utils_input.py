@@ -120,6 +120,6 @@ def input_value_within(min_value: TypeVarIntFloat,
             chosen_value = cast(input_str)
             if min_value <= chosen_value <= max_value:
                 return chosen_value
-            logger.error('Out of range')
+            logger.warning('Out of range')
         except ValueError:
-            logger.error('Invalid input')
+            logger.warning('Invalid input')
