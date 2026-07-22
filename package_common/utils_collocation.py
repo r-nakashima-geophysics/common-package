@@ -167,23 +167,16 @@ class ChebyshevGaussQuad:
         This method may run inside multiprocessing workers.
         """
 
-        field_1: ArrayComplex
-        field_2: ArrayComplex = np.ones(self.__num_mode, dtype=np.complex128)
-        weight: float
+        field_1: ArrayComplex = vec_1.T @ self.__array_func_1
+        field_2: ArrayComplex
+        if (self.__flag_func_2) and (vec_2 is not None):
+            field_2 = vec_2.T @ self.__array_func_2
+        else:
+            field_2 = np.ones((self.__num_mode, self.__num_point),
+                              dtype=np.complex128)
 
-        integral: ArrayComplex = np.zeros(self.__num_mode, dtype=np.complex128)
-
-        for i_pos in range(len(self.__point_array)):
-
-            field_1 = self.__array_func_1[:, i_pos] @ vec_1
-
-            if (self.__flag_func_2) and (vec_2 is not None):
-                field_2 = self.__array_func_2[:, i_pos] @ vec_2
-
-            weight = self.__array_weight[i_pos]
-
-            integral += weight * np.conj(field_1) * field_2
-
+        integral: ArrayComplex \
+            = np.sum(self.__array_weight * np.conj(field_1) * field_2, axis=1)
         integral *= np.pi / self.__num_point
 
         return integral
