@@ -95,15 +95,17 @@ class ChebyshevGaussQuad:
         self.__array_func_1: ArrayFloat | ArrayComplex
         self.__array_func_2: ArrayFloat | ArrayComplex
 
-        self.__array_weight: ArrayFloat \
-            = np.empty(self.__num_point, dtype=np.float64)
+        self.__array_weight: ArrayFloat = np.array(
+            [weight(pos) * np.sqrt(1-(pos**2)) for pos in self.__point_array],
+            dtype=np.float64)
 
         if not y_complex.check_spectral_deform():
 
             self.__array_func_1 = np.empty(
                 (self.__num_degree, self.__num_point), dtype=np.float64)
-            self.__array_func_2 = np.empty(
-                (self.__num_degree, self.__num_point), dtype=np.float64)
+            if func_2 is not None:
+                self.__array_func_2 = np.empty(
+                    (self.__num_degree, self.__num_point), dtype=np.float64)
 
             for i_pos, pos in enumerate(self.__point_array):
 
@@ -113,14 +115,13 @@ class ChebyshevGaussQuad:
                     self.__array_func_2[:, i_pos] = [
                         func_2(i_n, pos) for i_n in range(self.__num_degree)]
 
-                self.__array_weight[i_pos] = weight(pos) * np.sqrt(1-(pos**2))
-
         else:
 
             self.__array_func_1 = np.empty(
                 (self.__num_degree, self.__num_point), dtype=np.complex128)
-            self.__array_func_2 = np.empty(
-                (self.__num_degree, self.__num_point), dtype=np.complex128)
+            if func_2 is not None:
+                self.__array_func_2 = np.empty(
+                    (self.__num_degree, self.__num_point), dtype=np.complex128)
 
             y_pos: complex
             s_pos: complex | None = None
@@ -137,8 +138,6 @@ class ChebyshevGaussQuad:
                 if func_2 is not None:
                     self.__array_func_2[:, i_pos] = [
                         func_2(i_n, s_pos) for i_n in range(self.__num_degree)]
-
-                self.__array_weight[i_pos] = weight(pos) * np.sqrt(1-(pos**2))
 
     def quadrature(self: Self,
                    *,
@@ -162,18 +161,26 @@ class ChebyshevGaussQuad:
         integral : ArrayComplex
             The result of the Chebyshev-Gauss quadrature.
 
+        Warnings
+        --------
+        Inconsistent input
+            If vec_2 is None, although func_2 is not None.
+
         Notes
         -----
         This method may run inside multiprocessing workers.
         """
 
+        if self.__flag_func_2 and (vec_2 is None):
+            self.__logger.error('Inconsistent input')
+            sys.exit(1)
+
         field_1: ArrayComplex = vec_1.T @ self.__array_func_1
-        field_2: ArrayComplex
-        if (self.__flag_func_2) and (vec_2 is not None):
+        field_2: float | ArrayComplex
+        if self.__flag_func_2 and (vec_2 is not None):
             field_2 = vec_2.T @ self.__array_func_2
         else:
-            field_2 = np.ones((self.__num_mode, self.__num_point),
-                              dtype=np.complex128)
+            field_2 = 1
 
         integral: ArrayComplex \
             = np.sum(self.__array_weight * np.conj(field_1) * field_2, axis=1)
