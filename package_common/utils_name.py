@@ -57,7 +57,6 @@ def get_current_function_name(frame: FrameType | None = None) -> str:
     logger: DefaultLogger = DefaultLogger(this_name)
     if not isinstance(frame, FrameType):
         logger.error('Invalid type of the argument')
-        sys.exit(1)
 
     function_name: str = 'Unknown'
     if (frame is not None) and (frame.f_back is not None):

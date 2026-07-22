@@ -111,6 +111,7 @@ class DefaultLogger:
         """
 
         self.__logger.error(message)
+        sys.exit(1)
 
     def critical(self: Self,
                  message: str) -> None:

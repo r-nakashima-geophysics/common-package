@@ -89,12 +89,10 @@ def screening_eig(matrix_eig: ArrayComplex,
     if (matrix_eig.shape[0] != size_matrix + 1) \
             or (len(check.ravel()) != size_matrix):
         logger.error('Invalid shape of the input arrays')
-        sys.exit(1)
 
     for phys_qty in phys_qtys:
         if len(phys_qty.ravel()) != size_matrix:
             logger.error('Invalid shape of the input arrays')
-            sys.exit(1)
 
     list_phys_qtys: list[ArrayAny] = list(phys_qtys)
 

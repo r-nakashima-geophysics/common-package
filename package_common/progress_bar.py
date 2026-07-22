@@ -59,7 +59,6 @@ class ProgressBar:
 
         if self.__num_calc <= 0:
             self.__logger.error('Invalid argument')
-            sys.exit(1)
 
     def start(self) -> None:
         """Start the progress bar."""
@@ -95,19 +94,16 @@ class ProgressBar:
 
         if (i_calc < 0) or (i_calc + 1 > self.__num_calc):
             self.__logger.error('Invalid argument')
-            sys.exit(1)
 
         if num_process <= 0:
             self.__logger.error('Invalid argument')
-            sys.exit(1)
 
         if ((i_calc+1) % num_process == 0) \
                 or (i_calc + 1 == self.__num_calc):
 
             lap_time: float | None = self.__timer.lap()
             if lap_time is None:
-                self.__logger.warning('Progress bar has not been started.')
-                sys.exit(1)
+                self.__logger.error('Progress bar has not been started.')
 
             else:
                 remaining_hours: float \

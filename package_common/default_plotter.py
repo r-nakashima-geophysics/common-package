@@ -260,7 +260,6 @@ def create_plotter(nrows: int = 1,
 
     if (nrows <= 0) or (ncols <= 0):
         logger.error('Invalid argument')
-        sys.exit(1)
 
     if (nrows == 1) and (ncols == 1):
         return DefaultPlotter(**kwargs)

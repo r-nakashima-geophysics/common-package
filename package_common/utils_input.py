@@ -54,11 +54,9 @@ def input_value(default: TypeVarIntFloat,
             return cast(sys.argv[1])
         except (ValueError, TypeError):
             logger.error('Invalid argument')
-            sys.exit(1)
 
     elif len(sys.argv) > 2:
         logger.error('Too many input arguments')
-        sys.exit(1)
 
     return default
 
@@ -106,7 +104,6 @@ def input_value_within(min_value: TypeVarIntFloat,
 
     if min_value > max_value:
         logger.error('Invalid argument')
-        sys.exit(1)
 
     input_str: str
     chosen_value: TypeVarIntFloat

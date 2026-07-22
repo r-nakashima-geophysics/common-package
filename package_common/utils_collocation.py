@@ -83,7 +83,6 @@ class ChebyshevGaussQuad:
         if not ChebyshevGaussQuad.__flag:
             ChebyshevGaussQuad.__logger.error(
                 '`set_class_variable` class method has not been executed')
-            sys.exit(1)
         else:
             self.__num_mode: int = ChebyshevGaussQuad.__num_mode
             self.__num_degree: int = ChebyshevGaussQuad.__num_degree
@@ -173,7 +172,6 @@ class ChebyshevGaussQuad:
 
         if self.__flag_func_2 and (vec_2 is None):
             self.__logger.error('Inconsistent input')
-            sys.exit(1)
 
         field_1: ArrayComplex = vec_1.T @ self.__array_func_1
         field_2: float | ArrayComplex
@@ -216,9 +214,7 @@ def calc_collocation_point(i_l: int,
         return -np.cos(i_l*np.pi/num_point)
 
     logger: DefaultLogger = create_function_name_logger()
-
     logger.error('Invalid argument')
-    sys.exit(1)
 
 
 def spherical_laplacian_heinrichs(

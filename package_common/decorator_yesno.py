@@ -62,7 +62,7 @@ def yes_exe_no_quit(func: Callable[..., None]) -> Callable[..., None]:
                 logger.info('Quit')
                 sys.exit(0)
 
-            logger.error('Invalid input')
+            logger.warning('Invalid input')
 
     return new_func
 
@@ -126,6 +126,6 @@ def exe_yes_continue(func: Callable[..., None]) -> Callable[..., None]:
                     logger.info('Quit')
                     sys.exit(0)
 
-                logger.error('Invalid input')
+                logger.warning('Invalid input')
 
     return new_func

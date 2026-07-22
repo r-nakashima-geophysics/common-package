@@ -39,7 +39,6 @@ def set_num_threads(num_threads: int) -> None:
 
     if num_threads <= 0:
         logger.error('Invalid argument')
-        sys.exit(1)
 
     os.environ['OMP_NUM_THREADS'] = str(num_threads)
     os.environ['OPENBLAS_NUM_THREADS'] = str(num_threads)
@@ -120,7 +119,6 @@ def create_shared_arrays(*arrays) \
 
         if not isinstance(array, np.ndarray):
             logger.error('Invalid type of the argument')
-            sys.exit(1)
 
         shm = shared_memory.SharedMemory(create=True, size=array.nbytes)
         shared_array = np.ndarray(shape=array.shape, dtype=array.dtype,

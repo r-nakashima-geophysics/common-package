@@ -195,12 +195,10 @@ def init_complex_coordinate_simple(
 
     if np.isclose(y_start, y_end):
         logger.error('Invalid argument')
-        sys.exit(1)
 
     if (not np.isclose(alpha, 0)) \
             and np.isclose(beta_0, 0) and np.isclose(beta_1, 0):
         logger.error('Invalid argument')
-        sys.exit(1)
 
     name: str = f'[simple_a={alpha}_b0={beta_0}_b1={beta_1}]'
 
