@@ -96,8 +96,10 @@ class ChebyshevGaussQuad:
             ChebyshevGaussQuad.__logger.error(
                 '`set_class_variable` class method has not been executed')
         else:
-            self.__num_degree: int = ChebyshevGaussQuad.__num_degree
+            num_degree: int = ChebyshevGaussQuad.__num_degree
             self.__num_point: int = ChebyshevGaussQuad.__num_point
+            point_array: ArrayFloat | ArrayComplex \
+                = ChebyshevGaussQuad.__point_array
 
         self.__flag_func_2: bool = func_2 is not None
 
@@ -108,38 +110,25 @@ class ChebyshevGaussQuad:
             [weight(pos) * np.sqrt(1-(pos**2))
              for pos in ChebyshevGaussQuad.__point_array], dtype=np.float64)
 
+        dtype: type
         if not ChebyshevGaussQuad.__spectral_deform:
-
-            self.__array_func_1 = np.empty(
-                (self.__num_degree, self.__num_point), dtype=np.float64)
-            if func_2 is not None:
-                self.__array_func_2 = np.empty(
-                    (self.__num_degree, self.__num_point), dtype=np.float64)
-
-            for i_pos, pos in enumerate(ChebyshevGaussQuad.__point_array):
-
-                self.__array_func_1[:, i_pos] = [
-                    func_1(i_n, pos) for i_n in range(self.__num_degree)]
-                if func_2 is not None:
-                    self.__array_func_2[:, i_pos] = [
-                        func_2(i_n, pos) for i_n in range(self.__num_degree)]
-
+            dtype = np.float64
         else:
+            dtype = np.complex128
+            point_array = ChebyshevGaussQuad.__point_analytic_cont
 
-            self.__array_func_1 = np.empty(
-                (self.__num_degree, self.__num_point), dtype=np.complex128)
+        self.__array_func_1 = np.empty(
+            (num_degree, self.__num_point), dtype=dtype)
+        if func_2 is not None:
+            self.__array_func_2 = np.empty(
+                (num_degree, self.__num_point), dtype=dtype)
+
+        for i_pos, s_pos in enumerate(point_array):
+            self.__array_func_1[:, i_pos] = [
+                func_1(i_n, s_pos) for i_n in range(num_degree)]
             if func_2 is not None:
-                self.__array_func_2 = np.empty(
-                    (self.__num_degree, self.__num_point), dtype=np.complex128)
-
-            for i_pos, s_pos in enumerate(
-                    ChebyshevGaussQuad.__point_analytic_cont):
-
-                self.__array_func_1[:, i_pos] = [
-                    func_1(i_n, s_pos) for i_n in range(self.__num_degree)]
-                if func_2 is not None:
-                    self.__array_func_2[:, i_pos] = [
-                        func_2(i_n, s_pos) for i_n in range(self.__num_degree)]
+                self.__array_func_2[:, i_pos] = [
+                    func_2(i_n, s_pos) for i_n in range(num_degree)]
 
     def quadrature(self: Self,
                    *,

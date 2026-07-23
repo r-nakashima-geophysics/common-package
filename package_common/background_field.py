@@ -97,7 +97,7 @@ class BackgroundField:
         if not isinstance(x, (float, int)):
             self.__logger.error('Invalid type of the argument')
 
-        return self.value(complex(x, 0)).real
+        return self.value(x + 0j).real
 
     @property
     def value_d(self: Self) -> ComplexFunc:
@@ -146,7 +146,7 @@ class BackgroundField:
         if not isinstance(x, (float, int)):
             self.__logger.error('Invalid type of the argument')
 
-        return self.value_d(complex(x, 0)).real
+        return self.value_d(x + 0j).real
 
     @property
     def value_d2(self: Self) -> ComplexFunc:
@@ -195,4 +195,4 @@ class BackgroundField:
         if not isinstance(x, (float, int)):
             self.__logger.error('Invalid type of the argument')
 
-        return self.value_d2(complex(x, 0)).real
+        return self.value_d2(x + 0j).real
