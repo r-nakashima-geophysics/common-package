@@ -106,9 +106,9 @@ class ChebyshevGaussQuad:
         self.__array_func_1: ArrayFloat | ArrayComplex
         self.__array_func_2: ArrayFloat | ArrayComplex
 
-        self.__array_weight: ArrayFloat = np.array(
-            [weight(pos) * np.sqrt(1-(pos**2))
-             for pos in ChebyshevGaussQuad.__point_array], dtype=np.float64)
+        self.__array_weight: ArrayFloat = (
+            np.vectorize(weight)(point_array) * np.sqrt(1.0 - point_array**2)
+        )
 
         dtype: type
         if not ChebyshevGaussQuad.__spectral_deform:
@@ -248,21 +248,22 @@ def spherical_laplacian_heinrichs(
         mu_d = mu_complex.r_value_d(s_pos_real)
         mu_d2 = mu_complex.r_value_d2(s_pos_real)
 
-    sin2: float | complex = 1 - (mu**2)
+    sin_sq: float | complex = 1 - (mu**2)
 
     chebyshev: float | complex
     chebyshev_d: float | complex
     chebyshev_d2: float | complex
     chebyshev, chebyshev_d, chebyshev_d2 = _calc_chebyshev(n_degree, s_pos, 2)
-    heinrichs: float | complex = (1-(s_pos**2)) * chebyshev
-    heinrichs_d: float | complex = (
-        (1-(s_pos**2)) * chebyshev_d - 2 * s_pos * chebyshev
-    )
-    heinrichs_d2: float | complex = (
-        (1-(s_pos**2)) * chebyshev_d2 - 4 * s_pos * chebyshev_d - 2 * chebyshev
-    )
+
+    s_sin_sq: float | complex = 1 - (s_pos**2)
+    heinrichs: float | complex = s_sin_sq * chebyshev
+    heinrichs_d: float | complex \
+        = s_sin_sq * chebyshev_d - 2 * s_pos * chebyshev
+    heinrichs_d2: float | complex \
+        = s_sin_sq * chebyshev_d2 - 4 * s_pos * chebyshev_d - 2 * chebyshev
 
     return (
-        sin2 * heinrichs_d2 / (mu_d**2) - (2*mu/mu_d + sin2*mu_d2/(mu_d**3))
-        * heinrichs_d - (m_order**2) * heinrichs / sin2
+        sin_sq * heinrichs_d2 / (mu_d**2)
+        - (2*mu/mu_d + sin_sq*mu_d2/(mu_d**3))
+        * heinrichs_d - (m_order**2) * heinrichs / sin_sq
     )

@@ -150,7 +150,8 @@ def _calc_chebyshev(n_degree: int,
     """
 
     t: TypeVarFloatComplex = np.acos(s_pos)
-    cn: TypeVarFloatComplex = np.cos(n_degree*t)
+    nt: TypeVarFloatComplex = n_degree * t
+    cn: TypeVarFloatComplex = np.cos(nt)
     if order == 0:
         return (cn,)
 
@@ -158,16 +159,17 @@ def _calc_chebyshev(n_degree: int,
     chebyshev_d2: TypeVarFloatComplex
     chebyshev_d3: TypeVarFloatComplex
 
-    n_sq: int = n_degree**2
+    n_sq: int
 
-    if (not np.isclose(s_pos, 1.0)) and (not np.isclose(s_pos, -1.0)):
+    if not np.isclose(np.abs(s_pos.real), 1.0):
 
         s: TypeVarFloatComplex = np.sin(t)
-        sn: TypeVarFloatComplex = np.sin(n_degree*t)
+        sn: TypeVarFloatComplex = np.sin(nt)
         chebyshev_d = n_degree * sn / s
         if order == 1:
             return (cn, chebyshev_d)
 
+        n_sq = n_degree**2
         c: TypeVarFloatComplex = np.cos(t)
         chebyshev_d2 = (-n_sq * cn + chebyshev_d * c) / (s**2)
         if order == 2:
@@ -179,6 +181,7 @@ def _calc_chebyshev(n_degree: int,
             return (cn, chebyshev_d, chebyshev_d2, chebyshev_d3)
 
     else:
+        n_sq = n_degree**2
         chebyshev_d = (s_pos**(n_degree+1)) * n_sq
         if order == 1:
             return (cn, chebyshev_d)
