@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from package_common.calc_heinrichs import heinrichs, heinrichs_d, heinrichs_d2
+from package_common.calc_chebyshev import _calc_chebyshev
 from package_common.common_types import (ArrayComplex, ArrayFloat, Callable,
                                          FloatFunc, Self)
 from package_common.default_logger import DefaultLogger
@@ -261,9 +261,19 @@ def spherical_laplacian_heinrichs(
 
     sin2: float | complex = 1 - (mu**2)
 
+    chebyshev: float | complex
+    chebyshev_d: float | complex
+    chebyshev_d2: float | complex
+    chebyshev, chebyshev_d, chebyshev_d2 = _calc_chebyshev(n_degree, s_pos, 2)
+    heinrichs: float | complex = (1-(s_pos**2)) * chebyshev
+    heinrichs_d: float | complex = (
+        (1-(s_pos**2)) * chebyshev_d - 2 * s_pos * chebyshev
+    )
+    heinrichs_d2: float | complex = (
+        (1-(s_pos**2)) * chebyshev_d2 - 4 * s_pos * chebyshev_d - 2 * chebyshev
+    )
+
     return (
-        sin2 * heinrichs_d2(n_degree, s_pos) / (mu_d**2)
-        - (2*mu/mu_d + sin2*mu_d2/(mu_d**3))
-        * heinrichs_d(n_degree, s_pos)
-        - (m_order**2) * heinrichs(n_degree, s_pos) / sin2
+        sin2 * heinrichs_d2 / (mu_d**2) - (2*mu/mu_d + sin2*mu_d2/(mu_d**3))
+        * heinrichs_d - (m_order**2) * heinrichs / sin2
     )

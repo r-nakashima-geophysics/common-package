@@ -126,8 +126,8 @@ def chebyshev_d3(n_degree: int,
 def _calc_chebyshev(n_degree: int,
                     s_pos: TypeVarFloatComplex,
                     order: int) -> tuple[TypeVarFloatComplex, ...]:
-    """
-    Calculate the value of a Chebyshev polynomial or its derivatives at a given point.
+    """Helper function to calculate the value of a Chebyshev polynomial or its
+    derivatives at a given point.
 
     Parameters
     ----------
@@ -145,12 +145,12 @@ def _calc_chebyshev(n_degree: int,
 
     Notes
     -----
-    This function is a helper function for chebyshev, chebyshev_d, chebyshev_d2, and chebyshev_d3.
+    This function is a helper function for chebyshev, chebyshev_d,
+    chebyshev_d2, and chebyshev_d3.
     """
 
     t: TypeVarFloatComplex = np.acos(s_pos)
     cn: TypeVarFloatComplex = np.cos(n_degree*t)
-
     if order == 0:
         return (cn,)
 
