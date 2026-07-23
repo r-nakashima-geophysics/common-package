@@ -155,9 +155,9 @@ def _calc_chebyshev(n_degree: int,
     if order == 0:
         return (cn,)
 
-    chebyshev_d: TypeVarFloatComplex
-    chebyshev_d2: TypeVarFloatComplex
-    chebyshev_d3: TypeVarFloatComplex
+    cheb_d: TypeVarFloatComplex
+    cheb_d2: TypeVarFloatComplex
+    cheb_d3: TypeVarFloatComplex
 
     n_sq: int
 
@@ -165,33 +165,33 @@ def _calc_chebyshev(n_degree: int,
 
         s: TypeVarFloatComplex = np.sin(t)
         sn: TypeVarFloatComplex = np.sin(nt)
-        chebyshev_d = n_degree * sn / s
+        cheb_d = n_degree * sn / s
         if order == 1:
-            return (cn, chebyshev_d)
+            return (cn, cheb_d)
 
         n_sq = n_degree**2
         c: TypeVarFloatComplex = np.cos(t)
-        chebyshev_d2 = (-n_sq * cn + chebyshev_d * c) / (s**2)
+        cheb_d2 = (-n_sq * cn + cheb_d * c) / (s**2)
         if order == 2:
-            return (cn, chebyshev_d, chebyshev_d2)
+            return (cn, cheb_d, cheb_d2)
 
-        chebyshev_d3 = ((1-n_sq) * chebyshev_d
-                        + 3 * chebyshev_d2 * c) / (s**2)
+        cheb_d3 = ((1-n_sq) * cheb_d
+                   + 3 * cheb_d2 * c) / (s**2)
         if order == 3:
-            return (cn, chebyshev_d, chebyshev_d2, chebyshev_d3)
+            return (cn, cheb_d, cheb_d2, cheb_d3)
 
     else:
         n_sq = n_degree**2
-        chebyshev_d = (s_pos**(n_degree+1)) * n_sq
+        cheb_d = (s_pos**(n_degree+1)) * n_sq
         if order == 1:
-            return (cn, chebyshev_d)
+            return (cn, cheb_d)
 
-        chebyshev_d2 = s_pos * chebyshev_d * (n_sq-1)/3
+        cheb_d2 = s_pos * cheb_d * (n_sq-1)/3
         if order == 2:
-            return (cn, chebyshev_d, chebyshev_d2)
+            return (cn, cheb_d, cheb_d2)
 
-        chebyshev_d3 = s_pos * chebyshev_d2 * (n_sq-4)/5
+        cheb_d3 = s_pos * cheb_d2 * (n_sq-4)/5
         if order == 3:
-            return (cn, chebyshev_d, chebyshev_d2, chebyshev_d3)
+            return (cn, cheb_d, cheb_d2, cheb_d3)
 
     under_construction_log()
