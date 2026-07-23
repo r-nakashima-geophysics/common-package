@@ -35,7 +35,7 @@ def chebyshev(n_degree: int,
     -1.0
     """
 
-    return np.cos(n_degree * np.acos(s_pos))
+    return _calc_chebyshev(n_degree, s_pos, 0)
 
 
 def chebyshev_d(n_degree: int,
@@ -63,11 +63,7 @@ def chebyshev_d(n_degree: int,
     4.2423009548996277e-16
     """
 
-    if (not np.isclose(s_pos, 1.0)) and (not np.isclose(s_pos, -1.0)):
-        t: TypeVarFloatComplex = np.acos(s_pos)
-        return n_degree * np.sin(n_degree*t) / np.sin(t)
-
-    return (s_pos**(n_degree+1)) * n_degree**2
+    return _calc_chebyshev(n_degree, s_pos, 1)
 
 
 def chebyshev_d2(n_degree: int,
@@ -95,15 +91,7 @@ def chebyshev_d2(n_degree: int,
     12.000000000000002
     """
 
-    if (not np.isclose(s_pos, 1.0)) and (not np.isclose(s_pos, -1.0)):
-        t: TypeVarFloatComplex = np.acos(s_pos)
-        return (
-            (-(n_degree**2) * np.cos(n_degree*t)
-                + chebyshev_d(n_degree, s_pos) * np.cos(t)
-             ) / (np.sin(t)**2)
-        )
-
-    return s_pos * chebyshev_d(n_degree, s_pos) * (n_degree**2-1)/3
+    return _calc_chebyshev(n_degree, s_pos, 2)
 
 
 def chebyshev_d3(n_degree: int,
@@ -131,12 +119,71 @@ def chebyshev_d3(n_degree: int,
     24.000000000000007
     """
 
-    if (not np.isclose(s_pos, 1.0)) and (not np.isclose(s_pos, -1.0)):
-        t: TypeVarFloatComplex = np.acos(s_pos)
-        return (
-            ((1-(n_degree**2)) * chebyshev_d(n_degree, s_pos)
-                + 3 * chebyshev_d2(n_degree, s_pos) * np.cos(t)
-             ) / (np.sin(t)**2)
-        )
+    return _calc_chebyshev(n_degree, s_pos, 3)
 
-    return s_pos * chebyshev_d2(n_degree, s_pos) * (n_degree**2-4)/5
+
+def _calc_chebyshev(n_degree: int,
+                    s_pos: TypeVarFloatComplex,
+                    order: int) -> TypeVarFloatComplex:
+    """
+    Calculate the value of a Chebyshev polynomial or its derivatives at a given point.
+
+    Parameters
+    ----------
+    n_degree : int
+        The degree of the Chebyshev polynomial.
+    s_pos : TypeVarFloatComplex
+        The position of the point.
+    order : int
+        The order of the derivative.
+
+    Returns
+    -------
+    TypeVarFloatComplex
+        The value of the Chebyshev polynomial or its derivative at the point.
+
+    Notes
+    -----
+    This function is a helper function for chebyshev, chebyshev_d, chebyshev_d2, and chebyshev_d3.
+    """
+
+    t: TypeVarFloatComplex = np.acos(s_pos)
+    cn: TypeVarFloatComplex = np.cos(n_degree*t)
+
+    if order == 0:
+        return cn
+
+    chebyshev_d: TypeVarFloatComplex
+    chebyshev_d2: TypeVarFloatComplex
+    chebyshev_d3: TypeVarFloatComplex
+
+    if (not np.isclose(s_pos, 1.0)) and (not np.isclose(s_pos, -1.0)):
+
+        s: TypeVarFloatComplex = np.sin(t)
+        sn: TypeVarFloatComplex = np.sin(n_degree*t)
+        chebyshev_d = n_degree * sn / s
+        if order == 1:
+            return chebyshev_d
+
+        c: TypeVarFloatComplex = np.cos(t)
+        chebyshev_d2 = (-(n_degree**2) * cn + chebyshev_d * c) / (s**2)
+        if order == 2:
+            return chebyshev_d2
+
+        chebyshev_d3 = ((1-(n_degree**2)) * chebyshev_d
+                        + 3 * chebyshev_d2 * c) / (s**2)
+        if order == 3:
+            return chebyshev_d3
+
+    else:
+        chebyshev_d = (s_pos**(n_degree+1)) * n_degree**2
+        if order == 1:
+            return chebyshev_d
+
+        chebyshev_d2 = s_pos * chebyshev_d * (n_degree**2-1)/3
+        if order == 2:
+            return chebyshev_d2
+
+        chebyshev_d3 = s_pos * chebyshev_d2 * (n_degree**2-4)/5
+        if order == 3:
+            return chebyshev_d3

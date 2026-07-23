@@ -4,11 +4,12 @@ import inspect
 import sys
 from types import FrameType
 
+from package_common.common_types import NoReturn
 from package_common.default_logger import DefaultLogger
 from package_common.utils_name import get_current_function_name
 
 
-def under_construction_log() -> None:
+def under_construction_log() -> NoReturn:
     """Log the under construction message.
 
     Warnings
