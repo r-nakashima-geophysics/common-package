@@ -40,9 +40,15 @@ class ComplexCoordinate(BackgroundField):
         The LaTeX text of the complex coordinate transformation.
     params : dict[str, float]
         The parameters for the complex coordinate transformation.
-    value_without_spectral_deform : FloatFunc
+    value_no_spectral_deform : FloatFunc
         The profile of the coordinate transformation without the spectral
         deformation method.
+    value_d_no_spectral_deform : FloatFunc
+        The first derivative of the profile of the coordinate transformation
+        without the spectral deformation method.
+    with_spectral_deform : bool
+        The boolean value to check whether the spectral deformation method is
+        used or not.
     """
 
     def __init__(self: Self,
@@ -53,7 +59,8 @@ class ComplexCoordinate(BackgroundField):
                  value_d2: ComplexFunc | None = None,
                  tex: str | None = None,
                  params: dict[str, float],
-                 value_without_spectral_deform: FloatFunc) -> None:
+                 value_no_spectral_deform: FloatFunc,
+                 value_d_no_spectral_deform: FloatFunc) -> None:
         """Initialize an instance of the ComplexCoordinate class.
 
         Parameters
@@ -72,12 +79,16 @@ class ComplexCoordinate(BackgroundField):
             The LaTeX text of the complex coordinate transformation.
         params : dict[str, float]
             The parameters for the complex coordinate transformation.
-        value_without_spectral_deform: FloatFunc
+        value_no_spectral_deform: FloatFunc
             The profile of the coordinate transformation without the spectral
             deformation.
+        value_d_no_spectral_deform: FloatFunc
+            The first derivative of the profile of the coordinate
+            transformation without the spectral deformation.
         """
 
         self.params: dict[str, float] = params
+        self.with_spectral_deform = self.check_spectral_deform()
 
         super().__init__(name,
                          value=value,
@@ -85,8 +96,8 @@ class ComplexCoordinate(BackgroundField):
                          value_d2=value_d2,
                          tex=tex)
 
-        self.value_without_spectral_deform: FloatFunc \
-            = value_without_spectral_deform
+        self.value_no_spectral_deform: FloatFunc = value_no_spectral_deform
+        self.value_d_no_spectral_deform: FloatFunc = value_d_no_spectral_deform
 
         self.__logger: DefaultLogger = DefaultLogger(self.name)
 
@@ -138,7 +149,7 @@ class ComplexCoordinate(BackgroundField):
 
         return sol.x[0] + 1j*sol.x[1]
 
-    def check_spectral_deform(self) -> bool:
+    def check_spectral_deform(self: Self) -> bool:
         """Check whether the spectral deformation method is used or not.
 
         Returns
@@ -223,9 +234,14 @@ def init_complex_coordinate_simple(
             - 2 * (alpha+1j) * (3*beta_1*s_pos+beta_0)
         )
 
-    def y_without_spectral_deform(s_pos: float) -> float:
+    def y_no_spectral_deform(s_pos: float) -> float:
         return (
             y_start + (y_end-y_start)*(s_pos+1)/2
+        )
+
+    def y_d_no_spectral_deform(s_pos: float) -> float:
+        return (
+            (y_end-y_start) / 2
         )
 
     return ComplexCoordinate(
@@ -234,4 +250,5 @@ def init_complex_coordinate_simple(
         value_d=y_complex_d,
         value_d2=y_complex_d2,
         params=params,
-        value_without_spectral_deform=y_without_spectral_deform)
+        value_no_spectral_deform=y_no_spectral_deform,
+        value_d_no_spectral_deform=y_d_no_spectral_deform)

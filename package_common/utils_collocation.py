@@ -20,6 +20,7 @@ class ChebyshevGaussQuad:
     __spectral_deform: bool
     __point_array: ArrayFloat
     __point_analytic_cont: ArrayComplex
+    __jacobian: FloatFunc
 
     __flag: bool = False
     __logger: DefaultLogger = DefaultLogger(__name__)
@@ -41,7 +42,7 @@ class ChebyshevGaussQuad:
 
         cls.__num_degree = num_degree
         cls.__num_point = 3 * cls.__num_degree
-        cls.__spectral_deform = y_complex.check_spectral_deform()
+        cls.__spectral_deform = y_complex.with_spectral_deform
         cls.__flag = True
 
         cls.__point_array = np.array(
@@ -56,7 +57,7 @@ class ChebyshevGaussQuad:
             cls.__point_analytic_cont \
                 = np.empty(cls.__num_point, dtype=np.complex128)
             for i_pos, pos in enumerate(cls.__point_array):
-                y_pos = y_complex.value_without_spectral_deform(pos)
+                y_pos = y_complex.value_no_spectral_deform(pos)
                 if i_pos == 0:
                     guess = pos + 1j * 0
                 else:
@@ -64,11 +65,13 @@ class ChebyshevGaussQuad:
                 cls.__point_analytic_cont[i_pos] \
                     = y_complex.inverse(y_pos, guess=guess)
 
+        cls.__jacobian = y_complex.value_d_no_spectral_deform
+
     def __init__(self: Self,
                  *,
                  func_1: Func4Quad,
                  func_2: Func4Quad | None = None,
-                 weight: FloatFunc = lambda x: 1) -> None:
+                 weight: FloatFunc = lambda x: 1.0) -> None:
         """Initialize an instance of the ChebyshevGaussQuad class.
 
         Parameters
@@ -77,7 +80,7 @@ class ChebyshevGaussQuad:
             The function associated with the first vector.
         func_2 : Func4Quad, optional, default None
             The function associated with the second vector.
-        weight : FloatFunc, optional, default lambda x: 1
+        weight : FloatFunc, optional, default lambda x: 1.0
             The weight function for the quadrature of the first and second
             vectors.
 
@@ -108,6 +111,7 @@ class ChebyshevGaussQuad:
 
         self.__array_weight: ArrayFloat = (
             np.vectorize(weight)(point_array) * np.sqrt(1.0 - point_array**2)
+            * np.vectorize(ChebyshevGaussQuad.__jacobian)(point_array)
         )
 
         dtype: type
@@ -123,12 +127,12 @@ class ChebyshevGaussQuad:
             self.__array_func_2 = np.empty(
                 (num_degree, self.__num_point), dtype=dtype)
 
-        for i_pos, s_pos in enumerate(point_array):
-            self.__array_func_1[:, i_pos] = [
-                func_1(i_n, s_pos) for i_n in range(num_degree)]
+        for i_n in range(num_degree):
+            self.__array_func_1[i_n, :] = [
+                func_1(i_n, s_pos) for s_pos in point_array.tolist()]
             if func_2 is not None:
-                self.__array_func_2[:, i_pos] = [
-                    func_2(i_n, s_pos) for i_n in range(num_degree)]
+                self.__array_func_2[i_n, :] = [
+                    func_2(i_n, s_pos) for s_pos in point_array.tolist()]
 
     def quadrature(self: Self,
                    *,
@@ -166,14 +170,13 @@ class ChebyshevGaussQuad:
             self.__logger.error('Inconsistent input')
 
         field_1: ArrayComplex = vec_1.T @ self.__array_func_1
-        field_2: float | ArrayComplex
+        integral: ArrayComplex
         if self.__flag_func_2 and (vec_2 is not None):
-            field_2 = vec_2.T @ self.__array_func_2
+            field_2: ArrayComplex = vec_2.T @ self.__array_func_2
+            integral = (np.conj(field_1) * field_2) @ self.__array_weight
         else:
-            field_2 = 1
+            integral = np.conj(field_1) @ self.__array_weight
 
-        integral: ArrayComplex \
-            = np.sum(self.__array_weight * np.conj(field_1) * field_2, axis=1)
         integral *= np.pi / self.__num_point
 
         return integral
@@ -238,7 +241,7 @@ def spherical_laplacian_heinrichs(
     mu: float | complex
     mu_d: float | complex
     mu_d2: float | complex
-    if mu_complex.check_spectral_deform():
+    if mu_complex.with_spectral_deform:
         mu = mu_complex.value(s_pos)
         mu_d = mu_complex.value_d(s_pos)
         mu_d2 = mu_complex.value_d2(s_pos)
