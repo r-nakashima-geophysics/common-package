@@ -161,7 +161,7 @@ def _calc_chebyshev(n_degree: int,
 
     n_sq: int
 
-    if not np.isclose(np.abs(s_pos.real), 1.0):
+    if not (np.isclose(s_pos, 1.0) or np.isclose(s_pos, -1.0)):
 
         s: TypeVarFloatComplex = np.sin(t)
         sn: TypeVarFloatComplex = np.sin(nt)
