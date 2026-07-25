@@ -69,6 +69,12 @@ wheels = [
 ]
 
 [[package]]
+name = "caffeine"
+version = "0.5"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/66/ba/acd2d55744d86142c533c6c73412c5aa0387467f8f75aa3d62a86c866fe8/caffeine-0.5.tar.gz", hash = "sha256:40092894e2e79652ec2ed7a41508ff3b06b60e041ad42c86ff54d64220332d3a", size = 2403, upload-time = "2016-02-08T17:08:34.355Z" }
+
+[[package]]
 name = "colorama"
 version = "0.4.6"
 source = { registry = "https://pypi.org/simple" }
@@ -83,6 +89,7 @@ version = "1.0.15"
 source = { virtual = "." }
 dependencies = [
     { name = "autopep8" },
+    { name = "caffeine" },
     { name = "isort" },
     { name = "matplotlib" },
     { name = "mypy" },
@@ -98,6 +105,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "autopep8", specifier = ">=2.3.2" },
+    { name = "caffeine", specifier = ">=0.5" },
     { name = "isort", specifier = ">=8.0.1" },
     { name = "matplotlib", specifier = ">=3.11.1" },
     { name = "mypy", specifier = ">=2.3.0" },
