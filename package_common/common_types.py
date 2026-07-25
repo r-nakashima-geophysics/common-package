@@ -9,7 +9,12 @@ Examples
 [1. 2. 3.]
 """
 
-from typing import Any, Callable, Final, NoReturn, Self, TypeVar, cast
+from typing import Any, Callable
+from typing import Final as Final
+from typing import NoReturn as NoReturn
+from typing import Self as Self
+from typing import TypeVar
+from typing import cast as cast
 
 import numpy as np
 import numpy.typing as npt

@@ -53,8 +53,9 @@ def get_current_function_name(frame: FrameType | None = None) -> str:
         this_name = this_frame.f_code.co_name
     else:
         this_name = 'Unknown'
-    logger: DefaultLogger = DefaultLogger(this_name)
+
     if not isinstance(frame, FrameType):
+        logger: DefaultLogger = DefaultLogger(this_name)
         logger.error('Invalid type of the argument')
 
     function_name: str = 'Unknown'

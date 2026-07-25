@@ -86,7 +86,7 @@ class ProgressBar:
         Invalid argument
             If `i_calc` and `num_process` are not positive or exceed the total
             iteration number.
-        Progress bar has not been started.
+        Progress bar has not been started
             If `start()` has not been called before `update()` is called.
         """
 
@@ -101,7 +101,7 @@ class ProgressBar:
 
             lap_time: float | None = self.__timer.lap()
             if lap_time is None:
-                self.__logger.error('Progress bar has not been started.')
+                self.__logger.error('Progress bar has not been started')
 
             else:
                 remaining_hours: float \

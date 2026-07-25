@@ -59,7 +59,7 @@ class DefaultTimer:
             caffeine.on(display=False)
             DefaultTimer.__import_caffeine = True
 
-    def start(self) -> None:
+    def start(self: Self) -> None:
         """(Re)start the timer."""
 
         if self.__start_time is None:
@@ -69,7 +69,7 @@ class DefaultTimer:
             self.__start_time = perf_counter()
         self.__running = True
 
-    def show(self) -> None:
+    def show(self: Self) -> None:
         """Show the elapsed time.
 
         Warnings
@@ -90,7 +90,7 @@ class DefaultTimer:
                 self.start()
             self.__logger.info(f'Net time: {self.__net_time:.1f} sec.')
 
-    def end(self) -> None:
+    def end(self: Self) -> None:
         """End the timer."""
 
         self.show()
@@ -101,7 +101,7 @@ class DefaultTimer:
         self.__split_time = None
         self.__net_time = None
 
-    def stop(self) -> None:
+    def stop(self: Self) -> None:
         """Stop the timer.
 
         Warnings
@@ -115,11 +115,11 @@ class DefaultTimer:
             self.__logger.warning('Timer has not been (re)started')
         elif self.__net_time is None:
             self.__net_time = now - self.__start_time
-        elif self.__net_time is not None:
+        else:
             self.__net_time += now - self.__start_time
         self.__running = False
 
-    def lap(self) -> float | None:
+    def lap(self: Self) -> float | None:
         """Measure the lap time.
 
         Returns

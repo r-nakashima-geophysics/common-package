@@ -122,7 +122,7 @@ class DefaultPlotter:
 
         DefaultLogger(filename).info('Saved')
 
-    def tight_layout(self) -> None:
+    def tight_layout(self: Self) -> None:
         """Adjust the padding of the figure."""
 
         self.fig.tight_layout()

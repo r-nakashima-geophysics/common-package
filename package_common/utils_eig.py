@@ -26,6 +26,7 @@ def sort_eig(eigenvalues: ArrayComplex,
 
     Examples
     --------
+    >>> import numpy as np
     >>> from package_common.utils_eig import sort_eig
     >>> eigenvalues, eigenvectors = np.linalg.eig(matrix)
     >>> matrix_eig = sort_eig(eigenvalues, eigenvectors)
