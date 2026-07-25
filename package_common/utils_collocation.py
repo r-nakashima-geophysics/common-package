@@ -4,7 +4,7 @@ import numpy as np
 
 from package_common.calc_chebyshev import _calc_chebyshev
 from package_common.common_types import (ArrayComplex, ArrayFloat, Callable,
-                                         FloatFunc, Self)
+                                         FloatFunc, Self, cast)
 from package_common.default_logger import DefaultLogger
 from package_common.spectral_deform import ComplexCoordinate
 from package_common.utils_name import create_function_name_logger
@@ -20,7 +20,7 @@ class ChebyshevGaussQuad:
     __spectral_deform: bool
     __point_array: ArrayFloat
     __point_analytic_cont: ArrayComplex
-    __jacobian: FloatFunc
+    __jacobian: ArrayFloat
 
     __flag: bool = False
     __logger: DefaultLogger = DefaultLogger(__name__)
@@ -65,7 +65,11 @@ class ChebyshevGaussQuad:
                 cls.__point_analytic_cont[i_pos] \
                     = y_complex.inverse(y_pos, guess=guess)
 
-        cls.__jacobian = y_complex.value_d_no_spectral_deform
+        cls.__jacobian = np.array(
+            [y_complex.value_d_no_spectral_deform(pos)
+             for pos in cls.__point_array],
+            dtype=np.float64
+        )
 
     def __init__(self: Self,
                  *,
@@ -110,8 +114,8 @@ class ChebyshevGaussQuad:
         self.__array_func_2: ArrayFloat | ArrayComplex
 
         self.__array_weight: ArrayFloat = (
-            np.vectorize(weight)(point_array) * np.sqrt(1.0 - point_array**2)
-            * np.vectorize(ChebyshevGaussQuad.__jacobian)(point_array)
+            np.vectorize(weight, otypes=[np.float64])(point_array)
+            * np.sqrt(1.0 - point_array**2) * ChebyshevGaussQuad.__jacobian
         )
 
         dtype: type
@@ -127,12 +131,13 @@ class ChebyshevGaussQuad:
             self.__array_func_2 = np.empty(
                 (num_degree, self.__num_point), dtype=dtype)
 
+        list_point_array: list[float | complex] = point_array.tolist()
         for i_n in range(num_degree):
             self.__array_func_1[i_n, :] = [
-                func_1(i_n, s_pos) for s_pos in point_array.tolist()]
+                func_1(i_n, s_pos) for s_pos in list_point_array]
             if func_2 is not None:
                 self.__array_func_2[i_n, :] = [
-                    func_2(i_n, s_pos) for s_pos in point_array.tolist()]
+                    func_2(i_n, s_pos) for s_pos in list_point_array]
 
     def quadrature(self: Self,
                    *,
@@ -175,7 +180,8 @@ class ChebyshevGaussQuad:
             field_2: ArrayComplex = vec_2.T @ self.__array_func_2
             integral = (np.conj(field_1) * field_2) @ self.__array_weight
         else:
-            integral = np.conj(field_1) @ self.__array_weight
+            integral = cast(
+                np.conj(field_1) @ self.__array_weight, ArrayComplex)
 
         integral *= np.pi / self.__num_point
 

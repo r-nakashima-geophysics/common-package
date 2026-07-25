@@ -35,13 +35,11 @@ def sort_eig(eigenvalues: ArrayComplex,
     size_matrix: int = len(eigenvalues)
 
     idx: ArrayInt = np.argsort(eigenvalues.real)
-    eigenvalues_sorted: ArrayComplex = eigenvalues[idx]
-    eigenvectors_sorted: ArrayComplex = eigenvectors[:, idx]
 
     matrix_eig: ArrayComplex = np.empty(
         (size_matrix+1, size_matrix), dtype=np.complex128)
-    matrix_eig[0*size_matrix:1*size_matrix, :] = eigenvectors_sorted
-    matrix_eig[size_matrix, :] = eigenvalues_sorted
+    matrix_eig[0*size_matrix:1*size_matrix, :] = eigenvectors[:, idx]
+    matrix_eig[size_matrix, :] = eigenvalues[idx]
 
     return matrix_eig
 
