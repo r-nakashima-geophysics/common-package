@@ -82,7 +82,7 @@ class ChebyshevGaussQuad:
         ----------
         func_1 : Func4Quad
             The function associated with the first vector.
-        func_2 : Func4Quad, optional, default None
+        func_2 : Func4Quad | None, optional, default None
             The function associated with the second vector.
         weight : FloatFunc, optional, default lambda x: 1.0
             The weight function for the quadrature of the first and second
@@ -153,7 +153,7 @@ class ChebyshevGaussQuad:
         ----------
         vec_1 : ArrayComplex
             The first vector.
-        vec_2 : ArrayComplex, optional, default None
+        vec_2 : ArrayComplex | None, optional, default None
             The second vector.
 
         Returns
@@ -262,7 +262,7 @@ def spherical_laplacian_heinrichs(
     cheb: float | complex
     cheb_d: float | complex
     cheb_d2: float | complex
-    cheb, cheb_d, cheb_d2 = calc_chebyshev(n_degree, mu, 2)
+    cheb, cheb_d, cheb_d2 = calc_chebyshev(n_degree, s_pos, 2)
 
     s_sin_sq: float | complex = 1 - (s_pos**2)
     heinrichs: float | complex = s_sin_sq * cheb

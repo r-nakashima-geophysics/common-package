@@ -63,7 +63,7 @@ class DefaultPlotter:
     __set_latex: bool = False
 
     def __init__(self,
-                 **kwargs) -> None:
+                 **kwargs: Any) -> None:
         """Initialize an instance of the DefaultPlotter class.
 
         Parameters
@@ -126,6 +126,11 @@ class DefaultPlotter:
         """Adjust the padding of the figure."""
 
         self.fig.tight_layout()
+
+    def close(self) -> None:
+        """Close the figure."""
+
+        plt.close(self.fig)
 
     @classmethod
     def set_latex(cls) -> None:

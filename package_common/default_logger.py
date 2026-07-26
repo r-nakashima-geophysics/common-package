@@ -3,7 +3,7 @@
 import logging
 import sys
 
-from package_common.common_types import NoReturn, Any
+from package_common.common_types import Any, NoReturn
 
 
 class DefaultLogger:

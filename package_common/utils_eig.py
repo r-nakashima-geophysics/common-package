@@ -55,7 +55,7 @@ def screening_eig(matrix_eig: ArrayComplex,
         The matrix storing the eigenvalues and eigenvectors.
     check : ArrayBool
         The validity of the eigenmodes.
-    *phys_qtys
+    *phys_qtys : ArrayAny
         The physical quantities.
 
     Returns

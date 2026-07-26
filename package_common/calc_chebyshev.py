@@ -151,9 +151,9 @@ def calc_chebyshev(n_degree: int,
 
     t: TypeVarFloatComplex = np.arccos(s_pos)
     nt: TypeVarFloatComplex = n_degree * t
-    cn: TypeVarFloatComplex = np.cos(nt)
+    cos_nt: TypeVarFloatComplex = np.cos(nt)
     if order == 0:
-        return (cn,)
+        return (cos_nt,)
 
     cheb_d: TypeVarFloatComplex
     cheb_d2: TypeVarFloatComplex
@@ -163,35 +163,35 @@ def calc_chebyshev(n_degree: int,
 
     if not (np.isclose(s_pos, 1.0) or np.isclose(s_pos, -1.0)):
 
-        s: TypeVarFloatComplex = np.sin(t)
-        sn: TypeVarFloatComplex = np.sin(nt)
-        cheb_d = n_degree * sn / s
+        sin_t: TypeVarFloatComplex = np.sin(t)
+        sin_nt: TypeVarFloatComplex = np.sin(nt)
+        cheb_d = n_degree * sin_nt / sin_t
         if order == 1:
-            return (cn, cheb_d)
+            return (cos_nt, cheb_d)
 
         n_sq = n_degree**2
-        c: TypeVarFloatComplex = s_pos
-        s_sq: TypeVarFloatComplex = 1 - c**2
-        cheb_d2 = (-n_sq * cn + cheb_d * c) / s_sq
+        cos_t: TypeVarFloatComplex = s_pos
+        sin_t_sq: TypeVarFloatComplex = 1 - cos_t**2
+        cheb_d2 = (-n_sq * cos_nt + cheb_d * cos_t) / sin_t_sq
         if order == 2:
-            return (cn, cheb_d, cheb_d2)
+            return (cos_nt, cheb_d, cheb_d2)
 
-        cheb_d3 = ((1-n_sq) * cheb_d + 3 * cheb_d2 * c) / s_sq
+        cheb_d3 = ((1-n_sq) * cheb_d + 3 * cheb_d2 * cos_t) / sin_t_sq
         if order == 3:
-            return (cn, cheb_d, cheb_d2, cheb_d3)
+            return (cos_nt, cheb_d, cheb_d2, cheb_d3)
 
     else:
         n_sq = n_degree**2
         cheb_d = (s_pos**(n_degree+1)) * n_sq
         if order == 1:
-            return (cn, cheb_d)
+            return (cos_nt, cheb_d)
 
         cheb_d2 = s_pos * cheb_d * (n_sq-1)/3
         if order == 2:
-            return (cn, cheb_d, cheb_d2)
+            return (cos_nt, cheb_d, cheb_d2)
 
         cheb_d3 = s_pos * cheb_d2 * (n_sq-4)/5
         if order == 3:
-            return (cn, cheb_d, cheb_d2, cheb_d3)
+            return (cos_nt, cheb_d, cheb_d2, cheb_d3)
 
     under_construction_log()
