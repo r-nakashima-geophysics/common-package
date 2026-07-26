@@ -4,8 +4,7 @@ import numpy as np
 
 from package_common.calc_chebyshev import calc_chebyshev
 from package_common.common_types import (ArrayComplex, ArrayFloat, Callable,
-                                         FloatFunc, Self, TypeVarFloatComplex,
-                                         cast)
+                                         FloatFunc, Self, cast)
 from package_common.default_logger import DefaultLogger
 from package_common.spectral_deform import ComplexCoordinate
 from package_common.utils_name import create_function_name_logger
