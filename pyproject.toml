@@ -1,24 +1,30 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "common-package"
 version = "1.0.16"
-description = "These Python scripts are used as modules in the repositories r-nakashima-geophysics/MHD-2D-sphere and r-nakashima-geophysics/MHD-2D-box."
-readme = "README.md"
-requires-python = ">=3.14"
 dependencies = [
-    "caffeine>=0.5"; sys_platform == 'darwin'",
+    "autopep8>=2.3.2",
+    "caffeine>=0.5",
+    "isort>=8.0.1",
     "matplotlib>=3.11.1",
+    "mypy>=2.3.0",
     "numpy>=2.5.1",
     "psutil>=7.2.2",
-    "scipy>=1.18.0",
-]
-
-[project.optional-dependencies]
-dev = [
-    "autopep8>=2.3.2",
-    "isort>=8.0.1",
-    "mypy>=2.3.0",
     "pycodestyle>=2.14.0",
     "pylint>=4.0.6",
+    "scipy>=1.18.0",
     "scipy-stubs>=1.18.0.1",
     "types-psutil>=7.2.2.20260518",
 ]
+requires-python = ">=3.14"
+authors = [{ name = "r-nakashima-geophysics" }]
+description = "These Python scripts are used as modules in the repositories r-nakashima-geophysics/MHD-2D-sphere and r-nakashima-geophysics/MHD-2D-box."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+
+[tool.setuptools.package-data]
+package_common = ["py.typed"]

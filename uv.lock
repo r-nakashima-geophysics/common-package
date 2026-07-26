@@ -86,7 +86,7 @@ wheels = [
 [[package]]
 name = "common-package"
 version = "1.0.16"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "autopep8" },
     { name = "caffeine" },
