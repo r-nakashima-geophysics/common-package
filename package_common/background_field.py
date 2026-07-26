@@ -1,6 +1,6 @@
 """A Python module to define a class for handling background fields."""
 
-from package_common.common_types import ComplexFunc, Self
+from package_common.common_types import ComplexFunc
 from package_common.default_logger import DefaultLogger
 
 
@@ -36,7 +36,7 @@ class BackgroundField:
     2.0
     """
 
-    def __init__(self: Self,
+    def __init__(self,
                  name: str,
                  *,
                  value: ComplexFunc,
@@ -72,7 +72,7 @@ class BackgroundField:
 
         self.__logger: DefaultLogger = DefaultLogger(self.name)
 
-    def r_value(self: Self,
+    def r_value(self,
                 x: float | int) -> float:
         """Return the value of the background field at a given (real)
         point.
@@ -100,7 +100,7 @@ class BackgroundField:
         return self.value(x + 0j).real
 
     @property
-    def value_d(self: Self) -> ComplexFunc:
+    def value_d(self) -> ComplexFunc:
         """Return the first derivative of the profile of the background
         field.
 
@@ -120,7 +120,7 @@ class BackgroundField:
 
         self.__logger.error('This attribute has not been set')
 
-    def r_value_d(self: Self,
+    def r_value_d(self,
                   x: float | int) -> float:
         """Return the value of the first derivative of the profile of
         the background field at a given (real) point.
@@ -149,7 +149,7 @@ class BackgroundField:
         return self.value_d(x + 0j).real
 
     @property
-    def value_d2(self: Self) -> ComplexFunc:
+    def value_d2(self) -> ComplexFunc:
         """Return the second derivative of the profile of the background
         field.
 
@@ -169,7 +169,7 @@ class BackgroundField:
 
         self.__logger.error('This attribute has not been set')
 
-    def r_value_d2(self: Self,
+    def r_value_d2(self,
                    x: float | int) -> float:
         """Return the value of the second derivative of the profile of
         the background field at a given (real) point.

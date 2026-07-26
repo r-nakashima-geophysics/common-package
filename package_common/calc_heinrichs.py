@@ -7,7 +7,7 @@ References
 (2001).
 """
 
-from package_common.calc_chebyshev import _calc_chebyshev
+from package_common.calc_chebyshev import calc_chebyshev
 from package_common.common_types import TypeVarFloatComplex
 
 
@@ -34,7 +34,7 @@ def heinrichs(n_degree: int,
     -0.75
     """
 
-    chebyshev: TypeVarFloatComplex = _calc_chebyshev(n_degree, s_pos, 0)[0]
+    chebyshev: TypeVarFloatComplex = calc_chebyshev(n_degree, s_pos, 0)[0]
 
     return (1-(s_pos**2)) * chebyshev
 
@@ -65,7 +65,7 @@ def heinrichs_d(n_degree: int,
 
     chebyshev: TypeVarFloatComplex
     chebyshev_d: TypeVarFloatComplex
-    chebyshev, chebyshev_d = _calc_chebyshev(n_degree, s_pos, 1)
+    chebyshev, chebyshev_d = calc_chebyshev(n_degree, s_pos, 1)
 
     return (
         (1-(s_pos**2)) * chebyshev_d - 2 * s_pos * chebyshev
@@ -99,7 +99,7 @@ def heinrichs_d2(n_degree: int,
     chebyshev: TypeVarFloatComplex
     chebyshev_d: TypeVarFloatComplex
     chebyshev_d2: TypeVarFloatComplex
-    chebyshev, chebyshev_d, chebyshev_d2 = _calc_chebyshev(n_degree, s_pos, 2)
+    chebyshev, chebyshev_d, chebyshev_d2 = calc_chebyshev(n_degree, s_pos, 2)
 
     return (
         (1-(s_pos**2)) * chebyshev_d2 - 4 * s_pos * chebyshev_d - 2 * chebyshev
@@ -134,7 +134,7 @@ def heinrichs_d3(n_degree: int,
     chebyshev_d2: TypeVarFloatComplex
     chebyshev_d3: TypeVarFloatComplex
     _, chebyshev_d, chebyshev_d2, chebyshev_d3 \
-        = _calc_chebyshev(n_degree, s_pos, 3)
+        = calc_chebyshev(n_degree, s_pos, 3)
 
     return (
         (1-(s_pos**2)) * chebyshev_d3

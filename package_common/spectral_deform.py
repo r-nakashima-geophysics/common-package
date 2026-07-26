@@ -14,10 +14,11 @@ import numpy as np
 from scipy import optimize
 
 from package_common.background_field import BackgroundField
-from package_common.common_types import (ArrayFloat, ComplexFunc, FloatFunc,
-                                         Self)
+from package_common.common_types import (ArrayFloat, ComplexFunc, FloatFunc)
 from package_common.default_logger import DefaultLogger
 from package_common.utils_name import create_function_name_logger
+
+type OptimizeResult = optimize.OptimizeResult
 
 
 class ComplexCoordinate(BackgroundField):
@@ -51,7 +52,7 @@ class ComplexCoordinate(BackgroundField):
         used or not.
     """
 
-    def __init__(self: Self,
+    def __init__(self,
                  name: str,
                  *,
                  value: ComplexFunc,
@@ -88,7 +89,7 @@ class ComplexCoordinate(BackgroundField):
         """
 
         self.params: dict[str, float] = params
-        self.with_spectral_deform = self.check_spectral_deform()
+        self.with_spectral_deform: bool = self.check_spectral_deform()
 
         super().__init__(name,
                          value=value,
@@ -101,7 +102,7 @@ class ComplexCoordinate(BackgroundField):
 
         self.__logger: DefaultLogger = DefaultLogger(self.name)
 
-    def inverse(self: Self,
+    def inverse(self,
                 y_pos: complex,
                 *,
                 guess: complex | None = None) -> complex:
@@ -142,19 +143,20 @@ class ComplexCoordinate(BackgroundField):
         else:
             init_guess = np.array([guess.real, guess.imag], dtype=np.float64)
 
-        sol = optimize.root(_residual, init_guess, jac=_jacobian)
+        sol: OptimizeResult = optimize.root(
+            _residual, init_guess, jac=_jacobian)
 
         if (not sol.success) and (not np.allclose(sol.fun, [0, 0])):
             self.__logger.warning(f'Did not converge at y = {y_pos}')
 
         return sol.x[0] + 1j*sol.x[1]
 
-    def check_spectral_deform(self: Self) -> bool:
+    def check_spectral_deform(self) -> bool:
         """Check whether the spectral deformation method is used or not.
 
         Returns
         -------
-        check : bool
+        bool
             The boolean value to check whether the spectral deformation method
             is used or not.
         """

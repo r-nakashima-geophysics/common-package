@@ -77,7 +77,7 @@ def set_num_process() -> int:
     return num_process_physical
 
 
-def create_shared_arrays(*arrays) \
+def create_shared_arrays(*arrays: ArrayAny) \
         -> tuple[tuple[SharedMemory, ...],
                  SharedInfo]:
     """Create some shared memory arrays.
@@ -107,8 +107,6 @@ def create_shared_arrays(*arrays) \
         >>> shm, info = create_shared_arrays(np.array([1, 2, 3]))
     """
 
-    logger: DefaultLogger = create_function_name_logger()
-
     shms: list[SharedMemory] = []
     shared_info: SharedInfo = []
 
@@ -117,12 +115,13 @@ def create_shared_arrays(*arrays) \
     for array in arrays:
 
         if not isinstance(array, np.ndarray):
+            logger: DefaultLogger = create_function_name_logger()
             logger.error('Invalid type of the argument')
 
         shm = shared_memory.SharedMemory(create=True, size=array.nbytes)
         shared_array = np.ndarray(shape=array.shape, dtype=array.dtype,
                                   buffer=shm.buf)
-        shared_array[:] = array[:]
+        shared_array[:] = array
 
         shms.append(shm)
         shared_info.append((shm.name, shared_array.shape, shared_array.dtype))
@@ -175,7 +174,7 @@ def attach_shared_arrays(shared_info: SharedInfo) \
     return tuple_shm, tuple_shared_arrays
 
 
-def detach_shared_arrays(*shms,
+def detach_shared_arrays(*shms: SharedMemory,
                          unlink: bool = False) -> None:
     """Detach the shared memories.
 

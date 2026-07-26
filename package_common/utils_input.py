@@ -47,15 +47,17 @@ def input_value(default: TypeVarIntFloat,
         2
     """
 
-    logger: DefaultLogger = create_function_name_logger()
+    logger: DefaultLogger
 
     if len(sys.argv) == 2:
         try:
             return cast(sys.argv[1])
         except (ValueError, TypeError):
+            logger = create_function_name_logger()
             logger.error('Invalid argument')
 
     elif len(sys.argv) > 2:
+        logger = create_function_name_logger()
         logger.error('Too many input arguments')
 
     return default

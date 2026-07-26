@@ -26,7 +26,6 @@ def sort_eig(eigenvalues: ArrayComplex,
 
     Examples
     --------
-    >>> import numpy as np
     >>> from package_common.utils_eig import sort_eig
     >>> eigenvalues, eigenvectors = np.linalg.eig(matrix)
     >>> matrix_eig = sort_eig(eigenvalues, eigenvectors)
@@ -34,7 +33,7 @@ def sort_eig(eigenvalues: ArrayComplex,
 
     size_matrix: int = len(eigenvalues)
 
-    idx: ArrayInt = np.argsort(eigenvalues.real)
+    idx: ArrayInt = np.argsort(eigenvalues.real, kind='stable')
 
     matrix_eig: ArrayComplex = np.empty(
         (size_matrix+1, size_matrix), dtype=np.complex128)
@@ -46,8 +45,8 @@ def sort_eig(eigenvalues: ArrayComplex,
 
 def screening_eig(matrix_eig: ArrayComplex,
                   check: ArrayBool,
-                  *phys_qtys) -> tuple[ArrayComplex,
-                                       tuple[ArrayAny, ...]]:
+                  *phys_qtys: ArrayAny) -> tuple[ArrayComplex,
+                                                 tuple[ArrayAny, ...]]:
     """Exclude invalid eigenmodes.
 
     Parameters
@@ -62,9 +61,9 @@ def screening_eig(matrix_eig: ArrayComplex,
     Returns
     -------
     matrix_eig : ArrayComplex
-        The eigenvalues and eigenvectors.
+        The matrix storing the eigenvalues and eigenvectors. This is masked by `check`.
     phys_qtys : tuple[ArrayAny, ...]
-        The physical quantities.
+        The physical quantities. This is masked by `check`.
 
     Warnings
     --------
@@ -79,25 +78,23 @@ def screening_eig(matrix_eig: ArrayComplex,
     >>> matrix_eig, phys_qtys = screening_eig(matrix_eig, check, phys_qtys)
     """
 
-    logger: DefaultLogger = create_function_name_logger()
+    logger: DefaultLogger
 
     size_matrix: int = matrix_eig.shape[1]
 
     if (matrix_eig.shape[0] != size_matrix + 1) \
             or (len(check.ravel()) != size_matrix):
+        logger = create_function_name_logger()
         logger.error('Invalid shape of the input arrays')
 
     for phys_qty in phys_qtys:
         if len(phys_qty.ravel()) != size_matrix:
+            logger = create_function_name_logger()
             logger.error('Invalid shape of the input arrays')
-
-    list_phys_qtys: list[ArrayAny] = list(phys_qtys)
 
     invalid: ArrayBool = np.logical_not(check)
     matrix_eig[:, invalid] = np.nan
-    for phys_qty in list_phys_qtys:
+    for phys_qty in phys_qtys:
         phys_qty[invalid] = np.nan
-
-    phys_qtys = tuple(list_phys_qtys)
 
     return matrix_eig, phys_qtys

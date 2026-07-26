@@ -1,6 +1,5 @@
 """A Python module to define a class for displaying the progress bar."""
 
-from package_common.common_types import Self
 from package_common.default_logger import DefaultLogger
 from package_common.default_timer import DefaultTimer
 
@@ -25,7 +24,7 @@ class ProgressBar:
     __mark_filled: str = '█'
     __max_length_print_name: int = 15
 
-    def __init__(self: Self,
+    def __init__(self,
                  name: str,
                  num_calc: int) -> None:
         """Initialize an instance of the ProgressBar class.
@@ -69,7 +68,7 @@ class ProgressBar:
         print(f'{self.__print_name} [{p_bar}] {text}',
               end='', flush=True)
 
-    def update(self: Self,
+    def update(self,
                i_calc: int,
                num_process: int = 1) -> None:
         """Measure calculation times and update the progress bar.
@@ -109,7 +108,7 @@ class ProgressBar:
                     / num_process
                 len_filled: int = int(((i_calc+1)/self.__num_calc)
                                       * ProgressBar.__bar_width)
-                p_bar = ProgressBar.__mark_filled * len_filled \
+                p_bar: str = ProgressBar.__mark_filled * len_filled \
                     + ProgressBar.__mark_empty \
                     * (ProgressBar.__bar_width - len_filled)
                 text: str = f'{i_calc+1}/{self.__num_calc}' \

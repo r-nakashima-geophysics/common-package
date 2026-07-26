@@ -3,7 +3,7 @@ a function or not."""
 
 import sys
 
-from package_common.common_types import Callable
+from package_common.common_types import Callable, Any
 from package_common.default_logger import DefaultLogger
 from package_common.utils_name import create_function_name_logger
 
@@ -46,8 +46,8 @@ def yes_exe_no_quit(func: Callable[..., None]) -> Callable[..., None]:
 
     logger: DefaultLogger = create_function_name_logger()
 
-    def new_func(*args,
-                 **kwargs) -> None:
+    def new_func(*args: Any,
+                 **kwargs: Any) -> None:
 
         yes_or_no: str
         while True:
@@ -100,9 +100,9 @@ def exe_yes_continue(func: Callable[..., None]) -> Callable[..., None]:
     ...
     >>> wrapper()
     test
-    Re-execute? Enter yes or no: yes
+    Re-execute? Enter 'yes' or 'no': yes
     test
-    Re-execute? Enter yes or no: no
+    Re-execute? Enter 'yes' or 'no': no
     """
 
     logger: DefaultLogger = create_function_name_logger()

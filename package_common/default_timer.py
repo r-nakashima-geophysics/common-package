@@ -12,7 +12,6 @@ import sys
 from time import perf_counter
 from types import ModuleType
 
-from package_common.common_types import Self
 from package_common.default_logger import DefaultLogger
 
 
@@ -34,7 +33,7 @@ class DefaultTimer:
 
     __import_caffeine: bool = False
 
-    def __init__(self: Self,
+    def __init__(self,
                  name: str) -> None:
         """Initialize an instance of the DefaultTimer class.
 
@@ -52,14 +51,14 @@ class DefaultTimer:
 
         self.__logger: DefaultLogger = DefaultLogger(name)
 
-        if (sys.platform == "darwin") \
+        if (sys.platform == 'darwin') \
                 and (not DefaultTimer.__import_caffeine):
 
             caffeine: ModuleType = importlib.import_module('caffeine')
             caffeine.on(display=False)
             DefaultTimer.__import_caffeine = True
 
-    def start(self: Self) -> None:
+    def start(self) -> None:
         """(Re)start the timer."""
 
         if self.__start_time is None:
@@ -69,7 +68,7 @@ class DefaultTimer:
             self.__start_time = perf_counter()
         self.__running = True
 
-    def show(self: Self) -> None:
+    def show(self) -> None:
         """Show the elapsed time.
 
         Warnings
@@ -90,7 +89,7 @@ class DefaultTimer:
                 self.start()
             self.__logger.info(f'Net time: {self.__net_time:.1f} sec.')
 
-    def end(self: Self) -> None:
+    def end(self) -> None:
         """End the timer."""
 
         self.show()
@@ -101,7 +100,7 @@ class DefaultTimer:
         self.__split_time = None
         self.__net_time = None
 
-    def stop(self: Self) -> None:
+    def stop(self) -> None:
         """Stop the timer.
 
         Warnings
@@ -119,7 +118,7 @@ class DefaultTimer:
             self.__net_time += now - self.__start_time
         self.__running = False
 
-    def lap(self: Self) -> float | None:
+    def lap(self) -> float | None:
         """Measure the lap time.
 
         Returns

@@ -17,7 +17,6 @@ import numpy as np
 import numpy.typing as npt
 from matplotlib import axes, collections, colorbar, contour, figure, legend
 
-from package_common.common_types import Self
 from package_common.default_logger import DefaultLogger
 from package_common.utils_name import create_function_name_logger
 
@@ -62,7 +61,7 @@ class DefaultPlotter:
 
     __set_latex: bool = False
 
-    def __init__(self: Self,
+    def __init__(self,
                  **kwargs) -> None:
         """Initialize an instance of the DefaultPlotter class.
 
@@ -85,11 +84,11 @@ class DefaultPlotter:
         self.axes.set_axisbelow(True)
         self.axes.minorticks_on()
 
-    def save(self: Self,
+    def save(self,
              path_dir: Path,
              filename: str,
+             *,
              dpi: int = 300,
-             /,
              switch_tight_layout: bool = True) -> None:
         """Save the figure.
 
@@ -122,7 +121,7 @@ class DefaultPlotter:
 
         DefaultLogger(filename).info('Saved')
 
-    def tight_layout(self: Self) -> None:
+    def tight_layout(self) -> None:
         """Adjust the padding of the figure."""
 
         self.fig.tight_layout()
@@ -172,7 +171,7 @@ class DefaultGridPlotter(DefaultPlotter):
         >>> grid_plotter.axes[0, 0].plot(x, y)
     """
 
-    def __init__(self: Self,
+    def __init__(self,
                  nrows: int = 1,
                  ncols: int = 1,
                  **kwargs) -> None:

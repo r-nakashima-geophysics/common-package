@@ -26,7 +26,6 @@ def under_construction_log() -> NoReturn:
     frame: FrameType | None = inspect.currentframe()
 
     function_name: str = get_current_function_name(frame)
-    logger: DefaultLogger = DefaultLogger(function_name, level='INFO')
+    logger: DefaultLogger = DefaultLogger(function_name)
 
-    logger.info('Under construction')
-    sys.exit(0)
+    logger.error('Under construction')

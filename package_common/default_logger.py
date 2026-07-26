@@ -3,7 +3,7 @@
 import logging
 import sys
 
-from package_common.common_types import NoReturn, Self
+from package_common.common_types import NoReturn, Any
 
 
 class DefaultLogger:
@@ -23,7 +23,7 @@ class DefaultLogger:
     >>> logger.show_params(f'{param1=}', f'{param2=}')
     """
 
-    def __init__(self: Self,
+    def __init__(self,
                  name: str,
                  level: int | str = logging.INFO) -> None:
         """Initialize an instance of the DefaultLogger class.
@@ -64,7 +64,7 @@ class DefaultLogger:
             handler.setFormatter(formatter)
             self.__logger.addHandler(handler)
 
-    def debug(self: Self,
+    def debug(self,
               message: str) -> None:
         """Log a debug message.
 
@@ -76,7 +76,7 @@ class DefaultLogger:
 
         self.__logger.debug(message)
 
-    def info(self: Self,
+    def info(self,
              message: str) -> None:
         """Log an information message.
 
@@ -88,7 +88,7 @@ class DefaultLogger:
 
         self.__logger.info(message)
 
-    def warning(self: Self,
+    def warning(self,
                 message: str) -> None:
         """Log a warning message.
 
@@ -100,7 +100,7 @@ class DefaultLogger:
 
         self.__logger.warning(message)
 
-    def error(self: Self,
+    def error(self,
               message: str) -> NoReturn:
         """Log an error message.
 
@@ -113,7 +113,7 @@ class DefaultLogger:
         self.__logger.error(message)
         sys.exit(1)
 
-    def critical(self: Self,
+    def critical(self,
                  message: str) -> NoReturn:
         """Log a critical message.
 
@@ -126,8 +126,8 @@ class DefaultLogger:
         self.__logger.critical(message)
         sys.exit(1)
 
-    def show_params(self: Self,
-                    *args) -> None:
+    def show_params(self,
+                    *args: Any) -> None:
         """Show the parameters.
 
         Parameters
