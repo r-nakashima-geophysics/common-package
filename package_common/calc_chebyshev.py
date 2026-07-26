@@ -7,9 +7,12 @@ References
 (2001).
 """
 
+import cmath
+import math
+
 import numpy as np
 
-from package_common.common_types import TypeVarFloatComplex
+from package_common.common_types import TypeVarFloatComplex, cast
 from package_common.utils_debug import under_construction_log
 
 
@@ -149,7 +152,11 @@ def calc_chebyshev(n_degree: int,
     chebyshev_d2, and chebyshev_d3.
     """
 
-    t: TypeVarFloatComplex = np.arccos(s_pos)
+    is_complex: bool = isinstance(s_pos, complex)
+
+    t: TypeVarFloatComplex \
+        = cast(TypeVarFloatComplex,
+               cmath.acos(s_pos) if is_complex else math.acos(s_pos))
     nt: TypeVarFloatComplex = n_degree * t
     cos_nt: TypeVarFloatComplex = np.cos(nt)
     if order == 0:
@@ -163,15 +170,19 @@ def calc_chebyshev(n_degree: int,
 
     if not (np.isclose(s_pos, 1.0) or np.isclose(s_pos, -1.0)):
 
-        sin_t: TypeVarFloatComplex = np.sin(t)
-        sin_nt: TypeVarFloatComplex = np.sin(nt)
+        sin_t: TypeVarFloatComplex \
+            = cast(TypeVarFloatComplex,
+                   cmath.sin(t) if is_complex else math.sin(t))
+        sin_nt: TypeVarFloatComplex \
+            = cast(TypeVarFloatComplex,
+                   cmath.sin(nt) if is_complex else math.sin(nt))
         cheb_d = n_degree * sin_nt / sin_t
         if order == 1:
             return (cos_nt, cheb_d)
 
         n_sq = n_degree**2
         cos_t: TypeVarFloatComplex = s_pos
-        sin_t_sq: TypeVarFloatComplex = 1 - cos_t**2
+        sin_t_sq: TypeVarFloatComplex = sin_t**2
         cheb_d2 = (-n_sq * cos_nt + cheb_d * cos_t) / sin_t_sq
         if order == 2:
             return (cos_nt, cheb_d, cheb_d2)

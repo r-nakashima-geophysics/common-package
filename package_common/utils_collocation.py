@@ -114,7 +114,7 @@ class ChebyshevGaussQuad:
         self.__array_func_2: ArrayFloat | ArrayComplex
 
         self.__array_weight: ArrayFloat = (
-            np.vectorize(weight, otypes=[np.float64])(point_array)
+            np.array([weight(pos) for pos in point_array], dtype=np.float64)
             * np.sqrt(1.0 - point_array**2) * ChebyshevGaussQuad.__jacobian
         )
 
