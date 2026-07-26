@@ -17,6 +17,7 @@ import numpy as np
 import numpy.typing as npt
 from matplotlib import axes, collections, colorbar, contour, figure, legend
 
+from package_common.common_types import Any
 from package_common.default_logger import DefaultLogger
 from package_common.utils_name import create_function_name_logger
 
@@ -216,20 +217,20 @@ def create_plotter() -> DefaultPlotter:
 @overload
 def create_plotter(nrows: Literal[1],
                    ncols: Literal[1],
-                   **kwargs) -> DefaultPlotter:
+                   **kwargs: Any) -> DefaultPlotter:
     ...
 
 
 @overload
 def create_plotter(nrows: int,
                    ncols: int,
-                   **kwargs) -> DefaultGridPlotter:
+                   **kwargs: Any) -> DefaultGridPlotter:
     ...
 
 
 def create_plotter(nrows: int = 1,
                    ncols: int = 1,
-                   **kwargs) -> DefaultPlotter | DefaultGridPlotter:
+                   **kwargs: Any) -> DefaultPlotter | DefaultGridPlotter:
     """Create the instance of the DefaultPlotter class or
     DefaultGridPlotter class.
 

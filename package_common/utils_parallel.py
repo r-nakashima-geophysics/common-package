@@ -34,9 +34,8 @@ def set_num_threads(num_threads: int) -> None:
         >>> set_num_threads(4)
     """
 
-    logger: DefaultLogger = create_function_name_logger()
-
     if num_threads <= 0:
+        logger: DefaultLogger = create_function_name_logger()
         logger.error('Invalid argument')
 
     os.environ['OMP_NUM_THREADS'] = str(num_threads)

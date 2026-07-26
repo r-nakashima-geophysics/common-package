@@ -103,11 +103,11 @@ class ChebyshevGaussQuad:
         if not ChebyshevGaussQuad.__flag:
             ChebyshevGaussQuad.__logger.error(
                 '`set_class_variable` class method has not been executed')
-        else:
-            num_degree: int = ChebyshevGaussQuad.__num_degree
-            self.__num_point: int = ChebyshevGaussQuad.__num_point
-            point_array: ArrayFloat | ArrayComplex \
-                = ChebyshevGaussQuad.__point_array
+
+        num_degree: int = ChebyshevGaussQuad.__num_degree
+        self.__num_point: int = ChebyshevGaussQuad.__num_point
+        point_array: ArrayFloat | ArrayComplex \
+            = ChebyshevGaussQuad.__point_array
 
         self.__flag_func_2: bool = func_2 is not None
 
@@ -181,7 +181,8 @@ class ChebyshevGaussQuad:
             field_2: ArrayComplex = vec_2.T @ self.__array_func_2
             integral = (np.conj(field_1) * field_2) @ self.__array_weight
         else:
-            integral = np.conj(field_1) @ self.__array_weight
+            integral = cast(ArrayComplex,
+                            np.conj(field_1) @ self.__array_weight)
 
         integral *= np.pi / self.__num_point
 
@@ -221,8 +222,8 @@ def calc_collocation_point(i_l: int,
 def spherical_laplacian_heinrichs(
         m_order: int,
         n_degree: int,
-        s_pos: TypeVarFloatComplex,
-        mu_complex: ComplexCoordinate) -> TypeVarFloatComplex:
+        s_pos: float | complex,
+        mu_complex: ComplexCoordinate) -> float | complex:
     """Calculate the spherical horizontal Laplacian of the Heinrichs
     basis at a given point.
 
@@ -232,14 +233,14 @@ def spherical_laplacian_heinrichs(
         The zonal wavenumber (order).
     n_degree : int
         The degree of the Heinrichs basis.
-    s_pos : TypeVarFloatComplex
+    s_pos : float | complex
         The position of the point.
     mu_complex : ComplexCoordinate
         The complex coordinate for spectral deformation.
 
     Returns
     -------
-    TypeVarFloatComplex
+    float | complex
         The value of the spherical horizontal Laplacian of the Heinrichs basis
         at the point.
     """
@@ -259,19 +260,19 @@ def spherical_laplacian_heinrichs(
 
     sin_sq: float | complex = 1 - (mu**2)
 
-    cheb: TypeVarFloatComplex
-    cheb_d: TypeVarFloatComplex
-    cheb_d2: TypeVarFloatComplex
-    cheb, cheb_d, cheb_d2 = calc_chebyshev(n_degree, s_pos, 2)
+    cheb: float | complex
+    cheb_d: float | complex
+    cheb_d2: float | complex
+    cheb, cheb_d, cheb_d2 = calc_chebyshev(n_degree, mu, 2)
 
-    s_sin_sq: TypeVarFloatComplex = 1 - (s_pos**2)
-    heinrichs: TypeVarFloatComplex = s_sin_sq * cheb
-    heinrichs_d: TypeVarFloatComplex = s_sin_sq * cheb_d - 2 * s_pos * cheb
-    heinrichs_d2: TypeVarFloatComplex \
+    s_sin_sq: float | complex = 1 - (s_pos**2)
+    heinrichs: float | complex = s_sin_sq * cheb
+    heinrichs_d: float | complex = s_sin_sq * cheb_d - 2 * s_pos * cheb
+    heinrichs_d2: float | complex \
         = s_sin_sq * cheb_d2 - 4 * s_pos * cheb_d - 2 * cheb
 
-    return cast(TypeVarFloatComplex,
-                sin_sq * heinrichs_d2 / (mu_d**2)
-                - (2*mu/mu_d + sin_sq*mu_d2/(mu_d**3))
-                * heinrichs_d - (m_order**2) * heinrichs / sin_sq
-                )
+    return (
+        sin_sq * heinrichs_d2 / (mu_d**2)
+        - (2*mu/mu_d + sin_sq*mu_d2/(mu_d**3))
+        * heinrichs_d - (m_order**2) * heinrichs / sin_sq
+    )
