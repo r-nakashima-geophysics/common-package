@@ -149,7 +149,7 @@ def _calc_chebyshev(n_degree: int,
     chebyshev_d2, and chebyshev_d3.
     """
 
-    t: TypeVarFloatComplex = np.acos(s_pos)
+    t: TypeVarFloatComplex = np.arccos(s_pos)
     nt: TypeVarFloatComplex = n_degree * t
     cn: TypeVarFloatComplex = np.cos(nt)
     if order == 0:
