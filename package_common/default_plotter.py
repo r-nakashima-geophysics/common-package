@@ -7,7 +7,6 @@ should not be used to create instances of these classes directly. The use of
 `create_plotter` function is recommended.
 """
 
-import os
 import shutil
 from pathlib import Path
 from typing import Literal, overload
@@ -116,7 +115,7 @@ class DefaultPlotter:
         if switch_tight_layout:
             self.fig.tight_layout()
 
-        os.makedirs(path_dir, exist_ok=True)
+        path_dir.mkdir(parents=True, exist_ok=True)
         path_fig: Path = path_dir / filename
         self.fig.savefig(path_fig, dpi=dpi)
 

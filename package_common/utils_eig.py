@@ -37,7 +37,7 @@ def sort_eig(eigenvalues: ArrayComplex,
 
     matrix_eig: ArrayComplex = np.empty(
         (size_matrix+1, size_matrix), dtype=np.complex128)
-    matrix_eig[0*size_matrix:1*size_matrix, :] = eigenvectors[:, idx]
+    matrix_eig[:size_matrix, :] = eigenvectors[:, idx]
     matrix_eig[size_matrix, :] = eigenvalues[idx]
 
     return matrix_eig

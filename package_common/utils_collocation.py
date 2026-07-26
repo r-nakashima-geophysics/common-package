@@ -9,7 +9,7 @@ from package_common.default_logger import DefaultLogger
 from package_common.spectral_deform import ComplexCoordinate
 from package_common.utils_name import create_function_name_logger
 
-type Func4Quad = Callable[[int, float | int | complex], float | complex]
+type Func4Quad = Callable[[int, float | int | complex], complex | float]
 
 
 class ChebyshevGaussQuad:
@@ -131,7 +131,7 @@ class ChebyshevGaussQuad:
             self.__array_func_2 = np.empty(
                 (num_degree, self.__num_point), dtype=dtype)
 
-        list_point_array: list[float | complex] = point_array.tolist()
+        list_point_array: list[complex | float] = point_array.tolist()
         for i_n in range(num_degree):
             self.__array_func_1[i_n, :] = [
                 func_1(i_n, s_pos) for s_pos in list_point_array]
@@ -221,8 +221,8 @@ def calc_collocation_point(i_l: int,
 def spherical_laplacian_heinrichs(
         m_order: int,
         n_degree: int,
-        s_pos: float | complex,
-        mu_complex: ComplexCoordinate) -> float | complex:
+        s_pos: complex | float,
+        mu_complex: ComplexCoordinate) -> complex | float:
     """Calculate the spherical horizontal Laplacian of the Heinrichs
     basis at a given point.
 
@@ -232,21 +232,21 @@ def spherical_laplacian_heinrichs(
         The zonal wavenumber (order).
     n_degree : int
         The degree of the Heinrichs basis.
-    s_pos : float | complex
+    s_pos : complex | float
         The position of the point.
     mu_complex : ComplexCoordinate
         The complex coordinate for spectral deformation.
 
     Returns
     -------
-    float | complex
+    complex | float
         The value of the spherical horizontal Laplacian of the Heinrichs basis
         at the point.
     """
 
-    mu: float | complex
-    mu_d: float | complex
-    mu_d2: float | complex
+    mu: complex | float
+    mu_d: complex | float
+    mu_d2: complex | float
     if mu_complex.with_spectral_deform:
         mu = mu_complex.value(s_pos)
         mu_d = mu_complex.value_d(s_pos)
@@ -257,17 +257,17 @@ def spherical_laplacian_heinrichs(
         mu_d = mu_complex.r_value_d(s_pos_real)
         mu_d2 = mu_complex.r_value_d2(s_pos_real)
 
-    sin_sq: float | complex = 1 - (mu**2)
+    sin_sq: complex | float = 1 - (mu**2)
 
-    cheb: float | complex
-    cheb_d: float | complex
-    cheb_d2: float | complex
+    cheb: complex | float
+    cheb_d: complex | float
+    cheb_d2: complex | float
     cheb, cheb_d, cheb_d2 = calc_chebyshev(n_degree, s_pos, 2)
 
-    s_sin_sq: float | complex = 1 - (s_pos**2)
-    heinrichs: float | complex = s_sin_sq * cheb
-    heinrichs_d: float | complex = s_sin_sq * cheb_d - 2 * s_pos * cheb
-    heinrichs_d2: float | complex \
+    s_sin_sq: complex | float = 1 - (s_pos**2)
+    heinrichs: complex | float = s_sin_sq * cheb
+    heinrichs_d: complex | float = s_sin_sq * cheb_d - 2 * s_pos * cheb
+    heinrichs_d2: complex | float \
         = s_sin_sq * cheb_d2 - 4 * s_pos * cheb_d - 2 * cheb
 
     return (

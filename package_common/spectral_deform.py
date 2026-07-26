@@ -14,7 +14,7 @@ import numpy as np
 from scipy import optimize
 
 from package_common.background_field import BackgroundField
-from package_common.common_types import (ArrayFloat, ComplexFunc, FloatFunc)
+from package_common.common_types import ArrayFloat, ComplexFunc, FloatFunc
 from package_common.default_logger import DefaultLogger
 from package_common.utils_name import create_function_name_logger
 
