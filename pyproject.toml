@@ -5,16 +5,20 @@ description = "These Python scripts are used as modules in the repositories r-na
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
-    "autopep8>=2.3.2",
-    "caffeine>=0.5",
-    "isort>=8.0.1",
+    "caffeine>=0.5"; sys_platform == 'darwin'",
     "matplotlib>=3.11.1",
-    "mypy>=2.3.0",
     "numpy>=2.5.1",
     "psutil>=7.2.2",
+    "scipy>=1.18.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "autopep8>=2.3.2",
+    "isort>=8.0.1",
+    "mypy>=2.3.0",
     "pycodestyle>=2.14.0",
     "pylint>=4.0.6",
-    "scipy>=1.18.0",
     "scipy-stubs>=1.18.0.1",
     "types-psutil>=7.2.2.20260518",
 ]
