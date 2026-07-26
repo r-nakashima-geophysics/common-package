@@ -4,7 +4,8 @@ import numpy as np
 
 from package_common.calc_chebyshev import calc_chebyshev
 from package_common.common_types import (ArrayComplex, ArrayFloat, Callable,
-                                         FloatFunc, Self, TypeVarFloatComplex)
+                                         FloatFunc, Self, TypeVarFloatComplex,
+                                         cast)
 from package_common.default_logger import DefaultLogger
 from package_common.spectral_deform import ComplexCoordinate
 from package_common.utils_name import create_function_name_logger
@@ -269,8 +270,8 @@ def spherical_laplacian_heinrichs(
     heinrichs_d2: TypeVarFloatComplex \
         = s_sin_sq * cheb_d2 - 4 * s_pos * cheb_d - 2 * cheb
 
-    return (
-        sin_sq * heinrichs_d2 / (mu_d**2)
-        - (2*mu/mu_d + sin_sq*mu_d2/(mu_d**3))
-        * heinrichs_d - (m_order**2) * heinrichs / sin_sq
-    )
+    return cast(TypeVarFloatComplex,
+                sin_sq * heinrichs_d2 / (mu_d**2)
+                - (2*mu/mu_d + sin_sq*mu_d2/(mu_d**3))
+                * heinrichs_d - (m_order**2) * heinrichs / sin_sq
+                )

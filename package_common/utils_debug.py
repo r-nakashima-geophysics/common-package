@@ -1,7 +1,6 @@
 """A Python module to provide the utilities for debugging."""
 
 import inspect
-import sys
 from types import FrameType
 
 from package_common.common_types import NoReturn

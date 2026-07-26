@@ -59,7 +59,7 @@ def get_current_function_name(frame: FrameType | None = None) -> str:
         logger.error('Invalid type of the argument')
 
     function_name: str = 'Unknown'
-    if (frame is not None) and (frame.f_back is not None):
+    if frame.f_back is not None:
         function_name = frame.f_back.f_code.co_name
 
     return function_name

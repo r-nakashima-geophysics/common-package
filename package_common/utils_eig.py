@@ -61,7 +61,8 @@ def screening_eig(matrix_eig: ArrayComplex,
     Returns
     -------
     matrix_eig : ArrayComplex
-        The matrix storing the eigenvalues and eigenvectors. This is masked by `check`.
+        The matrix storing the eigenvalues and eigenvectors. This is masked by
+        `check`.
     phys_qtys : tuple[ArrayAny, ...]
         The physical quantities. This is masked by `check`.
 

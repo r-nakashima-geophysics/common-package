@@ -36,7 +36,7 @@ def chebyshev(n_degree: int,
     -1.0
     """
 
-    return _calc_chebyshev(n_degree, s_pos, 0)[0]
+    return calc_chebyshev(n_degree, s_pos, 0)[0]
 
 
 def chebyshev_d(n_degree: int,
@@ -64,7 +64,7 @@ def chebyshev_d(n_degree: int,
     4.2423009548996277e-16
     """
 
-    return _calc_chebyshev(n_degree, s_pos, 1)[1]
+    return calc_chebyshev(n_degree, s_pos, 1)[1]
 
 
 def chebyshev_d2(n_degree: int,
@@ -92,7 +92,7 @@ def chebyshev_d2(n_degree: int,
     12.000000000000002
     """
 
-    return _calc_chebyshev(n_degree, s_pos, 2)[2]
+    return calc_chebyshev(n_degree, s_pos, 2)[2]
 
 
 def chebyshev_d3(n_degree: int,
@@ -120,12 +120,12 @@ def chebyshev_d3(n_degree: int,
     24.000000000000007
     """
 
-    return _calc_chebyshev(n_degree, s_pos, 3)[3]
+    return calc_chebyshev(n_degree, s_pos, 3)[3]
 
 
-def _calc_chebyshev(n_degree: int,
-                    s_pos: TypeVarFloatComplex,
-                    order: int) -> tuple[TypeVarFloatComplex, ...]:
+def calc_chebyshev(n_degree: int,
+                   s_pos: TypeVarFloatComplex,
+                   order: int) -> tuple[TypeVarFloatComplex, ...]:
     """Helper function to calculate the value of a Chebyshev polynomial or its
     derivatives at a given point.
 
@@ -170,13 +170,13 @@ def _calc_chebyshev(n_degree: int,
             return (cn, cheb_d)
 
         n_sq = n_degree**2
-        c: TypeVarFloatComplex = np.cos(t)
-        cheb_d2 = (-n_sq * cn + cheb_d * c) / (s**2)
+        c: TypeVarFloatComplex = s_pos
+        s_sq: TypeVarFloatComplex = 1 - c**2
+        cheb_d2 = (-n_sq * cn + cheb_d * c) / s_sq
         if order == 2:
             return (cn, cheb_d, cheb_d2)
 
-        cheb_d3 = ((1-n_sq) * cheb_d
-                   + 3 * cheb_d2 * c) / (s**2)
+        cheb_d3 = ((1-n_sq) * cheb_d + 3 * cheb_d2 * c) / s_sq
         if order == 3:
             return (cn, cheb_d, cheb_d2, cheb_d3)
 

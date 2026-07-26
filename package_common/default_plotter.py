@@ -209,6 +209,11 @@ class DefaultGridPlotter(DefaultPlotter):
 
 
 @overload
+def create_plotter() -> DefaultPlotter:
+    ...
+
+
+@overload
 def create_plotter(nrows: Literal[1],
                    ncols: Literal[1],
                    **kwargs) -> DefaultPlotter:
