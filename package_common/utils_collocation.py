@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from package_common.calc_chebyshev import calc_chebyshev
+from package_common.calc_heinrichs import calc_heinrichs
 from package_common.common_types import (ArrayComplex, ArrayFloat, Callable,
                                          FloatFunc, Self, cast)
 from package_common.default_logger import DefaultLogger
@@ -29,7 +29,8 @@ class ChebyshevGaussQuad:
     def set_class_variable(cls: type[Self],
                            num_degree: int,
                            *,
-                           y_complex: ComplexCoordinate) -> None:
+                           y_complex: ComplexCoordinate,
+                           y_unuse_spectral_deform: ComplexCoordinate) -> None:
         """Set the class variables.
 
         Parameters
@@ -42,7 +43,7 @@ class ChebyshevGaussQuad:
 
         cls.__num_degree = num_degree
         cls.__num_point = 3 * cls.__num_degree
-        cls.__spectral_deform = y_complex.with_spectral_deform
+        cls.__spectral_deform = y_complex.use_spectral_deform
         cls.__flag = True
 
         cls.__point_array = np.array(
@@ -56,7 +57,7 @@ class ChebyshevGaussQuad:
             cls.__point_analytic_cont \
                 = np.empty(cls.__num_point, dtype=np.complex128)
             for i_pos, pos in enumerate(cls.__point_array):
-                y_pos = y_complex.value_no_spectral_deform(pos)
+                y_pos = y_unuse_spectral_deform.r_value(pos)
                 if i_pos == 0:
                     guess = pos + 1j * 0
                 else:
@@ -65,7 +66,7 @@ class ChebyshevGaussQuad:
                     = y_complex.inverse(y_pos, guess=guess)
 
         cls.__jacobian = np.array(
-            [y_complex.value_d_no_spectral_deform(pos)
+            [y_unuse_spectral_deform.r_value_d(pos)
              for pos in cls.__point_array],
             dtype=np.float64
         )
@@ -117,18 +118,19 @@ class ChebyshevGaussQuad:
             * np.sqrt(1.0 - point_array**2) * ChebyshevGaussQuad.__jacobian
         )
 
-        dtype: type
         if not ChebyshevGaussQuad.__spectral_deform:
-            dtype = np.float64
+            self.__array_func_1 = np.empty(
+                (num_degree, self.__num_point), dtype=np.float64)
+            if func_2 is not None:
+                self.__array_func_2 = np.empty(
+                    (num_degree, self.__num_point), dtype=np.float64)
         else:
-            dtype = np.complex128
+            self.__array_func_1 = np.empty(
+                (num_degree, self.__num_point), dtype=np.complex128)
+            if func_2 is not None:
+                self.__array_func_2 = np.empty(
+                    (num_degree, self.__num_point), dtype=np.complex128)
             point_array = ChebyshevGaussQuad.__point_analytic_cont
-
-        self.__array_func_1 = np.empty(
-            (num_degree, self.__num_point), dtype=dtype)
-        if func_2 is not None:
-            self.__array_func_2 = np.empty(
-                (num_degree, self.__num_point), dtype=dtype)
 
         list_point_array: list[complex | float] = point_array.tolist()
         for i_n in range(num_degree):
@@ -246,7 +248,7 @@ def spherical_laplacian_heinrichs(
     mu: complex | float
     mu_d: complex | float
     mu_d2: complex | float
-    if mu_complex.with_spectral_deform:
+    if mu_complex.use_spectral_deform:
         mu = mu_complex.value(s_pos)
         mu_d = mu_complex.value_d(s_pos)
         mu_d2 = mu_complex.value_d2(s_pos)
@@ -258,16 +260,10 @@ def spherical_laplacian_heinrichs(
 
     sin_sq: complex | float = 1 - (mu**2)
 
-    cheb: complex | float
-    cheb_d: complex | float
-    cheb_d2: complex | float
-    cheb, cheb_d, cheb_d2 = calc_chebyshev(n_degree, s_pos, 2)
-
-    s_sin_sq: complex | float = 1 - (s_pos**2)
-    heinrichs: complex | float = s_sin_sq * cheb
-    heinrichs_d: complex | float = s_sin_sq * cheb_d - 2 * s_pos * cheb
-    heinrichs_d2: complex | float \
-        = s_sin_sq * cheb_d2 - 4 * s_pos * cheb_d - 2 * cheb
+    heinrichs: complex | float
+    heinrichs_d: complex | float
+    heinrichs_d2: complex | float
+    heinrichs, heinrichs_d, heinrichs_d2 = calc_heinrichs(n_degree, s_pos, 2)
 
     return (
         sin_sq * heinrichs_d2 / (mu_d**2)
