@@ -111,7 +111,7 @@ def chebyshev_d3(n_degree: int,
 
     Returns
     -------
-    TypeVarFloatComplex
+    complex | float
         The value of the third derivative of the Chebyshev polynomial at the
         point.
 
@@ -167,10 +167,9 @@ def calc_chebyshev(n_degree: int,
 
     n_sq: int
 
-    if not (np.isclose(s_pos, 1.0) or np.isclose(s_pos, -1.0)):
+    sin_t: complex | float = cmath.sin(t) if is_complex else math.sin(t)
+    if not np.isclose(sin_t, 0.0):
 
-        sin_t: complex | float \
-            = cmath.sin(t) if is_complex else math.sin(t)
         sin_nt: complex | float \
             = cmath.sin(nt) if is_complex else math.sin(nt)
         cheb_d = n_degree * sin_nt / sin_t

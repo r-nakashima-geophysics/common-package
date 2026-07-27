@@ -55,7 +55,7 @@ class DefaultPlotter:
     >>> plotter = DefaultPlotter()
     >>> plotter.axes.plot(x, y)
     >>> plotter.tight_layout()
-    >>> plotter.save(Path('.'), 'plot.png', dpi=300)
+    >>> plotter.save(Path('.'), 'plot.png', 300)
     >>> plt.show()
     """
 
@@ -74,11 +74,11 @@ class DefaultPlotter:
         DefaultPlotter.set_latex()
 
         self.fig: Figure
-        self.axes: Axes
+        self.axes: Axes | ArrayAxes
         self.fig, self.axes = plt.subplots(1, 1, **kwargs)
 
-        self.leg: Legend | None = None
-        self.sc: PathCollection | None = None
+        self.leg: Legend | ArrayLegend | None = None
+        self.sc: PathCollection | ArrayPathCollection | None = None
 
         self.axes.grid()
         self.axes.set_axisbelow(True)
@@ -87,8 +87,8 @@ class DefaultPlotter:
     def save(self,
              path_dir: Path,
              filename: str,
-             *,
              dpi: int = 300,
+             *,
              switch_tight_layout: bool = True) -> None:
         """Save the figure.
 
@@ -169,7 +169,7 @@ class DefaultGridPlotter(DefaultPlotter):
         >>> grid_plotter = DefaultGridPlotter(1, 2)
         >>> grid_plotter.axes[0].plot(x, y)
         >>> grid_plotter.tight_layout()
-        >>> grid_plotter.save(Path('.'), 'plot.png', dpi=300)
+        >>> grid_plotter.save(Path('.'), 'plot.png', 300)
         >>> plt.show()
     Create a (2, 2) plot:
         >>> grid_plotter = DefaultGridPlotter(2, 2)

@@ -93,7 +93,7 @@ def screening_eig(matrix_eig: ArrayComplex,
             logger = create_function_name_logger()
             logger.error('Invalid shape of the input arrays')
 
-    invalid: ArrayBool = np.logical_not(check)
+    invalid: ArrayBool = ~check.ravel()
     matrix_eig[:, invalid] = np.nan
     for phys_qty in phys_qtys:
         phys_qty[invalid] = np.nan

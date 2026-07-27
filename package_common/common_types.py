@@ -9,7 +9,8 @@ Examples
 [1. 2. 3.]
 """
 
-from typing import Any, Callable, Final, NoReturn, Self, TypeVar, cast
+from collections.abc import Callable
+from typing import Any, Final, NoReturn, Self, TypeVar, cast
 
 import numpy as np
 import numpy.typing as npt
