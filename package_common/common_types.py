@@ -22,8 +22,8 @@ type ArrayBool = npt.NDArray[np.bool_]
 type ArrayStr = npt.NDArray[np.str_]
 type ArrayAny = npt.NDArray[Any]
 
-type FloatFunc = Callable[[float | int], float]
-type ComplexFunc = Callable[[complex], complex]
+type FuncFloat = Callable[[float | int], float]
+type FuncComplex = Callable[[complex], complex]
 
 TypeVarIntFloat = TypeVar('TypeVarIntFloat', int, float)
 TypeVarFloatComplex = TypeVar('TypeVarFloatComplex', float, complex)

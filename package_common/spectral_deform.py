@@ -14,7 +14,7 @@ import numpy as np
 from scipy import optimize
 
 from package_common.background_field import BackgroundField
-from package_common.common_types import ArrayFloat, ComplexFunc
+from package_common.common_types import ArrayFloat, FuncComplex
 from package_common.default_logger import DefaultLogger
 from package_common.utils_name import create_function_name_logger
 
@@ -29,12 +29,12 @@ class ComplexCoordinate(BackgroundField):
     ----------
     name : str
         The name of the complex coordinate transformation.
-    value : ComplexFunc
+    value : FuncComplex
         The profile of the complex coordinate transformation.
-    value_d : ComplexFunc | None
+    value_d : FuncComplex | None
         The first derivative of the profile of the complex coordinate
         transformation.
-    value_d2 : ComplexFunc | None
+    value_d2 : FuncComplex | None
         The second derivative of the profile of the complex coordinate
         transformation.
     tex : str | None
@@ -49,9 +49,9 @@ class ComplexCoordinate(BackgroundField):
     def __init__(self,
                  name: str,
                  *,
-                 value: ComplexFunc,
-                 value_d: ComplexFunc,
-                 value_d2: ComplexFunc | None = None,
+                 value: FuncComplex,
+                 value_d: FuncComplex,
+                 value_d2: FuncComplex | None = None,
                  tex: str | None = None,
                  params: dict[str, float]) -> None:
         """Initialize an instance of the ComplexCoordinate class.
@@ -60,12 +60,12 @@ class ComplexCoordinate(BackgroundField):
         ----------
         name : str
             The name of the complex coordinate transformation.
-        value : ComplexFunc
+        value : FuncComplex
             The profile of the complex coordinate transformation.
-        value_d : ComplexFunc
+        value_d : FuncComplex
             The first derivative of the profile of the complex coordinate
             transformation.
-        value_d2 : ComplexFunc | None, optional, default None
+        value_d2 : FuncComplex | None, optional, default None
             The second derivative of the profile of the complex coordinate
             transformation.
         tex : str | None, optional, default None
@@ -75,7 +75,7 @@ class ComplexCoordinate(BackgroundField):
         """
 
         self.params: dict[str, float] = params
-        self.use_spectral_deform: bool = self.check_spectral_deform()
+        self.use_spectral_deform: bool = self.__check_spectral_deform()
 
         super().__init__(name,
                          value=value,
@@ -129,12 +129,12 @@ class ComplexCoordinate(BackgroundField):
         sol: OptimizeResult = optimize.root(
             _residual, init_guess, jac=_jacobian)
 
-        if (not sol.success) and (not np.allclose(sol.fun, [0, 0])):
+        if (not sol.success) or (not np.allclose(sol.fun, [0, 0])):
             self.__logger.warning(f'Did not converge at y = {y_pos}')
 
         return sol.x[0] + 1j*sol.x[1]
 
-    def check_spectral_deform(self) -> bool:
+    def __check_spectral_deform(self) -> bool:
         """Check whether the spectral deformation method is used or not.
 
         Returns

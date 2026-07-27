@@ -1,6 +1,6 @@
 """A Python module to define a class for handling background fields."""
 
-from package_common.common_types import ComplexFunc
+from package_common.common_types import FuncComplex
 from package_common.default_logger import DefaultLogger
 
 
@@ -11,11 +11,11 @@ class BackgroundField:
     ----------
     name : str
         The name of the background field.
-    value : ComplexFunc
+    value : FuncComplex
         The profile of the background field.
-    value_d : ComplexFunc | None
+    value_d : FuncComplex | None
         The first derivative of the profile of the background field.
-    value_d2 : ComplexFunc | None
+    value_d2 : FuncComplex | None
         The second derivative of the profile of the background field.
     tex : str | None
         The LaTeX text of the background field.
@@ -39,9 +39,9 @@ class BackgroundField:
     def __init__(self,
                  name: str,
                  *,
-                 value: ComplexFunc,
-                 value_d: ComplexFunc | None = None,
-                 value_d2: ComplexFunc | None = None,
+                 value: FuncComplex,
+                 value_d: FuncComplex | None = None,
+                 value_d2: FuncComplex | None = None,
                  tex: str | None = None) -> None:
         """Initialize an instance of the BackgroundField class.
 
@@ -49,20 +49,20 @@ class BackgroundField:
         ----------
         name : str
             The name of the background field.
-        value : ComplexFunc
+        value : FuncComplex
             The profile of the background field.
-        value_d : ComplexFunc | None, optional, default None
+        value_d : FuncComplex | None, optional, default None
             The first derivative of the profile of the background field.
-        value_d2 : ComplexFunc | None, optional, default None
+        value_d2 : FuncComplex | None, optional, default None
             The second derivative of the profile of the background field.
         tex : str | None, optional, default None
             The LaTeX text of the background field.
         """
 
         self.name: str = name
-        self.value: ComplexFunc = value
-        self.__value_d: ComplexFunc | None = value_d
-        self.__value_d2: ComplexFunc | None = value_d2
+        self.value: FuncComplex = value
+        self.__value_d: FuncComplex | None = value_d
+        self.__value_d2: FuncComplex | None = value_d2
         self.tex: str = tex if tex is not None else name
 
         self.__logger: DefaultLogger = DefaultLogger(self.name)
@@ -95,13 +95,13 @@ class BackgroundField:
         return self.value(x).real
 
     @property
-    def value_d(self) -> ComplexFunc:
+    def value_d(self) -> FuncComplex:
         """Return the first derivative of the profile of the background
         field.
 
         Returns
         -------
-        ComplexFunc
+        FuncComplex
             The first derivative of the profile of the background field.
 
         Warnings
@@ -144,13 +144,13 @@ class BackgroundField:
         return self.value_d(x).real
 
     @property
-    def value_d2(self) -> ComplexFunc:
+    def value_d2(self) -> FuncComplex:
         """Return the second derivative of the profile of the background
         field.
 
         Returns
         -------
-        ComplexFunc
+        FuncComplex
             The second derivative of the profile of the background field.
 
         Warnings
