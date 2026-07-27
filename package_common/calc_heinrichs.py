@@ -8,23 +8,22 @@ References
 """
 
 from package_common.calc_chebyshev import calc_chebyshev
-from package_common.common_types import TypeVarFloatComplex
 
 
 def heinrichs(n_degree: int,
-              s_pos: TypeVarFloatComplex) -> TypeVarFloatComplex:
+              s_pos: complex | float) -> complex | float:
     """Calculate the value of the Heinrichs basis at a given point.
 
     Parameters
     ----------
     n_degree : int
         The degree of the Heinrichs basis.
-    s_pos : TypeVarFloatComplex
+    s_pos : complex | float
         The position of the point.
 
     Returns
     -------
-    TypeVarFloatComplex
+    complex | float
         The value of the Heinrichs basis at the point.
 
     Examples
@@ -34,13 +33,13 @@ def heinrichs(n_degree: int,
     -0.75
     """
 
-    chebyshev: TypeVarFloatComplex = calc_chebyshev(n_degree, s_pos, 0)[0]
+    chebyshev: complex | float = calc_chebyshev(n_degree, s_pos, 0)[0]
 
     return (1-(s_pos**2)) * chebyshev
 
 
 def heinrichs_d(n_degree: int,
-                s_pos: TypeVarFloatComplex) -> TypeVarFloatComplex:
+                s_pos: complex | float) -> complex | float:
     """Calculate the value of the first derivative of the Heinrichs
     basis at a given point.
 
@@ -48,12 +47,12 @@ def heinrichs_d(n_degree: int,
     ----------
     n_degree : int
         The degree of the Heinrichs basis.
-    s_pos : TypeVarFloatComplex
+    s_pos : complex | float
         The position of the point.
 
     Returns
     -------
-    TypeVarFloatComplex
+    complex | float
         The value of the first derivative of the Heinrichs basis at the point.
 
     Examples
@@ -63,8 +62,8 @@ def heinrichs_d(n_degree: int,
     1.0000000000000002
     """
 
-    chebyshev: TypeVarFloatComplex
-    chebyshev_d: TypeVarFloatComplex
+    chebyshev: complex | float
+    chebyshev_d: complex | float
     chebyshev, chebyshev_d = calc_chebyshev(n_degree, s_pos, 1)
 
     return (
@@ -73,7 +72,7 @@ def heinrichs_d(n_degree: int,
 
 
 def heinrichs_d2(n_degree: int,
-                 s_pos: TypeVarFloatComplex) -> TypeVarFloatComplex:
+                 s_pos: complex | float) -> complex | float:
     """Calculate the value of the second derivative of the Heinrichs
     basis at a given point.
 
@@ -81,12 +80,12 @@ def heinrichs_d2(n_degree: int,
     ----------
     n_degree : int
         The degree of the Heinrichs basis.
-    s_pos : TypeVarFloatComplex
+    s_pos : complex | float
         The position of the point.
 
     Returns
     -------
-    TypeVarFloatComplex
+    complex | float
         The value of the second derivative of the Heinrichs basis at the point.
 
     Examples
@@ -96,9 +95,9 @@ def heinrichs_d2(n_degree: int,
     11.000000000000002
     """
 
-    chebyshev: TypeVarFloatComplex
-    chebyshev_d: TypeVarFloatComplex
-    chebyshev_d2: TypeVarFloatComplex
+    chebyshev: complex | float
+    chebyshev_d: complex | float
+    chebyshev_d2: complex | float
     chebyshev, chebyshev_d, chebyshev_d2 = calc_chebyshev(n_degree, s_pos, 2)
 
     return (
@@ -107,7 +106,7 @@ def heinrichs_d2(n_degree: int,
 
 
 def heinrichs_d3(n_degree: int,
-                 s_pos: TypeVarFloatComplex) -> TypeVarFloatComplex:
+                 s_pos: complex | float) -> complex | float:
     """Calculate the value of the third derivative of the Heinrichs
     basis at a given point.
 
@@ -115,12 +114,12 @@ def heinrichs_d3(n_degree: int,
     ----------
     n_degree : int
         The degree of the Heinrichs basis.
-    s_pos : TypeVarFloatComplex
+    s_pos : complex | float
         The position of the point.
 
     Returns
     -------
-    TypeVarFloatComplex
+    complex | float
         The value of the third derivative of the Heinrichs basis at the point.
 
     Examples
@@ -130,9 +129,9 @@ def heinrichs_d3(n_degree: int,
     -18.000000000000004
     """
 
-    chebyshev_d: TypeVarFloatComplex
-    chebyshev_d2: TypeVarFloatComplex
-    chebyshev_d3: TypeVarFloatComplex
+    chebyshev_d: complex | float
+    chebyshev_d2: complex | float
+    chebyshev_d3: complex | float
     _, chebyshev_d, chebyshev_d2, chebyshev_d3 \
         = calc_chebyshev(n_degree, s_pos, 3)
 

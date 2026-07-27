@@ -12,24 +12,23 @@ import math
 
 import numpy as np
 
-from package_common.common_types import TypeVarFloatComplex, cast
 from package_common.utils_debug import under_construction_log
 
 
 def chebyshev(n_degree: int,
-              s_pos: TypeVarFloatComplex) -> TypeVarFloatComplex:
+              s_pos: complex | float) -> complex | float:
     """Calculate the value of a Chebyshev polynomial at a given point.
 
     Parameters
     ----------
     n_degree : int
         The degree of the Chebyshev polynomial.
-    s_pos : TypeVarFloatComplex
+    s_pos : complex | float
         The position of the point.
 
     Returns
     -------
-    TypeVarFloatComplex
+    complex | float
         The value of the Chebyshev polynomial at the point.
 
     Examples
@@ -43,7 +42,7 @@ def chebyshev(n_degree: int,
 
 
 def chebyshev_d(n_degree: int,
-                s_pos: TypeVarFloatComplex) -> TypeVarFloatComplex:
+                s_pos: complex | float) -> complex | float:
     """Calculate the value of the first derivative of a Chebyshev
     polynomial at a given point.
 
@@ -51,12 +50,12 @@ def chebyshev_d(n_degree: int,
     ----------
     n_degree : int
         The degree of the Chebyshev polynomial.
-    s_pos : TypeVarFloatComplex
+    s_pos : complex | float
         The position of the point.
 
     Returns
     -------
-    TypeVarFloatComplex
+    complex | float
         The value of the first derivative of the Chebyshev polynomial at the
         point.
 
@@ -71,7 +70,7 @@ def chebyshev_d(n_degree: int,
 
 
 def chebyshev_d2(n_degree: int,
-                 s_pos: TypeVarFloatComplex) -> TypeVarFloatComplex:
+                 s_pos: complex | float) -> complex | float:
     """Calculate the value of the second derivative of a Chebyshev
     polynomial at a given point.
 
@@ -79,12 +78,12 @@ def chebyshev_d2(n_degree: int,
     ----------
     n_degree : int
         The degree of the Chebyshev polynomial.
-    s_pos : TypeVarFloatComplex
+    s_pos : complex | float
         The position of the point.
 
     Returns
     -------
-    TypeVarFloatComplex
+    complex | float
         The value of the second derivative of the Chebyshev polynomial at the
         point.
 
@@ -99,7 +98,7 @@ def chebyshev_d2(n_degree: int,
 
 
 def chebyshev_d3(n_degree: int,
-                 s_pos: TypeVarFloatComplex) -> TypeVarFloatComplex:
+                 s_pos: complex | float) -> complex | float:
     """Calculate the value of the third derivative of a Chebyshev
     polynomial at a given point.
 
@@ -107,7 +106,7 @@ def chebyshev_d3(n_degree: int,
     ----------
     n_degree : int
         The degree of the Chebyshev polynomial.
-    s_pos : TypeVarFloatComplex
+    s_pos : complex | float
         The position of the point.
 
     Returns
@@ -127,8 +126,8 @@ def chebyshev_d3(n_degree: int,
 
 
 def calc_chebyshev(n_degree: int,
-                   s_pos: TypeVarFloatComplex,
-                   order: int) -> tuple[TypeVarFloatComplex, ...]:
+                   s_pos: complex | float,
+                   order: int) -> tuple[complex | float, ...]:
     """Helper function to calculate the value of a Chebyshev polynomial or its
     derivatives at a given point.
 
@@ -136,14 +135,14 @@ def calc_chebyshev(n_degree: int,
     ----------
     n_degree : int
         The degree of the Chebyshev polynomial.
-    s_pos : TypeVarFloatComplex
+    s_pos : complex | float
         The position of the point.
     order : int
         The order of the derivative.
 
     Returns
     -------
-    tuple[TypeVarFloatComplex, ...]
+    tuple[complex | float, ...]
         The value of the Chebyshev polynomial or its derivative at the point.
 
     Notes
@@ -154,35 +153,33 @@ def calc_chebyshev(n_degree: int,
 
     is_complex: bool = isinstance(s_pos, complex)
 
-    t: TypeVarFloatComplex \
-        = cast(TypeVarFloatComplex,
-               cmath.acos(s_pos) if is_complex else math.acos(s_pos))
-    nt: TypeVarFloatComplex = n_degree * t
-    cos_nt: TypeVarFloatComplex = np.cos(nt)
+    t: complex | float \
+        = cmath.acos(s_pos) if is_complex else math.acos(s_pos)
+    nt: complex | float = n_degree * t
+    cos_nt: complex | float \
+        = cmath.cos(nt) if is_complex else math.cos(nt)
     if order == 0:
         return (cos_nt,)
 
-    cheb_d: TypeVarFloatComplex
-    cheb_d2: TypeVarFloatComplex
-    cheb_d3: TypeVarFloatComplex
+    cheb_d: complex | float
+    cheb_d2: complex | float
+    cheb_d3: complex | float
 
     n_sq: int
 
     if not (np.isclose(s_pos, 1.0) or np.isclose(s_pos, -1.0)):
 
-        sin_t: TypeVarFloatComplex \
-            = cast(TypeVarFloatComplex,
-                   cmath.sin(t) if is_complex else math.sin(t))
-        sin_nt: TypeVarFloatComplex \
-            = cast(TypeVarFloatComplex,
-                   cmath.sin(nt) if is_complex else math.sin(nt))
+        sin_t: complex | float \
+            = cmath.sin(t) if is_complex else math.sin(t)
+        sin_nt: complex | float \
+            = cmath.sin(nt) if is_complex else math.sin(nt)
         cheb_d = n_degree * sin_nt / sin_t
         if order == 1:
             return (cos_nt, cheb_d)
 
         n_sq = n_degree**2
-        cos_t: TypeVarFloatComplex = s_pos
-        sin_t_sq: TypeVarFloatComplex = sin_t**2
+        cos_t: complex | float = s_pos
+        sin_t_sq: complex | float = sin_t**2
         cheb_d2 = (-n_sq * cos_nt + cheb_d * cos_t) / sin_t_sq
         if order == 2:
             return (cos_nt, cheb_d, cheb_d2)
