@@ -89,7 +89,7 @@ version = "1.0.17"
 source = { virtual = "." }
 dependencies = [
     { name = "autopep8" },
-    { name = "caffeine" },
+    { name = "caffeine", marker = "sys_platform == 'darwin'" },
     { name = "isort" },
     { name = "matplotlib" },
     { name = "mypy" },
@@ -105,7 +105,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "autopep8", specifier = ">=2.3.2" },
-    { name = "caffeine", specifier = ">=0.5" },
+    { name = "caffeine", marker = "sys_platform == 'darwin'", specifier = ">=0.5" },
     { name = "isort", specifier = ">=8.0.1" },
     { name = "matplotlib", specifier = ">=3.11.1" },
     { name = "mypy", specifier = ">=2.3.0" },
