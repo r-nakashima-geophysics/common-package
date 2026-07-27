@@ -86,11 +86,11 @@ class DefaultPlotter:
         DefaultPlotter.__set_latex()
 
         self.fig: Figure
-        self.axes: Axes | ArrayAxes
+        self.axes: Axes
         self.fig, self.axes = plt.subplots(1, 1, **kwargs)
 
-        self.leg: Legend | ArrayLegend | None = None
-        self.sc: PathCollection | ArrayPathCollection | None = None
+        self.leg: Legend | None = None
+        self.sc: PathCollection | None = None
 
         self.axes.grid()
         self.axes.set_axisbelow(True)
@@ -199,10 +199,12 @@ class DefaultGridPlotter(DefaultPlotter):
         DefaultPlotter.__set_latex()
 
         self.fig: Figure
+        self.axes: ArrayAxes
         self.fig, self.axes = plt.subplots(nrows, ncols, **kwargs)
 
-        self.leg = np.full_like(self.axes, None, dtype=np.object_)
-        self.sc = np.full_like(self.axes, None, dtype=np.object_)
+        self.leg: ArrayLegend = np.full_like(self.axes, None, dtype=np.object_)
+        self.sc: ArrayPathCollection \
+            = np.full_like(self.axes, None, dtype=np.object_)
 
         for axis in self.axes.ravel():
             axis.grid()

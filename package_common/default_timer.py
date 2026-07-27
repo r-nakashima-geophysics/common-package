@@ -32,13 +32,14 @@ class DefaultTimer:
     """
 
     __flag_import_caffeine: bool = False
+    __caffeine: ModuleType
 
     @classmethod
     def __import_caffeine(cls) -> None:
         """Import the caffeine module"""
 
         if (sys.platform == 'darwin') and (not cls.__flag_import_caffeine):
-            cls.__caffeine: ModuleType = importlib.import_module('caffeine')
+            cls.__caffeine = importlib.import_module('caffeine')
             cls.__caffeine.on(display=False)
             cls.__flag_import_caffeine = True
 
