@@ -31,24 +31,16 @@ class DefaultTimer:
     >>> timer.end()
     """
 
-    __import_caffeine: bool = False
-    __flag: bool = False
+    __flag_import_caffeine: bool = False
 
     @classmethod
-    def set_class_variable(cls: type['DefaultTimer']) -> None:
-        """Set the class variables.
+    def __import_caffeine(cls) -> None:
+        """Import the caffeine module"""
 
-        Notes
-        -----
-        This method is called when the DefaultTimer class is imported.
-        """
-
-        cls.__flag = True
-
-        if (sys.platform == 'darwin') and (not cls.__import_caffeine):
+        if (sys.platform == 'darwin') and (not cls.__flag_import_caffeine):
             cls.__caffeine: ModuleType = importlib.import_module('caffeine')
             cls.__caffeine.on(display=False)
-            cls.__import_caffeine = True
+            cls.__flag_import_caffeine = True
 
     def __init__(self,
                  name: str) -> None:
@@ -56,7 +48,7 @@ class DefaultTimer:
 
         Parameters
         ----------
-        name : str
+        name: str
             The name of the timer.
         """
 
@@ -68,8 +60,7 @@ class DefaultTimer:
 
         self.__logger: DefaultLogger = DefaultLogger(name)
 
-        if not DefaultTimer.__flag:
-            DefaultTimer.set_class_variable()
+        DefaultTimer.__import_caffeine()
 
     def start(self) -> None:
         """(Re)start the timer."""
@@ -113,7 +104,7 @@ class DefaultTimer:
         self.__split_time = None
         self.__net_time = None
 
-        if DefaultTimer.__import_caffeine:
+        if DefaultTimer.__flag_import_caffeine:
             DefaultTimer.__caffeine.off()
 
     def stop(self) -> None:

@@ -59,7 +59,19 @@ class DefaultPlotter:
     >>> plt.show()
     """
 
-    __set_latex: bool = False
+    __flag_set_latex: bool = False
+
+    @classmethod
+    def __set_latex(cls) -> None:
+        """Set latex."""
+
+        if not cls.__flag_set_latex:
+            cls.__flag_set_latex = True
+
+            if shutil.which('latex') is not None:
+                plt.rcParams['text.usetex'] = True
+            else:
+                plt.rcParams['text.usetex'] = False
 
     def __init__(self,
                  **kwargs: Any) -> None:
@@ -71,7 +83,7 @@ class DefaultPlotter:
             Keyword variadic arguments.
         """
 
-        DefaultPlotter.set_latex()
+        DefaultPlotter.__set_latex()
 
         self.fig: Figure
         self.axes: Axes | ArrayAxes
@@ -131,18 +143,6 @@ class DefaultPlotter:
 
         plt.close(self.fig)
 
-    @classmethod
-    def set_latex(cls) -> None:
-        """Set latex."""
-
-        if not cls.__set_latex:
-            cls.__set_latex = True
-
-            if shutil.which('latex') is not None:
-                plt.rcParams['text.usetex'] = True
-            else:
-                plt.rcParams['text.usetex'] = False
-
 
 class DefaultGridPlotter(DefaultPlotter):
     """Subclass of the DefaultPlotter class to handle figures with
@@ -196,16 +196,13 @@ class DefaultGridPlotter(DefaultPlotter):
             super().__init__(**kwargs)
             return
 
-        DefaultPlotter.set_latex()
+        DefaultPlotter.__set_latex()
 
         self.fig: Figure
-        self.axes: ArrayAxes
         self.fig, self.axes = plt.subplots(nrows, ncols, **kwargs)
 
-        self.leg: ArrayLegend \
-            = np.full_like(self.axes, None, dtype=np.object_)
-        self.sc: ArrayPathCollection \
-            = np.full_like(self.axes, None, dtype=np.object_)
+        self.leg = np.full_like(self.axes, None, dtype=np.object_)
+        self.sc = np.full_like(self.axes, None, dtype=np.object_)
 
         for axis in self.axes.ravel():
             axis.grid()
