@@ -4,7 +4,7 @@ import numpy as np
 
 from package_common.calc_heinrichs import calc_heinrichs
 from package_common.common_types import (ArrayComplex, ArrayFloat, Callable,
-                                         FloatFunc, Self, cast)
+                                         FuncFloat, cast)
 from package_common.default_logger import DefaultLogger
 from package_common.spectral_deform import ComplexCoordinate
 from package_common.utils_name import create_function_name_logger
@@ -22,11 +22,13 @@ class ChebyshevGaussQuad:
     __point_analytic_cont: ArrayComplex
     __jacobian: ArrayFloat
 
+    __cache_dict_array: dict[Func4Quad, ArrayComplex | ArrayFloat] = {}
+
     __flag: bool = False
     __logger: DefaultLogger = DefaultLogger(__name__)
 
     @classmethod
-    def set_class_variable(cls: type[Self],
+    def set_class_variable(cls,
                            num_degree: int,
                            *,
                            y_complex: ComplexCoordinate,
@@ -39,7 +41,14 @@ class ChebyshevGaussQuad:
             The number of the degree.
         y_complex : ComplexCoordinate
             The complex coordinate for spectral deformation.
+        y_unuse_spectral_deform : ComplexCoordinate
+            The complex coordinate without spectral deformation.
         """
+
+        if cls.__flag:
+            return
+
+        cls.__cache_dict_array.clear()
 
         cls.__num_degree = num_degree
         cls.__num_point = 3 * cls.__num_degree
@@ -71,11 +80,51 @@ class ChebyshevGaussQuad:
             dtype=np.float64
         )
 
+    @classmethod
+    def __create_array_func(cls,
+                            func: Func4Quad) -> ArrayComplex | ArrayFloat:
+        """Create an array of the function values at all collocation points.
+
+        Parameters
+        ----------
+        func : Func4Quad
+            The function to be evaluated.
+
+        Returns
+        -------
+        ArrayComplex | ArrayFloat
+            The array of the function values at all collocation points.
+        """
+
+        cached_array: ArrayComplex | ArrayFloat | None \
+            = cls.__cache_dict_array.get(func, None)
+        if cached_array is not None:
+            return cached_array
+
+        array_func: ArrayComplex | ArrayFloat
+        point_array: ArrayComplex | ArrayFloat
+        if not cls.__spectral_deform:
+            array_func = np.empty(
+                (cls.__num_degree, cls.__num_point), dtype=np.float64)
+            point_array = cls.__point_array
+        else:
+            array_func = np.empty(
+                (cls.__num_degree, cls.__num_point), dtype=np.complex128)
+            point_array = cls.__point_analytic_cont
+
+        list_point_array: list[complex | float] = point_array.tolist()
+        for i_n in range(cls.__num_degree):
+            array_func[i_n, :] = [
+                func(i_n, s_pos) for s_pos in list_point_array]
+
+        cls.__cache_dict_array[func] = array_func
+        return array_func
+
     def __init__(self,
                  *,
                  func_1: Func4Quad,
                  func_2: Func4Quad | None = None,
-                 weight: FloatFunc = lambda x: 1.0) -> None:
+                 weight: FuncFloat = lambda x: 1.0) -> None:
         """Initialize an instance of the ChebyshevGaussQuad class.
 
         Parameters
@@ -84,7 +133,7 @@ class ChebyshevGaussQuad:
             The function associated with the first vector.
         func_2 : Func4Quad | None, optional, default None
             The function associated with the second vector.
-        weight : FloatFunc, optional, default lambda x: 1.0
+        weight : FuncFloat, optional, default lambda x: 1.0
             The weight function for the quadrature of the first and second
             vectors.
 
@@ -103,42 +152,21 @@ class ChebyshevGaussQuad:
             ChebyshevGaussQuad.__logger.error(
                 '`set_class_variable` class method has not been executed')
 
-        num_degree: int = ChebyshevGaussQuad.__num_degree
         self.__num_point: int = ChebyshevGaussQuad.__num_point
-        point_array: ArrayFloat | ArrayComplex \
-            = ChebyshevGaussQuad.__point_array
+        point_array: ArrayFloat = ChebyshevGaussQuad.__point_array
 
         self.__flag_func_2: bool = func_2 is not None
-
-        self.__array_func_1: ArrayFloat | ArrayComplex
-        self.__array_func_2: ArrayFloat | ArrayComplex
 
         self.__array_weight: ArrayFloat = (
             np.array([weight(pos) for pos in point_array], dtype=np.float64)
             * np.sqrt(1.0 - point_array**2) * ChebyshevGaussQuad.__jacobian
         )
 
-        if not ChebyshevGaussQuad.__spectral_deform:
-            self.__array_func_1 = np.empty(
-                (num_degree, self.__num_point), dtype=np.float64)
-            if func_2 is not None:
-                self.__array_func_2 = np.empty(
-                    (num_degree, self.__num_point), dtype=np.float64)
-        else:
-            self.__array_func_1 = np.empty(
-                (num_degree, self.__num_point), dtype=np.complex128)
-            if func_2 is not None:
-                self.__array_func_2 = np.empty(
-                    (num_degree, self.__num_point), dtype=np.complex128)
-            point_array = ChebyshevGaussQuad.__point_analytic_cont
-
-        list_point_array: list[complex | float] = point_array.tolist()
-        for i_n in range(num_degree):
-            self.__array_func_1[i_n, :] = [
-                func_1(i_n, s_pos) for s_pos in list_point_array]
-            if func_2 is not None:
-                self.__array_func_2[i_n, :] = [
-                    func_2(i_n, s_pos) for s_pos in list_point_array]
+        self.__array_func_1: ArrayComplex | ArrayFloat \
+            = ChebyshevGaussQuad.__create_array_func(func_1)
+        if func_2 is not None:
+            self.__array_func_2: ArrayComplex | ArrayFloat \
+                = ChebyshevGaussQuad.__create_array_func(func_2)
 
     def quadrature(self,
                    *,
