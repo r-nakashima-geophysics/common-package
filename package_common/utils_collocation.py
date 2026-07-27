@@ -47,8 +47,7 @@ class ChebyshevGaussQuad:
 
         cls.__point_array = np.array(
             [calc_collocation_point(2*i_l-1, 2*cls.__num_point)
-             for i_l in range(1, cls.__num_point+1)],
-            dtype=np.float64
+             for i_l in range(1, cls.__num_point+1)], dtype=np.float64
         )
 
         if cls.__spectral_deform:

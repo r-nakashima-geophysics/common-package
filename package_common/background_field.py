@@ -63,12 +63,7 @@ class BackgroundField:
         self.value: ComplexFunc = value
         self.__value_d: ComplexFunc | None = value_d
         self.__value_d2: ComplexFunc | None = value_d2
-
-        self.tex: str
-        if tex is not None:
-            self.tex = tex
-        else:
-            self.tex = self.name
+        self.tex: str = tex if tex is not None else name
 
         self.__logger: DefaultLogger = DefaultLogger(self.name)
 
@@ -97,7 +92,7 @@ class BackgroundField:
         if not isinstance(x, (float, int)):
             self.__logger.error('Invalid type of the argument')
 
-        return self.value(x + 0j).real
+        return self.value(x).real
 
     @property
     def value_d(self) -> ComplexFunc:
@@ -146,7 +141,7 @@ class BackgroundField:
         if not isinstance(x, (float, int)):
             self.__logger.error('Invalid type of the argument')
 
-        return self.value_d(x + 0j).real
+        return self.value_d(x).real
 
     @property
     def value_d2(self) -> ComplexFunc:
@@ -195,4 +190,4 @@ class BackgroundField:
         if not isinstance(x, (float, int)):
             self.__logger.error('Invalid type of the argument')
 
-        return self.value_d2(x + 0j).real
+        return self.value_d2(x).real
