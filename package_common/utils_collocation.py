@@ -117,7 +117,9 @@ class ChebyshevGaussQuad:
             array_func[i_n, :] = [
                 func(i_n, s_pos) for s_pos in list_point_array]
 
+        array_func.flags.writeable = False
         cls.__cache_dict_array[func] = array_func
+
         return array_func
 
     def __init__(self,
