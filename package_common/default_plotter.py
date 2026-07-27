@@ -62,7 +62,7 @@ class DefaultPlotter:
     __flag_set_latex: bool = False
 
     @classmethod
-    def __set_latex(cls) -> None:
+    def _set_latex(cls) -> None:
         """Set latex."""
 
         if not cls.__flag_set_latex:
@@ -83,7 +83,7 @@ class DefaultPlotter:
             Keyword variadic arguments.
         """
 
-        DefaultPlotter.__set_latex()
+        DefaultPlotter._set_latex()
 
         self.fig: Figure
         self.axes: Axes
@@ -196,7 +196,7 @@ class DefaultGridPlotter(DefaultPlotter):
             super().__init__(**kwargs)
             return
 
-        DefaultPlotter.__set_latex()
+        DefaultPlotter._set_latex()
 
         self.fig: Figure
         self.axes: ArrayAxes
