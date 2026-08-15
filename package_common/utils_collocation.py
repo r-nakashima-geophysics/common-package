@@ -51,7 +51,7 @@ class ChebyshevGaussQuad:
         cls.__cache_dict_array.clear()
 
         cls.__num_degree = num_degree
-        cls.__num_point = 3 * cls.__num_degree
+        cls.__num_point = 3 * cls.__num_degree + (num_degree % 2)
         cls.__spectral_deform = y_complex.use_spectral_deform
         cls.__flag = True
 
