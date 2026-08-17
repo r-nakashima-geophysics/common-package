@@ -4,7 +4,7 @@ import numpy as np
 
 from package_common.calc_heinrichs import calc_heinrichs
 from package_common.common_types import (ArrayComplex, ArrayFloat, Callable,
-                                         FuncFloat, cast)
+                                         FuncComplex, FuncFloat, cast)
 from package_common.default_logger import DefaultLogger
 from package_common.spectral_deform import ComplexCoordinate
 from package_common.utils_name import create_function_name_logger
@@ -20,10 +20,11 @@ class ChebyshevGaussQuad:
     __spectral_deform: bool
     __point_array: ArrayFloat
     __point_analytic_cont: ArrayComplex
-    __jacobian: ArrayFloat
+    __jacobian: ArrayComplex | ArrayFloat
 
     __cache_dict_array: dict[Func4Quad, ArrayComplex | ArrayFloat] = {}
 
+    __analytic_cont: bool
     __flag: bool = False
     __logger: DefaultLogger = DefaultLogger(__name__)
 
@@ -32,7 +33,8 @@ class ChebyshevGaussQuad:
                            num_degree: int,
                            *,
                            y_complex: ComplexCoordinate,
-                           y_unuse_spectral_deform: ComplexCoordinate) -> None:
+                           y_unuse_spectral_deform: ComplexCoordinate,
+                           analytic_cont: bool = True) -> None:
         """Set the class variables.
 
         Parameters
@@ -43,6 +45,9 @@ class ChebyshevGaussQuad:
             The complex coordinate for spectral deformation.
         y_unuse_spectral_deform : ComplexCoordinate
             The complex coordinate without spectral deformation.
+        analytic_cont : bool, optional, default True
+            The boolean value to switch whether the analytic continuation of
+            the collocation points in the complex plane is used.
         """
 
         if cls.__flag:
@@ -53,6 +58,7 @@ class ChebyshevGaussQuad:
         cls.__num_degree = num_degree
         cls.__num_point = 3 * cls.__num_degree + (num_degree % 2)
         cls.__spectral_deform = y_complex.use_spectral_deform
+        cls.__analytic_cont = analytic_cont
         cls.__flag = True
 
         cls.__point_array = np.array(
@@ -60,7 +66,7 @@ class ChebyshevGaussQuad:
              for i_l in range(1, cls.__num_point+1)], dtype=np.float64
         )
 
-        if cls.__spectral_deform:
+        if cls.__spectral_deform and cls.__analytic_cont:
             y_pos: complex
             guess: complex
             cls.__point_analytic_cont \
@@ -74,11 +80,17 @@ class ChebyshevGaussQuad:
                 cls.__point_analytic_cont[i_pos] \
                     = y_complex.inverse(y_pos, guess=guess)
 
-        cls.__jacobian = np.array(
-            [y_unuse_spectral_deform.r_value_d(pos)
-             for pos in cls.__point_array],
-            dtype=np.float64
-        )
+        if cls.__spectral_deform and (not cls.__analytic_cont):
+            cls.__jacobian = np.array(
+                [y_complex.value_d(pos) for pos in cls.__point_array],
+                dtype=np.complex128
+            )
+        else:
+            cls.__jacobian = np.array(
+                [y_unuse_spectral_deform.r_value_d(pos)
+                 for pos in cls.__point_array],
+                dtype=np.float64
+            )
 
     @classmethod
     def __create_array_func(cls,
@@ -103,14 +115,18 @@ class ChebyshevGaussQuad:
 
         array_func: ArrayComplex | ArrayFloat
         point_array: ArrayComplex | ArrayFloat
-        if not cls.__spectral_deform:
+        if cls.__spectral_deform and (not cls.__analytic_cont):
             array_func = np.empty(
-                (cls.__num_degree, cls.__num_point), dtype=np.float64)
+                (cls.__num_degree, cls.__num_point), dtype=np.complex128)
             point_array = cls.__point_array
-        else:
+        elif cls.__spectral_deform and cls.__analytic_cont:
             array_func = np.empty(
                 (cls.__num_degree, cls.__num_point), dtype=np.complex128)
             point_array = cls.__point_analytic_cont
+        else:
+            array_func = np.empty(
+                (cls.__num_degree, cls.__num_point), dtype=np.float64)
+            point_array = cls.__point_array
 
         list_point_array: list[complex | float] = point_array.tolist()
         for i_n in range(cls.__num_degree):
@@ -126,7 +142,7 @@ class ChebyshevGaussQuad:
                  *,
                  func_1: Func4Quad,
                  func_2: Func4Quad | None = None,
-                 weight: FuncFloat = lambda x: 1.0) -> None:
+                 weight: FuncComplex | FuncFloat = lambda x: 1.0) -> None:
         """Initialize an instance of the ChebyshevGaussQuad class.
 
         Parameters
@@ -155,14 +171,25 @@ class ChebyshevGaussQuad:
                 '`set_class_variable` class method has not been executed')
 
         self.__num_point: int = ChebyshevGaussQuad.__num_point
-        point_array: ArrayFloat = ChebyshevGaussQuad.__point_array
+        point_array: ArrayComplex | ArrayFloat \
+            = ChebyshevGaussQuad.__point_array
 
         self.__flag_func_2: bool = func_2 is not None
 
-        self.__array_weight: ArrayFloat = (
-            np.array([weight(pos) for pos in point_array], dtype=np.float64)
-            * np.sqrt(1.0 - point_array**2) * ChebyshevGaussQuad.__jacobian
-        )
+        self.__array_weight: ArrayComplex | ArrayFloat
+        if ChebyshevGaussQuad.__spectral_deform \
+                and (not ChebyshevGaussQuad.__analytic_cont):
+            self.__array_weight = (
+                np.array([weight(pos)
+                         for pos in point_array], dtype=np.complex128)
+            )
+        else:
+            self.__array_weight = (
+                np.array([weight(pos)
+                         for pos in point_array], dtype=np.float64)
+            )
+        self.__array_weight \
+            *= np.sqrt(1 - point_array**2) * ChebyshevGaussQuad.__jacobian
 
         self.__array_func_1: ArrayComplex | ArrayFloat \
             = ChebyshevGaussQuad.__create_array_func(func_1)
