@@ -109,30 +109,25 @@ class ComplexCoordinate(BackgroundField):
             If no solution converges to the target value.
         """
 
-        def _residual(s_vec: ArrayFloat) -> ArrayFloat:
-            s_pos: complex = s_vec[0] + 1j*s_vec[1]
-            residual: complex = self.value(s_pos) - y_pos
-            return np.array([residual.real, residual.imag], dtype=np.float64)
+        def _residual(s: complex) -> complex:
+            residual: complex = self.value(s) - y_pos
+            return residual
 
-        def _jacobian(s_vec: ArrayFloat) -> ArrayFloat:
-            s_pos: complex = s_vec[0] + 1j*s_vec[1]
-            dy: complex = self.value_d(s_pos)
-            return np.array([[np.real(dy), np.real(dy*1j)],
-                             [np.imag(dy), np.imag(dy*1j)]], dtype=np.float64)
+        init_guess: complex = guess if guess is not None else y_pos
 
-        init_guess: ArrayFloat
-        if guess is None:
-            init_guess = np.array([y_pos.real, y_pos.imag], dtype=np.float64)
-        else:
-            init_guess = np.array([guess.real, guess.imag], dtype=np.float64)
+        root: complex
+        result: optimize.RootResults
+        root, result = optimize.newton(
+            _residual, init_guess,
+            fprime=self.value_d, fprime2=self.value_d2,
+            full_output=True, disp=False
+        )
 
-        sol: OptimizeResult = optimize.root(
-            _residual, init_guess, jac=_jacobian)
-
-        if (not sol.success) or (not np.allclose(sol.fun, [0, 0])):
+        if (not result.converged) \
+                or (not np.isclose(self.value(root)-y_pos, 0)):
             self.__logger.warning(f'Did not converge at y = {y_pos}')
 
-        return sol.x[0] + 1j*sol.x[1]
+        return root
 
     def __check_spectral_deform(self) -> bool:
         """Check whether the spectral deformation method is used or not.
