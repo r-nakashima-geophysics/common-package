@@ -29,12 +29,13 @@ class ChebyshevGaussQuad:
     __logger: DefaultLogger = DefaultLogger(__name__)
 
     @classmethod
-    def set_class_variable(cls,
-                           num_degree: int,
-                           *,
-                           y_complex: ComplexCoordinate,
-                           y_unuse_spectral_deform: ComplexCoordinate,
-                           use_analytic_cont: bool = True) -> None:
+    def set_class_variable(
+            cls,
+            num_degree: int,
+            *,
+            y_complex: ComplexCoordinate,
+            y_unuse_spectral_deform: ComplexCoordinate | None = None,
+            use_analytic_cont: bool = True) -> None:
         """Set the class variables.
 
         Parameters
@@ -42,12 +43,18 @@ class ChebyshevGaussQuad:
         num_degree : int
             The number of the degree.
         y_complex : ComplexCoordinate
-            The complex coordinate for spectral deformation.
-        y_unuse_spectral_deform : ComplexCoordinate
-            The coordinate without spectral deformation.
+            The complex coordinate for the spectral deformation.
+        y_unuse_spectral_deform : ComplexCoordinate, optional, default None
+            The coordinate without the spectral deformation.
         use_analytic_cont : bool, optional, default True
             The boolean value to switch whether the analytic continuation of
             the complex coordinate is used.
+
+        Warnings
+        --------
+        `y_unuse_spectral_deform` is necessary
+            If `y_unuse_spectral_deform` is None when the spectral deformation
+            method is used.
         """
 
         if cls.__flag:
@@ -60,6 +67,12 @@ class ChebyshevGaussQuad:
         cls.__use_spectral_deform = y_complex.use_spectral_deform
         cls.__use_analytic_cont = use_analytic_cont
         cls.__flag = True
+
+        if cls.__use_spectral_deform and (y_unuse_spectral_deform is None):
+            cls.__logger.error('`y_unuse_spectral_deform` is necessary')
+        if (not cls.__use_spectral_deform) \
+                and (y_unuse_spectral_deform is None):
+            y_unuse_spectral_deform = y_complex
 
         cls.__point_array = np.array(
             [calc_collocation_point(2*i_l-1, 2*cls.__num_point)
@@ -293,7 +306,7 @@ def spherical_laplacian_heinrichs(
     s_pos : complex | float
         The position of the point.
     mu_complex : ComplexCoordinate
-        The complex coordinate for spectral deformation.
+        The complex coordinate for the spectral deformation.
 
     Returns
     -------
