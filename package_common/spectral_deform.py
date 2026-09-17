@@ -143,15 +143,15 @@ class ComplexCoordinate(BackgroundField):
                    for value in self.params.values())
 
 
-def init_complex_coordinate_simple(
+def init_complex_coordinate_standard(
         y_start: float,
         y_end: float,
         *,
         alpha: float = 0,
         beta_0: float = 0,
         beta_1: float = 0) -> ComplexCoordinate:
-    """Construct an instance of the ComplexCoordinate class for the
-    simple complex coordinate transformation, e.g. y = s + i(1-s^2), in the
+    """Construct an instance of the ComplexCoordinate class for a
+    standard complex coordinate transformation, e.g. y = s + i(1-s^2), in the
     spectral deformation method.
 
     Parameters
@@ -189,7 +189,7 @@ def init_complex_coordinate_simple(
             and np.isclose(beta_0, 0) and np.isclose(beta_1, 0):
         logger.error('Invalid argument')
 
-    name: str = f'[simple_a={alpha}_b0={beta_0}_b1={beta_1}]'
+    name: str = f'[standard_a={alpha}_b0={beta_0}_b1={beta_1}]'
 
     params: dict[str, float] = {
         "alpha": alpha,
