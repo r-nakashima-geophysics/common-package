@@ -175,8 +175,8 @@ class ChebyshevGaussQuad:
 
         Warnings
         --------
-        `set_class_variable` class method has not been executed
-            If `set_class_variable` class method has not been executed.
+        `set_class_variable` class method has not been executed yet
+            If `set_class_variable` class method has not been executed yet.
 
         Notes
         -----
@@ -186,7 +186,7 @@ class ChebyshevGaussQuad:
 
         if not ChebyshevGaussQuad.__flag:
             ChebyshevGaussQuad.__logger.error(
-                '`set_class_variable` class method has not been executed')
+                '`set_class_variable` class method has not been executed yet')
 
         self.__num_point: int = ChebyshevGaussQuad.__num_point
         point_array: ArrayComplex | ArrayFloat \
