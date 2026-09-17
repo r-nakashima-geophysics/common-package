@@ -52,12 +52,17 @@ class ChebyshevGaussQuad:
 
         Warnings
         --------
+        `set_class_variable` class method has already been executed
+            If `set_class_variable` class method is called after it has already
+            been executed.
         `y_unuse_spectral_deform` is necessary
             If `y_unuse_spectral_deform` is None when the spectral deformation
             method is used.
         """
 
         if cls.__flag:
+            cls.__logger.warning(
+                '`set_class_variable` class method has already been executed')
             return
 
         cls.__cache_dict_array.clear()
