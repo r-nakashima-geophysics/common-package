@@ -14,7 +14,7 @@ type SharedMemory = shared_memory.SharedMemory
 type SharedInfo = list[tuple[str, tuple[int, ...], np.dtype]]
 
 
-def set_num_threads(num_threads: int) -> None | NoReturn:
+def set_num_threads(num_threads: int) -> None:
     """Set the number of threads for each process.
 
     Parameters

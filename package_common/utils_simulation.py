@@ -13,9 +13,22 @@ class Field:
 
     Attributes
     ----------
+    name : str
+        The name of the field.
+    time : float
+        The time.
+    value : ArrayFloat
+        The value of the field.
 
     Examples
     --------
+    >>> from package_common.utils_simulation import Field
+    >>> Field.set_class_variable(3, 2)
+    >>> field = Field('example')
+    >>> field.value
+    array([[0., 0.],
+        [0., 0.],
+        [0., 0.]])
     """
 
     __num_dim1: int
@@ -60,7 +73,7 @@ class Field:
 
     def __init__(self,
                  name: str,
-                 time: float = 0) -> None | NoReturn:
+                 time: float = 0) -> None:
         """Initialize an instance of the Field class.
 
         Parameters
@@ -85,19 +98,19 @@ class Field:
 
         self.value: ArrayFloat
         if (Field.__num_dim2 is None) and (Field.__num_dim3 is None):
-            self.value = np.empty(Field.__num_dim1, dtype=np.float64)
+            self.value = np.zeros(Field.__num_dim1, dtype=np.float64)
         elif (Field.__num_dim2 is not None) and (Field.__num_dim3 is None):
-            self.value = np.empty(
+            self.value = np.zeros(
                 (Field.__num_dim1, Field.__num_dim2), dtype=np.float64)
         elif (Field.__num_dim2 is not None) and (Field.__num_dim3 is not None):
-            self.value = np.empty(
+            self.value = np.zeros(
                 (Field.__num_dim1, Field.__num_dim2, Field.__num_dim3),
                 dtype=np.float64)
         else:
             Field.__logger.warning('`num_dim3` is interpreted as `num_dim2`')
             Field.__num_dim2 = Field.__num_dim3
             Field.__num_dim3 = None
-            self.value = np.empty(
+            self.value = np.zeros(
                 (Field.__num_dim1, Field.__num_dim2), dtype=np.float64)
 
     def value_copy(self,

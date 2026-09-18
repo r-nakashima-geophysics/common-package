@@ -44,6 +44,26 @@ class ComplexCoordinate(BackgroundField):
     use_spectral_deform : bool
         The boolean value to check whether the spectral deformation method is
         used or not.
+
+    Examples
+    --------
+    >>> from package_common.spectral_deform import ComplexCoordinate
+    >>> alpha = 1
+    >>> def value(x):
+    ...     return x + alpha * 1j
+    >>> def value_d(x):
+    ...     return 1
+    >>> def value_d2(x):
+    ...     return 0
+    >>> complex_coord = ComplexCoordinate(
+    ...     "example", value=value, value_d=value_d, value_d2=value_d2,
+    ...     params={"alpha": alpha})
+    >>> complex_coord.value(1)
+    (1+1j)
+    >>> complex_coord.inverse(0)
+    np.complex128(-1j)
+    >>> complex_coord.use_spectral_deform
+    True
     """
 
     def __init__(self,
@@ -51,7 +71,7 @@ class ComplexCoordinate(BackgroundField):
                  *,
                  value: FuncComplex,
                  value_d: FuncComplex,
-                 value_d2: FuncComplex | None = None,
+                 value_d2: FuncComplex,
                  tex: str | None = None,
                  params: dict[str, float]) -> None:
         """Initialize an instance of the ComplexCoordinate class.
@@ -65,7 +85,7 @@ class ComplexCoordinate(BackgroundField):
         value_d : FuncComplex
             The first derivative of the profile of the complex coordinate
             transformation.
-        value_d2 : FuncComplex | None, optional, default None
+        value_d2 : FuncComplex
             The second derivative of the profile of the complex coordinate
             transformation.
         tex : str | None, optional, default None
@@ -178,6 +198,13 @@ def init_complex_coordinate_standard(
     Invalid argument
         If `y_start` and `y_end` are equal, or if `alpha` is not zero when both
         `beta_0` and `beta_1` are zero.
+
+    Examples
+    --------
+    >>> from package_common.spectral_deform import init_complex_coordinate_standard
+    >>> complex_coord = init_complex_coordinate_standard(-1, 1, beta_0=1)
+    >>> complex_coord.value(0)
+    1j
     """
 
     logger: DefaultLogger = create_function_name_logger()

@@ -179,7 +179,7 @@ class DefaultGridPlotter(DefaultPlotter):
     def __init__(self,
                  nrows: int = 1,
                  ncols: int = 1,
-                 **kwargs) -> None:
+                 **kwargs: Any) -> None:
         """Initialize an instance of the DefaultGridPlotter class.
 
         Parameters

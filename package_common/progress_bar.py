@@ -27,7 +27,7 @@ class ProgressBar:
 
     def __init__(self,
                  name: str,
-                 num_calc: int) -> None | NoReturn:
+                 num_calc: int) -> None:
         """Initialize an instance of the ProgressBar class.
 
         Parameters
@@ -71,7 +71,7 @@ class ProgressBar:
 
     def update(self,
                i_calc: int,
-               num_process: int = 1) -> None | NoReturn:
+               num_process: int = 1) -> None:
         """Measure calculation times and update the progress bar.
 
         Parameters

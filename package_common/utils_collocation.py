@@ -14,7 +14,21 @@ type Func4Quad = Callable[[int, float | int | complex], complex | float]
 
 
 class ChebyshevGaussQuad:
-    """Class to perform the Chebyshev-Gauss quadrature."""
+    """Class to perform the Chebyshev-Gauss quadrature.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from package_common.utils_collocation import ChebyshevGaussQuad
+    >>> from package_common.spectral_deform import init_complex_coordinate_standard
+    >>> ChebyshevGaussQuad.set_class_variable(
+    ...     3, y_complex=init_complex_coordinate_standard(0, 1))
+    >>> def func_1(n, x):
+    ...     return np.cos(n * np.pi * x)
+    >>> vec_1 = np.array([1, 2, 3])
+    >>> ChebyshevGaussQuad(func_1=func_1).quadrature(vec_1=vec_1)
+    np.float64(1.0082019999294884)
+    """
 
     __num_degree: int
     __num_point: int
@@ -36,7 +50,7 @@ class ChebyshevGaussQuad:
             *,
             y_complex: ComplexCoordinate,
             y_unuse_spectral_deform: ComplexCoordinate | None = None,
-            use_analytic_cont: bool = True) -> None | NoReturn:
+            use_analytic_cont: bool = True) -> None:
         """Set the class variables.
 
         Parameters
@@ -161,8 +175,7 @@ class ChebyshevGaussQuad:
                  *,
                  func_1: Func4Quad,
                  func_2: Func4Quad | None = None,
-                 weight: FuncComplex | FuncFloat = lambda x: 1.0) \
-            -> None | NoReturn:
+                 weight: FuncComplex | FuncFloat = lambda x: 1.0) -> None:
         """Initialize an instance of the ChebyshevGaussQuad class.
 
         Parameters
@@ -171,7 +184,7 @@ class ChebyshevGaussQuad:
             The function associated with the first vector.
         func_2 : Func4Quad | None, optional, default None
             The function associated with the second vector.
-        weight : FuncFloat, optional, default lambda x: 1.0
+        weight : FuncComplex | FuncFloat, optional, default lambda x: 1.0
             The weight function for the quadrature of the first and second
             vectors.
 
@@ -288,6 +301,12 @@ def calc_collocation_point(i_l: int,
     Invalid argument
         If the input value is not within [0, num_point], or if num_point is not
         positive.
+
+    Examples
+    --------
+    >>> from package_common.utils_collocation import calc_collocation_point
+    >>> calc_collocation_point(1, 5)
+    np.float64(-0.8090169943749475)
     """
 
     if (0 <= i_l <= num_point) and (num_point > 0):
@@ -321,6 +340,14 @@ def spherical_laplacian_heinrichs(
     complex | float
         The value of the spherical horizontal Laplacian of the Heinrichs basis
         at the point.
+
+    Examples
+    --------
+    >>> from package_common.utils_collocation import spherical_laplacian_heinrichs
+    >>> from package_common.spectral_deform import init_complex_coordinate_standard
+    >>> mu_complex = init_complex_coordinate_standard(-1, 1)
+    >>> spherical_laplacian_heinrichs(1, 2, 0, mu_complex)
+    7.0
     """
 
     mu: complex | float
