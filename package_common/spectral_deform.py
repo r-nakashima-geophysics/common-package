@@ -31,10 +31,10 @@ class ComplexCoordinate(BackgroundField):
         The name of the complex coordinate transformation.
     value : FuncComplex
         The profile of the complex coordinate transformation.
-    value_d : FuncComplex | None
+    value_d : FuncComplex
         The first derivative of the profile of the complex coordinate
         transformation.
-    value_d2 : FuncComplex | None
+    value_d2 : FuncComplex
         The second derivative of the profile of the complex coordinate
         transformation.
     tex : str | None
@@ -201,7 +201,8 @@ def init_complex_coordinate_standard(
 
     Examples
     --------
-    >>> from package_common.spectral_deform import init_complex_coordinate_standard
+    >>> from package_common.spectral_deform \
+    ...     import init_complex_coordinate_standard
     >>> complex_coord = init_complex_coordinate_standard(-1, 1, beta_0=1)
     >>> complex_coord.value(0)
     1j

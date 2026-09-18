@@ -3,7 +3,7 @@
 
 import numpy as np
 
-from package_common.common_types import ArrayFloat, Callable, NoReturn
+from package_common.common_types import ArrayFloat, Callable
 from package_common.default_logger import DefaultLogger
 from package_common.utils_debug import under_construction_log
 

@@ -20,7 +20,8 @@ class ChebyshevGaussQuad:
     --------
     >>> import numpy as np
     >>> from package_common.utils_collocation import ChebyshevGaussQuad
-    >>> from package_common.spectral_deform import init_complex_coordinate_standard
+    >>> from package_common.spectral_deform \
+    ...     import init_complex_coordinate_standard
     >>> ChebyshevGaussQuad.set_class_variable(
     ...     3, y_complex=init_complex_coordinate_standard(0, 1))
     >>> def func_1(n, x):
@@ -343,8 +344,10 @@ def spherical_laplacian_heinrichs(
 
     Examples
     --------
-    >>> from package_common.utils_collocation import spherical_laplacian_heinrichs
-    >>> from package_common.spectral_deform import init_complex_coordinate_standard
+    >>> from package_common.utils_collocation \
+    ...     import spherical_laplacian_heinrichs
+    >>> from package_common.spectral_deform import \
+    ...     init_complex_coordinate_standard
     >>> mu_complex = init_complex_coordinate_standard(-1, 1)
     >>> spherical_laplacian_heinrichs(1, 2, 0, mu_complex)
     7.0
