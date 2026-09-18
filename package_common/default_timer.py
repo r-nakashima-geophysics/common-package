@@ -31,6 +31,7 @@ class DefaultTimer:
     >>> timer.end()
     """
 
+    __num_active_timers: int = 0
     __flag_import_caffeine: bool = False
     __caffeine: ModuleType
 
@@ -58,7 +59,7 @@ class DefaultTimer:
         self.__elapsed_time: float | None = None
         self.__split_time: float | None = None
         self.__net_time: float | None = None
-
+        self.__counted: bool = False
         self.__logger: DefaultLogger = DefaultLogger(name)
 
         DefaultTimer.__import_caffeine()
@@ -72,6 +73,10 @@ class DefaultTimer:
         elif not self.__running:
             self.__start_time = perf_counter()
         self.__running = True
+
+        if not self.__counted:
+            DefaultTimer.__num_active_timers += 1
+            self.__counted = True
 
     def show(self) -> None:
         """Show the elapsed time.
@@ -105,7 +110,12 @@ class DefaultTimer:
         self.__split_time = None
         self.__net_time = None
 
-        if DefaultTimer.__flag_import_caffeine:
+        if self.__counted:
+            DefaultTimer.__num_active_timers -= 1
+            self.__counted = False
+
+        if (DefaultTimer.__flag_import_caffeine) \
+                and (DefaultTimer.__num_active_timers == 0):
             DefaultTimer.__caffeine.off()
 
     def stop(self) -> None:
