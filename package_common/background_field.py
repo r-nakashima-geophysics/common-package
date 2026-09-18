@@ -1,6 +1,6 @@
 """A Python module to define a class for handling background fields."""
 
-from package_common.common_types import FuncComplex
+from package_common.common_types import FuncComplex, NoReturn
 from package_common.default_logger import DefaultLogger
 
 
@@ -68,7 +68,7 @@ class BackgroundField:
         self.__logger: DefaultLogger = DefaultLogger(self.name)
 
     def r_value(self,
-                x: float | int) -> float:
+                x: float | int) -> float | NoReturn:
         """Return the value of the background field at a given (real)
         point.
 
@@ -95,7 +95,7 @@ class BackgroundField:
         return self.value(x).real
 
     @property
-    def value_d(self) -> FuncComplex:
+    def value_d(self) -> FuncComplex | NoReturn:
         """Return the first derivative of the profile of the background
         field.
 
@@ -116,7 +116,7 @@ class BackgroundField:
         self.__logger.error('This attribute has not been set')
 
     def r_value_d(self,
-                  x: float | int) -> float:
+                  x: float | int) -> float | NoReturn:
         """Return the value of the first derivative of the profile of
         the background field at a given (real) point.
 
@@ -144,7 +144,7 @@ class BackgroundField:
         return self.value_d(x).real
 
     @property
-    def value_d2(self) -> FuncComplex:
+    def value_d2(self) -> FuncComplex | NoReturn:
         """Return the second derivative of the profile of the background
         field.
 
@@ -165,7 +165,7 @@ class BackgroundField:
         self.__logger.error('This attribute has not been set')
 
     def r_value_d2(self,
-                   x: float | int) -> float:
+                   x: float | int) -> float | NoReturn:
         """Return the value of the second derivative of the profile of
         the background field at a given (real) point.
 

@@ -1,5 +1,6 @@
 """A Python module to define a class for displaying the progress bar."""
 
+from package_common.common_types import NoReturn
 from package_common.default_logger import DefaultLogger
 from package_common.default_timer import DefaultTimer
 
@@ -26,7 +27,7 @@ class ProgressBar:
 
     def __init__(self,
                  name: str,
-                 num_calc: int) -> None:
+                 num_calc: int) -> None | NoReturn:
         """Initialize an instance of the ProgressBar class.
 
         Parameters
@@ -70,7 +71,7 @@ class ProgressBar:
 
     def update(self,
                i_calc: int,
-               num_process: int = 1) -> None:
+               num_process: int = 1) -> None | NoReturn:
         """Measure calculation times and update the progress bar.
 
         Parameters

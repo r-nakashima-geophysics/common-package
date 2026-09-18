@@ -4,7 +4,8 @@ import numpy as np
 
 from package_common.calc_heinrichs import calc_heinrichs
 from package_common.common_types import (ArrayComplex, ArrayFloat, Callable,
-                                         FuncComplex, FuncFloat, cast)
+                                         FuncComplex, FuncFloat, NoReturn,
+                                         cast)
 from package_common.default_logger import DefaultLogger
 from package_common.spectral_deform import ComplexCoordinate
 from package_common.utils_name import create_function_name_logger
@@ -35,7 +36,7 @@ class ChebyshevGaussQuad:
             *,
             y_complex: ComplexCoordinate,
             y_unuse_spectral_deform: ComplexCoordinate | None = None,
-            use_analytic_cont: bool = True) -> None:
+            use_analytic_cont: bool = True) -> None | NoReturn:
         """Set the class variables.
 
         Parameters
@@ -160,7 +161,8 @@ class ChebyshevGaussQuad:
                  *,
                  func_1: Func4Quad,
                  func_2: Func4Quad | None = None,
-                 weight: FuncComplex | FuncFloat = lambda x: 1.0) -> None:
+                 weight: FuncComplex | FuncFloat = lambda x: 1.0) \
+            -> None | NoReturn:
         """Initialize an instance of the ChebyshevGaussQuad class.
 
         Parameters
@@ -218,7 +220,8 @@ class ChebyshevGaussQuad:
     def quadrature(self,
                    *,
                    vec_1: ArrayComplex,
-                   vec_2: ArrayComplex | None = None) -> ArrayComplex:
+                   vec_2: ArrayComplex | None = None) \
+            -> ArrayComplex | NoReturn:
         """Calculate the integrals of conj(field_1) * field_2 * weight using
         the Chebyshev-Gauss quadrature for all eigenmodes, where field_1 =
         sum(vec_1 * func_1) and field_2 = sum(vec_2 * func_2). The weight
@@ -265,7 +268,7 @@ class ChebyshevGaussQuad:
 
 
 def calc_collocation_point(i_l: int,
-                           num_point: int) -> float:
+                           num_point: int) -> float | NoReturn:
     """Calculate a Gauss-Lobatto collocation point.
 
     Parameters

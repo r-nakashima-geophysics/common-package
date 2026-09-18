@@ -4,12 +4,14 @@ import inspect
 import logging
 from types import FrameType
 
+from package_common.common_types import NoReturn
 from package_common.default_logger import DefaultLogger
 from package_common.default_timer import DefaultTimer
 from package_common.progress_bar import ProgressBar
 
 
-def get_current_function_name(frame: FrameType | None = None) -> str:
+def get_current_function_name(
+        frame: FrameType | None = None) -> str | NoReturn:
     """Return the name of the current function.
 
     Parameters

@@ -3,7 +3,7 @@
 import numpy as np
 
 from package_common.common_types import (ArrayAny, ArrayBool, ArrayComplex,
-                                         ArrayInt)
+                                         ArrayInt, NoReturn)
 from package_common.default_logger import DefaultLogger
 from package_common.utils_name import create_function_name_logger
 
@@ -45,8 +45,9 @@ def sort_eig(eigenvalues: ArrayComplex,
 
 def screening_eig(matrix_eig: ArrayComplex,
                   check: ArrayBool,
-                  *phys_qtys: ArrayAny) -> tuple[ArrayComplex,
-                                                 tuple[ArrayAny, ...]]:
+                  *phys_qtys: ArrayAny) \
+    -> tuple[ArrayComplex,
+             tuple[ArrayAny, ...]] | NoReturn:
     """Exclude invalid eigenmodes.
 
     Parameters

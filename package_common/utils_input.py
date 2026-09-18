@@ -2,14 +2,14 @@
 
 import sys
 
-from package_common.common_types import Callable, TypeVarIntFloat
+from package_common.common_types import Callable, NoReturn, TypeVarIntFloat
 from package_common.default_logger import DefaultLogger
 from package_common.utils_name import create_function_name_logger
 
 
 def input_value(default: TypeVarIntFloat,
                 cast: Callable[[str], TypeVarIntFloat]) \
-        -> TypeVarIntFloat:
+        -> TypeVarIntFloat | NoReturn:
     """Input a value from the command line or use a default value.
 
     When there is a command line argument, it overrides the default value.
@@ -66,7 +66,7 @@ def input_value(default: TypeVarIntFloat,
 def input_value_within(min_value: TypeVarIntFloat,
                        max_value: TypeVarIntFloat,
                        cast: Callable[[str], TypeVarIntFloat]) \
-        -> TypeVarIntFloat:
+        -> TypeVarIntFloat | NoReturn:
     """Input a value within a specified range from the command line.
 
     Parameters

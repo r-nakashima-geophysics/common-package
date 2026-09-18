@@ -3,7 +3,7 @@
 
 import numpy as np
 
-from package_common.common_types import ArrayFloat, Callable
+from package_common.common_types import ArrayFloat, Callable, NoReturn
 from package_common.default_logger import DefaultLogger
 from package_common.utils_debug import under_construction_log
 
@@ -60,7 +60,7 @@ class Field:
 
     def __init__(self,
                  name: str,
-                 time: float = 0) -> None:
+                 time: float = 0) -> None | NoReturn:
         """Initialize an instance of the Field class.
 
         Parameters

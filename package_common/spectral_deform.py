@@ -14,7 +14,7 @@ import numpy as np
 from scipy import optimize
 
 from package_common.background_field import BackgroundField
-from package_common.common_types import FuncComplex
+from package_common.common_types import FuncComplex, NoReturn
 from package_common.default_logger import DefaultLogger
 from package_common.utils_name import create_function_name_logger
 
@@ -149,7 +149,7 @@ def init_complex_coordinate_standard(
         *,
         alpha: float = 0,
         beta_0: float = 0,
-        beta_1: float = 0) -> ComplexCoordinate:
+        beta_1: float = 0) -> ComplexCoordinate | NoReturn:
     """Construct an instance of the ComplexCoordinate class for a
     standard complex coordinate transformation, e.g. y = s + i(1-s^2), in the
     spectral deformation method.
