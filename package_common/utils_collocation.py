@@ -89,10 +89,9 @@ class ChebyshevGaussQuad:
         cls.__use_analytic_cont = use_analytic_cont
         cls.__flag = True
 
-        if cls.__use_spectral_deform and (y_unuse_spectral_deform is None):
-            cls.__logger.error('`y_unuse_spectral_deform` is necessary')
-        if (not cls.__use_spectral_deform) \
-                and (y_unuse_spectral_deform is None):
+        if y_unuse_spectral_deform is None:
+            if cls.__use_spectral_deform:
+                cls.__logger.error('`y_unuse_spectral_deform` is necessary')
             y_unuse_spectral_deform = y_complex
 
         cls.__point_array = np.array(

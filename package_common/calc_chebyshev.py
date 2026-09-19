@@ -151,13 +151,18 @@ def _calc_chebyshev(n_degree: int,
     chebyshev_d2, and chebyshev_d3.
     """
 
-    is_complex: bool = isinstance(s_pos, complex)
+    t: complex | float
+    nt: complex | float
+    cos_nt: complex | float
+    if isinstance(s_pos, complex):
+        t = cmath.acos(s_pos)
+        nt = n_degree * t
+        cos_nt = cmath.cos(nt)
+    else:
+        t = math.acos(s_pos)
+        nt = n_degree * t
+        cos_nt = math.cos(nt)
 
-    t: complex | float \
-        = cmath.acos(s_pos) if is_complex else math.acos(s_pos)
-    nt: complex | float = n_degree * t
-    cos_nt: complex | float \
-        = cmath.cos(nt) if is_complex else math.cos(nt)
     if order == 0:
         return (cos_nt,)
 
@@ -165,13 +170,21 @@ def _calc_chebyshev(n_degree: int,
     cheb_d2: complex | float
     cheb_d3: complex | float
 
-    n_sq: int
+    sin_t: complex | float
+    if isinstance(t, complex):
+        sin_t = cmath.sin(t)
+    else:
+        sin_t = math.sin(t)
 
-    sin_t: complex | float = cmath.sin(t) if is_complex else math.sin(t)
+    n_sq: int
     if not np.isclose(sin_t, 0.0):
 
-        sin_nt: complex | float \
-            = cmath.sin(nt) if is_complex else math.sin(nt)
+        sin_nt: complex | float
+        if isinstance(nt, complex):
+            sin_nt = cmath.sin(nt)
+        else:
+            sin_nt = math.sin(nt)
+
         cheb_d = n_degree * sin_nt / sin_t
         if order == 1:
             return (cos_nt, cheb_d)

@@ -52,7 +52,7 @@ class Field:
                            num_dim2: int | None = None,
                            num_dim3: int | None = None,
                            *,
-                           num_tmp: int = 3) -> None | NoReturn:
+                           num_tmp: int = 3) -> None:
         """Set the class variables.
 
         Parameters
@@ -96,7 +96,13 @@ class Field:
 
     @classmethod
     def num_tmp(cls) -> int:
-        """Return the number of temporary storages."""
+        """Return the number of temporary storages.
+
+        Returns
+        -------
+        int
+            The number of temporary storages.
+        """
 
         return cls.__num_tmp
 
@@ -190,7 +196,7 @@ def time_integrate(fields: Field | list[Field],
     >>> field = Field(name='example')
     >>> field.value = np.array([1.0, 1.0])
     >>> rhs = lambda x, t: np.array([[0, 1], [-1, 0]]) @ x
-    >>> for _  in range(10):
+    >>> for _ in range(10):
     ...     field = time_integrate(field, 0.01, rhs)
     ...     print(field.value)
     [1.00994983 0.98995017]
@@ -207,59 +213,66 @@ def time_integrate(fields: Field | list[Field],
 
     is_list: bool = isinstance(fields, (list, tuple))
 
-    if not is_list:
-        fields = [fields]
-    if not isinstance(rhss, (list, tuple)):
-        rhss = [rhss]
-    if len(fields) != len(rhss):
-        logger: DefaultLogger = create_function_name_logger()
+    list_field: list[Field]
+    if isinstance(fields, (list, tuple)):
+        list_field = fields
+    else:
+        list_field = [fields]
+    if isinstance(rhss, (list, tuple)):
+        list_rhs = rhss
+    else:
+        list_rhs = [rhss]
+
+    logger: DefaultLogger
+    if len(list_field) != len(list_rhs):
+        logger = create_function_name_logger()
         logger.error('Mismatch length between `fields` and `rhss`')
 
     if method == 'RK4':
 
         if Field.num_tmp() < 3:
-            logger: DefaultLogger = create_function_name_logger()
+            logger = create_function_name_logger()
             logger.error('Lack of sufficient temporary storage')
 
-        for field in fields:
+        for field in list_field:
             field.copy_to_tmp()
 
         k: ArrayComplex | ArrayFloat
         values: ArrayComplex | ArrayFloat | list[ArrayComplex | ArrayFloat] \
-            = [field.value_tmp[2] for field in fields] if is_list \
-            else fields[0].value_tmp[2]
-        time: float = fields[0].time
-        for field, rhs in zip(fields, rhss):
+            = [field.value_tmp[2] for field in list_field] if is_list \
+            else list_field[0].value_tmp[2]
+        time: float = list_field[0].time
+        for field, rhs in zip(list_field, list_rhs):
             k = rhs(values, time) * dt
             field.value_tmp[0] += 0.5 * k
             field.value += k / 6
 
-        values = [field.value_tmp[0] for field in fields] if is_list \
-            else fields[0].value_tmp[0]
+        values = [field.value_tmp[0] for field in list_field] if is_list \
+            else list_field[0].value_tmp[0]
         time += 0.5 * dt
-        for field, rhs in zip(fields, rhss):
+        for field, rhs in zip(list_field, list_rhs):
             k = rhs(values, time) * dt
             field.value_tmp[1] += 0.5 * k
             field.value += k / 3
 
-        values = [field.value_tmp[1] for field in fields] if is_list \
-            else fields[0].value_tmp[1]
-        for field, rhs in zip(fields, rhss):
+        values = [field.value_tmp[1] for field in list_field] if is_list \
+            else list_field[0].value_tmp[1]
+        for field, rhs in zip(list_field, list_rhs):
             k = rhs(values, time) * dt
             field.value_tmp[2] += k
             field.value += k / 3
 
-        values = [field.value_tmp[2] for field in fields] if is_list \
-            else fields[0].value_tmp[2]
+        values = [field.value_tmp[2] for field in list_field] if is_list \
+            else list_field[0].value_tmp[2]
         time += 0.5 * dt
-        for field, rhs in zip(fields, rhss):
+        for field, rhs in zip(list_field, list_rhs):
             k = rhs(values, time) * dt
             field.value += k / 6
 
-        for field in fields:
+        for field in list_field:
             field.time = time
 
     else:
         under_construction_log()
 
-    return fields if is_list else fields[0]
+    return list_field if is_list else list_field[0]
