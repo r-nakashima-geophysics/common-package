@@ -2,14 +2,12 @@
 
 import numpy as np
 
-from package_common.common_types import ArrayComplex, ArrayFloat, Callable
+from package_common.common_types import Any, ArrayComplex, ArrayFloat, Callable
 from package_common.default_logger import DefaultLogger
 from package_common.utils_debug import under_construction_log
 from package_common.utils_name import create_function_name_logger
 
-type Rhs = Callable[[ArrayComplex | ArrayFloat |
-                     list[ArrayComplex | ArrayFloat], float],
-                    ArrayComplex | ArrayFloat]
+type Rhs = Callable[..., ArrayComplex | ArrayFloat]
 
 
 class Field:
@@ -24,7 +22,9 @@ class Field:
     value : ArrayComplex | ArrayFloat
         The value of the field.
     value_tmp : list[ArrayComplex | ArrayFloat]
-        The temporary storages for the value of the field.
+        The temporary storage arrays.
+    num_tmp : int
+        The number of temporary storage arrays.
 
     Examples
     --------
@@ -40,7 +40,6 @@ class Field:
     __num_dim1: int
     __num_dim2: int | None
     __num_dim3: int | None
-    __num_tmp: int
 
     __flag: bool = False
     __logger: DefaultLogger = DefaultLogger(__name__)
@@ -49,9 +48,7 @@ class Field:
     def set_class_variable(cls,
                            num_dim1: int,
                            num_dim2: int | None = None,
-                           num_dim3: int | None = None,
-                           *,
-                           num_tmp: int = 3) -> None:
+                           num_dim3: int | None = None) -> None:
         """Set the class variables.
 
         Parameters
@@ -62,16 +59,12 @@ class Field:
             The number of elements of the second dimension.
         num_dim3 : int | None, optional, default None.
             The number of elements of the third dimension.
-        num_tmp : int, optional, default 3
-            The number of temporary storages for the value of the field.
 
         Warnings
         --------
         `set_class_variable` class method has already been executed
             If `set_class_variable` class method is called after it has already
             been executed.
-        Invalid argument
-            If `num_tmp` is negative.
         """
 
         if cls.__flag:
@@ -79,13 +72,9 @@ class Field:
                 '`set_class_variable` class method has already been executed')
             return
 
-        if num_tmp < 0:
-            cls.__logger.error('Invalid argument')
-
         cls.__num_dim1 = num_dim1
         cls.__num_dim2 = num_dim2
         cls.__num_dim3 = num_dim3
-        cls.__num_tmp = num_tmp
         cls.__flag = True
 
         if (cls.__num_dim2 is None) and (cls.__num_dim3 is not None):
@@ -93,22 +82,11 @@ class Field:
             cls.__num_dim2 = cls.__num_dim3
             cls.__num_dim3 = None
 
-    @classmethod
-    def num_tmp(cls) -> int:
-        """Return the number of temporary storages.
-
-        Returns
-        -------
-        int
-            The number of temporary storages.
-        """
-
-        return cls.__num_tmp
-
     def __init__(self,
                  name: str,
                  time: float = 0,
                  *,
+                 num_tmp: int = 3,
                  dtype: type = np.float64) -> None:
         """Initialize an instance of the Field class.
 
@@ -120,19 +98,27 @@ class Field:
             The time.
         dtype : type, optional, default np.float64
             The data type of the `value` array.
+        num_tmp : int, optional, default 3
+            The number of temporary storage arrays.
 
         Warnings
         --------
         `set_class_variable` class method has not been executed yet
             If `set_class_variable` class method has not been executed yet.
+        Invalid argument
+            If `num_tmp` is negative.
         """
 
         if not Field.__flag:
             Field.__logger.error(
                 '`set_class_variable` class method has not been executed yet')
 
+        if num_tmp < 0:
+            DefaultLogger(name).__logger.error('Invalid argument')
+
         self.name: str = name
         self.time: float = time
+        self.num_tmp: int = num_tmp
 
         self.value: ArrayComplex | ArrayFloat
         if Field.__num_dim2 is None:
@@ -146,12 +132,29 @@ class Field:
                 dtype=dtype)
 
         self.value_tmp: list[ArrayComplex | ArrayFloat] \
-            = [np.zeros_like(self.value) for _ in range(Field.__num_tmp)]
+            = [np.zeros_like(self.value) for _ in range(self.num_tmp)]
 
-    def copy_to_tmp(self) -> None:
-        """Copy the value to the temporary storage."""
+    def copy_to_tmp(self,
+                    *,
+                    num_copy: int | None = None) -> None:
+        """Copy the values to the temporary storage arrays.
 
-        for i in range(Field.__num_tmp):
+        Parameters
+        ----------
+        num_copy : int | None, optional, default None
+            The number of temporary storage arrays to which the values are
+            copied.
+
+        Notes
+        -----
+        If `num_copy` is None, the values are copied to all temporary storage
+        arrays.
+        """
+
+        if num_copy is None:
+            num_copy = self.num_tmp
+
+        for i in range(num_copy):
             np.copyto(self.value_tmp[i], self.value)
 
 
@@ -159,7 +162,8 @@ def time_integrate(fields: Field | list[Field],
                    dt: float,
                    rhss: Rhs | list[Rhs],
                    *,
-                   method: str = 'RK4') -> Field | list[Field]:
+                   method: str = 'RK4',
+                   args: tuple[Any, ...] = ()) -> Field | list[Field]:
     """Time integrate the evolution of fields.
 
     Parameters
@@ -172,6 +176,8 @@ def time_integrate(fields: Field | list[Field],
         The right-hand side(s) of the differential equation(s).
     method : str, optional, default 'RK4'
         The integration method.
+    args : tuple[Any, ...], optional, default ()
+        Additional arguments.
 
     Returns
     -------
@@ -182,9 +188,9 @@ def time_integrate(fields: Field | list[Field],
     --------
     Mismatch length between `fields` and `rhss`
         If the lengths of `fields` and `rhss` mismatch.
-    Lack of sufficient temporary storage
-        If the number of temporary storages is less than a required number for
-        the chosen method (e.g., 3 for RK4).
+    Lack of sufficient temporary storage arrays
+        If the number of temporary storage arrays is less than the required
+        number for the chosen method (e.g., 3 for RK4).
 
     Examples
     --------
@@ -229,12 +235,11 @@ def time_integrate(fields: Field | list[Field],
 
     if method == 'RK4':
 
-        if Field.num_tmp() < 3:
-            logger = create_function_name_logger()
-            logger.error('Lack of sufficient temporary storage')
-
         for field in list_field:
-            field.copy_to_tmp()
+            if field.num_tmp < 3:
+                logger = create_function_name_logger()
+                logger.error('Lack of sufficient temporary storage arrays')
+            field.copy_to_tmp(num_copy=3)
 
         k: ArrayComplex | ArrayFloat
         values: ArrayComplex | ArrayFloat | list[ArrayComplex | ArrayFloat] \
@@ -242,7 +247,7 @@ def time_integrate(fields: Field | list[Field],
             else list_field[0].value_tmp[2]
         time: float = list_field[0].time
         for field, rhs in zip(list_field, list_rhs):
-            k = rhs(values, time) * dt
+            k = rhs(values, time, *args) * dt
             field.value_tmp[0] += 0.5 * k
             field.value += k / 6
 
@@ -250,14 +255,14 @@ def time_integrate(fields: Field | list[Field],
             else list_field[0].value_tmp[0]
         time += 0.5 * dt
         for field, rhs in zip(list_field, list_rhs):
-            k = rhs(values, time) * dt
+            k = rhs(values, time, *args) * dt
             field.value_tmp[1] += 0.5 * k
             field.value += k / 3
 
         values = [field.value_tmp[1] for field in list_field] if is_list \
             else list_field[0].value_tmp[1]
         for field, rhs in zip(list_field, list_rhs):
-            k = rhs(values, time) * dt
+            k = rhs(values, time, *args) * dt
             field.value_tmp[2] += k
             field.value += k / 3
 
@@ -265,7 +270,7 @@ def time_integrate(fields: Field | list[Field],
             else list_field[0].value_tmp[2]
         time += 0.5 * dt
         for field, rhs in zip(list_field, list_rhs):
-            k = rhs(values, time) * dt
+            k = rhs(values, time, *args) * dt
             field.value += k / 6
 
         for field in list_field:
