@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from package_common.calc_heinrichs import calc_heinrichs
+from package_common.calc_heinrichs import _calc_heinrichs
 from package_common.common_types import (ArrayComplex, ArrayFloat, Callable,
                                          FuncComplex, FuncFloat, NoReturn,
                                          cast)
@@ -23,12 +23,12 @@ class ChebyshevGaussQuad:
     >>> from package_common.spectral_deform \
     ...     import init_complex_coordinate_standard
     >>> ChebyshevGaussQuad.set_class_variable(
-    ...     3, y_complex=init_complex_coordinate_standard(0, 1))
+    ...     3, y_complex=init_complex_coordinate_standard(0, np.pi))
     >>> def func_1(n, x):
     ...     return np.cos(n * np.pi * x)
     >>> vec_1 = np.array([1, 2, 3])
     >>> ChebyshevGaussQuad(func_1=func_1).quadrature(vec_1=vec_1)
-    np.float64(1.0082019999294884)
+    np.float64(3.1673599963130186)
     """
 
     __num_degree: int
@@ -346,11 +346,11 @@ def spherical_laplacian_heinrichs(
     --------
     >>> from package_common.utils_collocation \
     ...     import spherical_laplacian_heinrichs
-    >>> from package_common.spectral_deform import \
-    ...     init_complex_coordinate_standard
+    >>> from package_common.spectral_deform \
+    ...     import init_complex_coordinate_standard
     >>> mu_complex = init_complex_coordinate_standard(-1, 1)
-    >>> spherical_laplacian_heinrichs(1, 2, 0, mu_complex)
-    7.0
+    >>> spherical_laplacian_heinrichs(2, 3, 0.5, mu_complex)
+    11.250000000000002
     """
 
     mu: complex | float
@@ -371,7 +371,7 @@ def spherical_laplacian_heinrichs(
     heinrichs: complex | float
     heinrichs_d: complex | float
     heinrichs_d2: complex | float
-    heinrichs, heinrichs_d, heinrichs_d2 = calc_heinrichs(n_degree, s_pos, 2)
+    heinrichs, heinrichs_d, heinrichs_d2 = _calc_heinrichs(n_degree, s_pos, 2)
 
     return (
         sin_sq * heinrichs_d2 / (mu_d**2)

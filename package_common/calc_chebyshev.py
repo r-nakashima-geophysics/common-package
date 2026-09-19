@@ -38,7 +38,7 @@ def chebyshev(n_degree: int,
     -1.0
     """
 
-    return calc_chebyshev(n_degree, s_pos, 0)[0]
+    return _calc_chebyshev(n_degree, s_pos, 0)[0]
 
 
 def chebyshev_d(n_degree: int,
@@ -66,7 +66,7 @@ def chebyshev_d(n_degree: int,
     4.2423009548996277e-16
     """
 
-    return calc_chebyshev(n_degree, s_pos, 1)[1]
+    return _calc_chebyshev(n_degree, s_pos, 1)[1]
 
 
 def chebyshev_d2(n_degree: int,
@@ -94,7 +94,7 @@ def chebyshev_d2(n_degree: int,
     12.000000000000002
     """
 
-    return calc_chebyshev(n_degree, s_pos, 2)[2]
+    return _calc_chebyshev(n_degree, s_pos, 2)[2]
 
 
 def chebyshev_d3(n_degree: int,
@@ -122,12 +122,12 @@ def chebyshev_d3(n_degree: int,
     24.000000000000007
     """
 
-    return calc_chebyshev(n_degree, s_pos, 3)[3]
+    return _calc_chebyshev(n_degree, s_pos, 3)[3]
 
 
-def calc_chebyshev(n_degree: int,
-                   s_pos: complex | float,
-                   order: int) -> tuple[complex | float, ...]:
+def _calc_chebyshev(n_degree: int,
+                    s_pos: complex | float,
+                    order: int) -> tuple[complex | float, ...]:
     """Helper function to calculate the value of a Chebyshev polynomial or its
     derivatives at a given point.
 

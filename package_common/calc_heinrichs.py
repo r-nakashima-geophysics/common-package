@@ -7,7 +7,7 @@ References
 (2001).
 """
 
-from package_common.calc_chebyshev import calc_chebyshev
+from package_common.calc_chebyshev import _calc_chebyshev
 from package_common.utils_debug import under_construction_log
 
 
@@ -34,7 +34,7 @@ def heinrichs(n_degree: int,
     -0.75
     """
 
-    return calc_heinrichs(n_degree, s_pos, 0)[0]
+    return _calc_heinrichs(n_degree, s_pos, 0)[0]
 
 
 def heinrichs_d(n_degree: int,
@@ -61,7 +61,7 @@ def heinrichs_d(n_degree: int,
     1.0000000000000002
     """
 
-    return calc_heinrichs(n_degree, s_pos, 1)[1]
+    return _calc_heinrichs(n_degree, s_pos, 1)[1]
 
 
 def heinrichs_d2(n_degree: int,
@@ -88,7 +88,7 @@ def heinrichs_d2(n_degree: int,
     11.000000000000002
     """
 
-    return calc_heinrichs(n_degree, s_pos, 2)[2]
+    return _calc_heinrichs(n_degree, s_pos, 2)[2]
 
 
 def heinrichs_d3(n_degree: int,
@@ -115,12 +115,12 @@ def heinrichs_d3(n_degree: int,
     -18.000000000000004
     """
 
-    return calc_heinrichs(n_degree, s_pos, 3)[3]
+    return _calc_heinrichs(n_degree, s_pos, 3)[3]
 
 
-def calc_heinrichs(n_degree: int,
-                   s_pos: complex | float,
-                   order: int) -> tuple[complex | float, ...]:
+def _calc_heinrichs(n_degree: int,
+                    s_pos: complex | float,
+                    order: int) -> tuple[complex | float, ...]:
     """Helper function to calculate the value of the Heinrichs basis or its
     derivatives at a given point.
 
@@ -145,7 +145,7 @@ def calc_heinrichs(n_degree: int,
     """
 
     tuple_cheb: tuple[complex | float, ...] \
-        = calc_chebyshev(n_degree, s_pos, order)
+        = _calc_chebyshev(n_degree, s_pos, order)
 
     cheb: complex | float = tuple_cheb[0]
     s_sin_sq: complex | float = 1 - (s_pos**2)
