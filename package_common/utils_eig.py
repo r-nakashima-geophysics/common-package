@@ -26,9 +26,14 @@ def sort_eig(eigenvalues: ArrayComplex,
 
     Examples
     --------
+    >>> import numpy as np
     >>> from package_common.utils_eig import sort_eig
+    >>> matrix = np.array([[1, 2], [3, 4]])
     >>> eigenvalues, eigenvectors = np.linalg.eig(matrix)
-    >>> matrix_eig = sort_eig(eigenvalues, eigenvectors)
+    >>> sort_eig(eigenvalues, eigenvectors)
+    array([[-0.82456484+0.j, -0.41597356+0.j],
+           [ 0.56576746+0.j, -0.90937671+0.j],
+           [-0.37228132+0.j,  5.37228132+0.j]])
     """
 
     size_matrix: int = len(eigenvalues)
@@ -74,10 +79,21 @@ def screening_eig(matrix_eig: ArrayComplex,
 
     Examples
     --------
+    >>> import numpy as np
     >>> from package_common.utils_eig import sort_eig, screening_eig
+    >>> matrix = np.array([[1, 2], [3, 4]])
+    >>> check = np.array([True, False])
+    >>> phys_qtys = np.array([10.0, 20.0])
     >>> eigenvalues, eigenvectors = np.linalg.eig(matrix)
     >>> matrix_eig = sort_eig(eigenvalues, eigenvectors)
-    >>> matrix_eig, phys_qtys = screening_eig(matrix_eig, check, phys_qtys)
+    >>> screening_eig(matrix_eig, check, phys_qtys)
+    (array([[-0.82456484+0.j,         nan+0.j],
+           [ 0.56576746+0.j,         nan+0.j],
+           [-0.37228132+0.j,         nan+0.j]]), (array([10., nan]),))
+
+    Notes
+    -----
+    Arrays of type `ArrayInt` are not supported in `phys_qtys`.
     """
 
     logger: DefaultLogger

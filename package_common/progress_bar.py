@@ -42,6 +42,9 @@ class ProgressBar:
             If `num_calc` is not positive.
         """
 
+        if num_calc <= 0:
+            DefaultLogger(name).error('Invalid argument')
+
         self.__name: str = name
         self.__num_calc: int = num_calc
 
@@ -53,9 +56,6 @@ class ProgressBar:
 
         self.__logger: DefaultLogger = DefaultLogger(self.__name)
         self.__timer: DefaultTimer = DefaultTimer(self.__name)
-
-        if self.__num_calc <= 0:
-            self.__logger.error('Invalid argument')
 
     def start(self) -> None:
         """Start the progress bar."""
