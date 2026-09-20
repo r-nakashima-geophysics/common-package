@@ -300,7 +300,7 @@ def calc_collocation_point(i_l: int,
     Warnings
     --------
     Invalid argument
-        If the input value is not within [0, num_point], or if num_point is not
+        If `i_l` is not within [0, num_point], or if `num_point` is not
         positive.
 
     Examples

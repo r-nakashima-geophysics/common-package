@@ -116,7 +116,7 @@ class Field:
                 '`set_class_variable` class method has not been executed yet')
 
         if num_tmp < 0:
-            DefaultLogger(name).__logger.error('Invalid argument')
+            DefaultLogger(name).error('Invalid argument')
 
         self.name: str = name
         self.time: float = time
@@ -147,6 +147,11 @@ class Field:
             The number of temporary storage arrays to which the values are
             copied.
 
+        Warnings
+        --------
+        Invalid argument
+            If `num_copy` is not within [0, `num_tmp`].
+
         Notes
         -----
         If `num_copy` is None, the values are copied to all temporary storage
@@ -155,6 +160,10 @@ class Field:
 
         if num_copy is None:
             num_copy = self.num_tmp
+
+        if not (0 <= num_copy <= self.num_tmp):
+            logger: DefaultLogger = create_function_name_logger()
+            logger.error('Invalid argument')
 
         for i in range(num_copy):
             np.copyto(self.value_tmp[i], self.value)
