@@ -7,7 +7,9 @@ from package_common.default_logger import DefaultLogger
 from package_common.utils_debug import under_construction_log
 from package_common.utils_name import create_function_name_logger
 
-type Rhs = Callable[..., ArrayComplex | ArrayFloat]
+type Rhs = Callable[
+    [ArrayComplex | ArrayFloat | list[ArrayComplex | ArrayFloat], float, ...],
+    ArrayComplex | ArrayFloat]
 
 
 class Field:
@@ -214,6 +216,12 @@ def time_integrate(fields: Field | list[Field],
     [1.0767164  0.91688701]
     [1.08583128 0.90607418]
     [1.09483758 0.89517075]
+
+    Notes
+    -----
+    The first argument of `rhs` must be the list of `field.value` (or a single
+    `field.value`), the second argument must be the current time, and the
+    remaining arguments are optional additional arguments.
     """
 
     is_list: bool = isinstance(fields, (list, tuple))
