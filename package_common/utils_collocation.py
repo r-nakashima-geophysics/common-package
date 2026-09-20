@@ -7,7 +7,8 @@ from package_common.common_types import (ArrayComplex, ArrayFloat, Callable,
                                          FuncComplex, FuncFloat, NoReturn,
                                          cast)
 from package_common.default_logger import DefaultLogger
-from package_common.spectral_deform import ComplexCoordinate
+from package_common.spectral_deform import (ComplexCoordinate,
+                                            init_complex_coordinate_standard)
 from package_common.utils_name import create_function_name_logger
 
 type Func4Quad = Callable[[int, float | int | complex], complex | float]
@@ -84,7 +85,7 @@ class ChebyshevGaussQuad:
         cls.__cache_dict_array.clear()
 
         cls.__num_degree = num_degree
-        cls.__num_point = 3 * cls.__num_degree + (num_degree % 2)
+        cls.__num_point = 2 * cls.__num_degree
         cls.__use_spectral_deform = y_complex.use_spectral_deform
         cls.__use_analytic_cont = use_analytic_cont
         cls.__flag = True
@@ -95,7 +96,7 @@ class ChebyshevGaussQuad:
             y_unuse_spectral_deform = y_complex
 
         cls.__point_array = np.array(
-            [calc_collocation_point(2*i_l-1, 2*cls.__num_point)
+            [calc_collocation_point(2*i_l-1, 2*cls.__num_point+1)
              for i_l in range(1, cls.__num_point+1)], dtype=np.float64
         )
 
@@ -306,21 +307,94 @@ def calc_collocation_point(i_l: int,
     --------
     >>> from package_common.utils_collocation import calc_collocation_point
     >>> calc_collocation_point(1, 5)
-    np.float64(-0.8090169943749475)
+    np.float64(-0.7071067811865476)
     """
 
     if (0 <= i_l <= num_point) and (num_point > 0):
-        return -np.cos(i_l*np.pi/num_point)
+        return -np.cos(i_l*np.pi/(num_point-1))
+
+    logger: DefaultLogger = create_function_name_logger()
+    logger.error('Invalid argument')
+
+
+def create_chebyshev_diff_mat(num_point: int) -> ArrayFloat:
+    """Create the Chebyshev differentiation matrix.
+
+    Parameters
+    ----------
+    num_point : int
+        The number of the collocation points.
+
+    Returns
+    -------
+    diff_mat : ArrayFloat
+        The Chebyshev differentiation matrix.
+
+    Warnings
+    --------
+    Invalid argument
+        If num_point is not positive.
+
+    References
+    ----------
+    [1] Peyret, Roger. Spectral methods for incompressible viscous flow. New
+    York: Springer, (2002).
+
+    Notes
+    -----
+    The Gauss-Lobatto collocation points used here (`calc_collocation_point`)
+    are multiplied by -1 (x ranges from -1 to 1). Thus, the resulting Chebyshev
+    differentiation matrix is different from that in reference [1]_, in which x
+    ranges from 1 to -1.
+
+    Examples
+    --------
+    >>> from package_common.utils_collocation import calc_collocation_point
+    >>> from package_common.calc_chebyshev import chebyshev, chebyshev_d
+    >>> x = [calc_collocation_point(i_l, 4) for i_l in range(4)]
+    >>> [chebyshev_d(2, x[i_l]) for i_l in range(len(x))]
+    [np.float64(-4.0), -2.0000000000000004, 1.999999999999999, np.float64(4.0)]
+    >>> import numpy as np
+    >>> from package_common.utils_collocation import create_chebyshev_diff_mat
+    >>> diff_mat = create_chebyshev_diff_mat(4)
+    >>> diff_mat @ np.array([chebyshev(2, x[i_l]) for i_l in range(len(x))])
+    array([-4., -2.,  2.,  4.])
+    """
+
+    if num_point > 0:
+
+        diff_mat: ArrayFloat = np.empty(
+            (num_point, num_point), dtype=np.float64)
+
+        x: ArrayFloat = np.array(
+            [calc_collocation_point(i_l, num_point)
+             for i_l in range(num_point)], dtype=np.float64)
+        c: ArrayFloat = np.ones(num_point, dtype=np.float64)
+        c[0] = 2
+        c[-1] = 2
+
+        for i in range(num_point):
+            for j in range(num_point):
+                if i != j:
+                    diff_mat[i, j] = (c[i]/c[j]) * (-1)**(i+j) / (x[i]-x[j])
+        for i in range(1, num_point-1):
+            diff_mat[i, i] = -x[i] / (2 * (1 - x[i]**2))
+        diff_mat[0, 0] = -(2*(num_point-1)**2 + 1) / 6
+        diff_mat[-1, -1] = (2*(num_point-1)**2 + 1) / 6
+
+        return diff_mat
 
     logger: DefaultLogger = create_function_name_logger()
     logger.error('Invalid argument')
 
 
 def spherical_laplacian_heinrichs(
-        m_order: int,
-        n_degree: int,
-        s_pos: complex | float,
-        mu_complex: ComplexCoordinate) -> complex | float:
+    m_order: int,
+    n_degree: int,
+    s_pos: complex | float,
+    *,
+    mu_complex: ComplexCoordinate
+        = init_complex_coordinate_standard(-1, 1)) -> complex | float:
     """Calculate the spherical horizontal Laplacian of the Heinrichs
     basis at a given point.
 
@@ -332,7 +406,8 @@ def spherical_laplacian_heinrichs(
         The degree of the Heinrichs basis.
     s_pos : complex | float
         The position of the point.
-    mu_complex : ComplexCoordinate
+    mu_complex : ComplexCoordinate, optional, default
+    init_complex_coordinate_standard(-1, 1)
         The complex coordinate for the spectral deformation.
 
     Returns
@@ -347,8 +422,7 @@ def spherical_laplacian_heinrichs(
     ...     import spherical_laplacian_heinrichs
     >>> from package_common.spectral_deform \
     ...     import init_complex_coordinate_standard
-    >>> mu_complex = init_complex_coordinate_standard(-1, 1)
-    >>> spherical_laplacian_heinrichs(2, 3, 0.5, mu_complex)
+    >>> spherical_laplacian_heinrichs(2, 3, 0.5)
     11.250000000000002
     """
 
