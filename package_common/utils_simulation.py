@@ -7,9 +7,7 @@ from package_common.default_logger import DefaultLogger
 from package_common.utils_debug import under_construction_log
 from package_common.utils_name import create_function_name_logger
 
-type Rhs = Callable[
-    [ArrayComplex | ArrayFloat | list[ArrayComplex | ArrayFloat], float, ...],
-    ArrayComplex | ArrayFloat]
+type Rhs = Callable[..., ArrayComplex | ArrayFloat]
 
 
 class Field:
@@ -161,7 +159,7 @@ class Field:
         if num_copy is None:
             num_copy = self.num_tmp
 
-        if not (0 <= num_copy <= self.num_tmp):
+        if (num_copy < 0) or (num_copy > self.num_tmp):
             logger: DefaultLogger = create_function_name_logger()
             logger.error('Invalid argument')
 
