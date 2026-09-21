@@ -32,31 +32,19 @@ type ArrayLegend = npt.NDArray[np.object_]
 type ArrayPathCollection = npt.NDArray[np.object_]
 
 
-class DefaultPlotter:
-    """Class to handle figures with a single axis.
+class PlotterParent:
+    """Parent class of DefaultPlotter and DefaultGridPlotter.
 
     Attributes
     ----------
     fig : Figure
         The instance of the Figure class.
-    axes : Axes
-        The instance of the Axes class.
-    leg : Legend | None
-        The instance of the Legend class.
-    sc : PathCollection | None
-        The instance of the PathCollection class.
-
-    Examples
-    --------
-    >>> import matplotlib.pyplot as plt
-    >>> from package_common.default_plotter import DefaultPlotter
-    >>> x = [1, 2]
-    >>> y = [3, 4]
-    >>> plotter = DefaultPlotter()
-    >>> plotter.axes.plot(x, y)
-    >>> plotter.tight_layout()
-    >>> plotter.save(Path('.'), 'plot.png', 300)
-    >>> plt.show()
+    axes : Axes | ArrayAxes
+        (The array) of the instance of the Axes class.
+    leg : Legend | ArrayLegend
+        (The array) of the instance of the Legend class.
+    sc : PathCollection | ArrayPathCollection
+        (The array) of the instance of the PathCollection class.
     """
 
     __flag_set_latex: bool = False
@@ -73,28 +61,15 @@ class DefaultPlotter:
             else:
                 plt.rcParams['text.usetex'] = False
 
-    def __init__(self,
-                 **kwargs: Any) -> None:
-        """Initialize an instance of the DefaultPlotter class.
+    def __init__(self) -> None:
+        """Initialize an instance of the PlotterParent class."""
 
-        Parameters
-        ----------
-        **kwargs
-            Keyword variadic arguments.
-        """
-
-        DefaultPlotter._set_latex()
+        PlotterParent._set_latex()
 
         self.fig: Figure
-        self.axes: Axes
-        self.fig, self.axes = plt.subplots(1, 1, **kwargs)
-
-        self.leg: Legend | None = None
-        self.sc: PathCollection | None = None
-
-        self.axes.grid()
-        self.axes.set_axisbelow(True)
-        self.axes.minorticks_on()
+        self.axes: Axes | ArrayAxes
+        self.leg: Legend | ArrayLegend | None = None
+        self.sc: PathCollection | ArrayPathCollection | None = None
 
     def save(self,
              path_dir: Path,
@@ -144,8 +119,60 @@ class DefaultPlotter:
         plt.close(self.fig)
 
 
-class DefaultGridPlotter(DefaultPlotter):
-    """Subclass of the DefaultPlotter class to handle figures with
+class DefaultPlotter(PlotterParent):
+    """Subclass of the PlotterParent class to handle figures with a single
+    axis.
+
+    Attributes
+    ----------
+    fig : Figure
+        The instance of the Figure class.
+    axes : Axes
+        The instance of the Axes class.
+    leg : Legend | None
+        The instance of the Legend class.
+    sc : PathCollection | None
+        The instance of the PathCollection class.
+
+    Examples
+    --------
+    >>> import matplotlib.pyplot as plt
+    >>> from package_common.default_plotter import DefaultPlotter
+    >>> x = [1, 2]
+    >>> y = [3, 4]
+    >>> plotter = DefaultPlotter()
+    >>> plotter.axes.plot(x, y)
+    >>> plotter.tight_layout()
+    >>> plotter.save(Path('.'), 'plot.png', 300)
+    >>> plt.show()
+    """
+
+    def __init__(self,
+                 **kwargs: Any) -> None:
+        """Initialize an instance of the DefaultPlotter class.
+
+        Parameters
+        ----------
+        **kwargs
+            Keyword variadic arguments.
+        """
+
+        super().__init__()
+
+        self.fig: Figure
+        self.axes: Axes
+        self.fig, self.axes = plt.subplots(1, 1, **kwargs)
+
+        self.leg: Legend | None = None
+        self.sc: PathCollection | None = None
+
+        self.axes.grid()
+        self.axes.set_axisbelow(True)
+        self.axes.minorticks_on()
+
+
+class DefaultGridPlotter(PlotterParent):
+    """Subclass of the PlotterParent class to handle figures with
     multiple axes.
 
     Attributes
@@ -158,6 +185,11 @@ class DefaultGridPlotter(DefaultPlotter):
         The array of the instance of the Legend class.
     sc : ArrayPathCollection
         The array of the instance of the PathCollection class.
+
+    Warnings
+    --------
+    Invalid argument
+        If `nrows` and `ncols` are not positive or if both are 1.
 
     Examples
     --------
@@ -192,11 +224,11 @@ class DefaultGridPlotter(DefaultPlotter):
             Keyword variadic arguments.
         """
 
-        if (nrows == 1) and (ncols == 1):
-            super().__init__(**kwargs)
-            return
+        if (nrows <= 0) or (ncols <= 0) or ((nrows == 1) and (ncols == 1)):
+            logger: DefaultLogger = create_function_name_logger()
+            logger.error('Invalid argument')
 
-        DefaultPlotter._set_latex()
+        super().__init__()
 
         self.fig: Figure
         self.axes: ArrayAxes
@@ -264,9 +296,8 @@ def create_plotter(
     >>> grid_plotter = create_plotter(2, 2)
     """
 
-    logger: DefaultLogger = create_function_name_logger()
-
     if (nrows <= 0) or (ncols <= 0):
+        logger: DefaultLogger = create_function_name_logger()
         logger.error('Invalid argument')
 
     if (nrows == 1) and (ncols == 1):
