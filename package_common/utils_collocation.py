@@ -2,6 +2,7 @@
 
 import numpy as np
 
+from package_common.calc_chebyshev import chebyshev
 from package_common.calc_heinrichs import _calc_heinrichs
 from package_common.common_types import (ArrayComplex, ArrayFloat, Callable,
                                          FuncComplex, FuncFloat, NoReturn,
@@ -16,6 +17,12 @@ type Func4Quad = Callable[[int, float | int | complex], complex | float]
 
 class ChebyshevGaussQuad:
     """Class to perform the Chebyshev-Gauss quadrature.
+
+    References
+    ----------
+    [1] Abramowitz, M. and Stegun, I. A., Handbook of Mathematical Functions
+    with Formulas, Graphs, and Mathematical Tables. US Government printing
+    office, (1964).
 
     Examples
     --------
@@ -303,6 +310,11 @@ def calc_collocation_point(i_l: int,
         If `i_l` is not within [0, num_point], or if `num_point` is not
         positive.
 
+    Notes
+    -----
+    The Gauss-Lobatto collocation points used here are multiplied by -1 (they
+    range from -1 to 1).
+
     Examples
     --------
     >>> from package_common.utils_collocation import calc_collocation_point
@@ -317,8 +329,134 @@ def calc_collocation_point(i_l: int,
     logger.error('Invalid argument')
 
 
-def create_chebyshev_diff_mat(num_point: int) -> ArrayFloat:
-    """Create the Chebyshev differentiation matrix.
+def create_cheb_expan_mat(num_point: int) -> ArrayFloat:
+    """Create the Chebyshev expansion matrix for the function values at the
+    collocation points.
+
+    Parameters
+    ----------
+    num_point : int
+        The number of the collocation points.
+
+    Returns
+    -------
+    expan_mat : ArrayFloat
+        The Chebyshev expansion matrix.
+
+    Warnings
+    --------
+    Invalid argument
+        If `num_point` is not positive.
+
+    References
+    ----------
+    [1] Peyret, Roger. Spectral methods for incompressible viscous flow. New
+    York: Springer, (2002).
+
+    Notes
+    -----
+    The Gauss-Lobatto collocation points used here (`calc_collocation_point`)
+    are multiplied by -1 (x ranges from -1 to 1). Thus, the resulting Chebyshev
+    expansion matrix is different from that in reference [1]_, in which x
+    ranges from 1 to -1.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from package_common.utils_collocation import calc_collocation_point
+    >>> from package_common.calc_chebyshev import chebyshev
+    >>> from package_common.utils_collocation import create_cheb_expan_mat
+    >>> x = [calc_collocation_point(i_l, 4) for i_l in range(4)]
+    >>> f_i = np.array([chebyshev(0, x[i_l])+2*chebyshev(1, x[i_l]) \
+    ...    for i_l in range(len(x))])
+    >>> expan_mat = create_cheb_expan_mat(4)
+    >>> expan_mat @ f_i
+    array([ 1.00000000e+00,  2.00000000e+00, -4.44089210e-16,  5.55111512e-17])
+    """
+
+    if num_point > 0:
+
+        expan_mat: ArrayFloat = np.empty(
+            (num_point, num_point), dtype=np.float64)
+
+        c: ArrayFloat = np.ones(num_point, dtype=np.float64)
+        c[0] = 2
+        c[-1] = 2
+
+        for i in range(num_point):
+            for j in range(num_point):
+                expan_mat[i, j] = (
+                    ((-1)**i) * 2 * np.cos(i*j*np.pi/(num_point-1))
+                    / (c[i]*c[j]*(num_point-1))
+                )
+
+        return expan_mat
+
+    logger: DefaultLogger = create_function_name_logger()
+    logger.error('Invalid argument')
+
+
+def create_cheb_invexpan_mat(num_degree: int) -> ArrayFloat:
+    """Create the inverse Chebyshev expansion matrix for the expansion
+    coefficients of the function values.
+
+    Parameters
+    ----------
+    num_degree : int
+        The number of the degree.
+
+    Returns
+    -------
+    invexpan_mat : ArrayFloat
+        The inverse Chebyshev expansion matrix.
+
+    Warnings
+    --------
+    Invalid argument
+        If `num_degree` is not positive.
+
+    Notes
+    -----
+    The Gauss-Lobatto collocation points used here (`calc_collocation_point`)
+    are multiplied by -1 (x ranges from -1 to 1).
+
+    Examples
+    --------
+    >>> from package_common.utils_collocation import calc_collocation_point
+    >>> from package_common.calc_chebyshev import chebyshev
+    >>> x = [calc_collocation_point(i_l, 4) for i_l in range(4)]
+    >>> [chebyshev(0, x[i_l])+2*chebyshev(1, x[i_l]) for i_l in range(len(x))]
+    [-1.0, -2.220446049250313e-16, 1.9999999999999996, 3.0]
+    >>> import numpy as np
+    >>> from package_common.utils_collocation \
+    ...     import create_cheb_invexpan_mat
+    >>> invexpan_mat = create_cheb_invexpan_mat(4)
+    >>> invexpan_mat @ np.array([1.0, 2.0, 0.0, 0.0])
+    array([-1.00000000e+00, -2.22044605e-16,  2.00000000e+00,  3.00000000e+00])
+    """
+
+    if num_degree > 0:
+
+        invexpan_mat: ArrayFloat = np.empty(
+            (num_degree, num_degree), dtype=np.float64)
+
+        x: ArrayFloat = np.array(
+            [calc_collocation_point(i_l, num_degree)
+             for i_l in range(num_degree)], dtype=np.float64)
+
+        for i in range(num_degree):
+            for j in range(num_degree):
+                invexpan_mat[i, j] = chebyshev(j, x[i])
+
+        return invexpan_mat
+
+    logger: DefaultLogger = create_function_name_logger()
+    logger.error('Invalid argument')
+
+
+def create_cheb_diff_mat(num_point: int) -> ArrayFloat:
+    """Create the Chebyshev differentiation matrix for the function values at
+    the collocation points.
 
     Parameters
     ----------
@@ -333,7 +471,7 @@ def create_chebyshev_diff_mat(num_point: int) -> ArrayFloat:
     Warnings
     --------
     Invalid argument
-        If num_point is not positive.
+        If `num_point` is not positive.
 
     References
     ----------
@@ -355,8 +493,8 @@ def create_chebyshev_diff_mat(num_point: int) -> ArrayFloat:
     >>> [chebyshev_d(2, x[i_l]) for i_l in range(len(x))]
     [np.float64(-4.0), -2.0000000000000004, 1.999999999999999, np.float64(4.0)]
     >>> import numpy as np
-    >>> from package_common.utils_collocation import create_chebyshev_diff_mat
-    >>> diff_mat = create_chebyshev_diff_mat(4)
+    >>> from package_common.utils_collocation import create_cheb_diff_mat
+    >>> diff_mat = create_cheb_diff_mat(4)
     >>> diff_mat @ np.array([chebyshev(2, x[i_l]) for i_l in range(len(x))])
     array([-4., -2.,  2.,  4.])
     """
@@ -376,7 +514,7 @@ def create_chebyshev_diff_mat(num_point: int) -> ArrayFloat:
         for i in range(num_point):
             for j in range(num_point):
                 if i != j:
-                    diff_mat[i, j] = (c[i]/c[j]) * (-1)**(i+j) / (x[i]-x[j])
+                    diff_mat[i, j] = (c[i]/c[j]) * ((-1)**(i+j)) / (x[i]-x[j])
         for i in range(1, num_point-1):
             diff_mat[i, i] = -x[i] / (2 * (1 - x[i]**2))
         diff_mat[0, 0] = -(2*(num_point-1)**2 + 1) / 6
