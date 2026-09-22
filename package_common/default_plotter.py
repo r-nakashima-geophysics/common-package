@@ -76,7 +76,8 @@ class PlotterParent:
              filename: str,
              dpi: int = 300,
              *,
-             switch_tight_layout: bool = True) -> None:
+             switch_tight_layout: bool = True,
+             mute_log_message: bool = False) -> None:
         """Save the figure.
 
         Parameters
@@ -89,6 +90,8 @@ class PlotterParent:
             The resolution of the figure.
         switch_tight_layout : bool, optional, default True
             The boolean value to switch whether to use tight layout or not.
+        mute_log_message : bool, optional, default False
+            The boolean value to switch whether to mute log messages or not.
         """
 
         if not isinstance(self.leg, np.ndarray):
@@ -106,7 +109,8 @@ class PlotterParent:
         path_fig: Path = path_dir / filename
         self.fig.savefig(path_fig, dpi=dpi)
 
-        DefaultLogger(filename).info('Saved')
+        if not mute_log_message:
+            DefaultLogger(filename).info('Saved')
 
     def tight_layout(self) -> None:
         """Adjust the padding of the figure."""
