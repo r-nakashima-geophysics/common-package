@@ -7,7 +7,10 @@ from package_common.default_logger import DefaultLogger
 from package_common.utils_debug import under_construction_log
 from package_common.utils_name import create_function_name_logger
 
-type Rhs = Callable[..., ArrayComplex | ArrayFloat]
+type Rhs = Callable[[
+    ArrayComplex | ArrayFloat | list[ArrayComplex | ArrayFloat], float, Any], 
+    ArrayComplex | ArrayFloat]
+type Bc = Callable[[ArrayComplex | ArrayFloat, float, Any], None]
 
 
 class Field:
@@ -87,7 +90,8 @@ class Field:
                  time: float = 0,
                  *,
                  num_tmp: int = 3,
-                 dtype: type = np.float64) -> None:
+                 dtype: type = np.float64,
+                 bc: Bc | None = None) -> None:
         """Initialize an instance of the Field class.
 
         Parameters
@@ -100,6 +104,8 @@ class Field:
             The data type of the `value` array.
         num_tmp : int, optional, default 3
             The number of temporary storage arrays.
+        bc : Bc | None, optional, default None
+            The boundary condition function.
 
         Warnings
         --------
@@ -107,6 +113,12 @@ class Field:
             If `set_class_variable` class method has not been executed yet.
         Invalid argument
             If `num_tmp` is negative.
+
+        Notes
+        -----
+        The first argument of `bc` must be a `field.value` (ArrayComplex |
+        ArrayFloat), the second argument must be the current time, and the
+        remaining arguments are optional additional arguments.
         """
 
         if not Field.__flag:
@@ -119,6 +131,7 @@ class Field:
         self.name: str = name
         self.time: float = time
         self.num_tmp: int = num_tmp
+        self.bc: Bc | None = bc
 
         self.value: ArrayComplex | ArrayFloat
         if Field.__num_dim2 is None:
@@ -165,6 +178,39 @@ class Field:
 
         for i in range(num_copy):
             np.copyto(self.value_tmp[i], self.value)
+
+    def boundary_condition(self,
+                           time: float,
+                           *args: Any,
+                           tmp: int | None = None) -> None:
+        """Apply the boundary condition.
+        
+        Parameters
+        ----------
+        time : float
+            The current time.
+        tmp : int | None, optional, default None
+            The index of the temporary storage array to which the boundary
+            condition is applied. If None, the boundary condition is applied
+            to the main value array.
+        args : Any
+            Additional arguments.
+
+        Warnings
+        --------
+        Invalid argument
+            If `tmp` is not within [0, `num_tmp` - 1] when it is not None.
+        """
+
+        if (tmp is not None) and ((tmp < 0) or (tmp >= self.num_tmp)):
+            logger: DefaultLogger = create_function_name_logger()
+            logger.error('Invalid argument')
+
+        if self.bc is not None:
+            if tmp is None:
+                self.bc(self.value, time, *args)
+            else:
+                self.bc(self.value_tmp[tmp], time, *args)
 
 
 def time_integrate(fields: Field | list[Field],
@@ -266,14 +312,18 @@ def time_integrate(fields: Field | list[Field],
             field.value_tmp[0] += 0.5 * k
             field.value += k / 6
 
+        time += 0.5 * dt
+        for field in list_field:
+            field.boundary_condition(time, tmp=0, *args)
         values = [field.value_tmp[0] for field in list_field] if is_list \
             else list_field[0].value_tmp[0]
-        time += 0.5 * dt
         for field, rhs in zip(list_field, list_rhs):
             k = rhs(values, time, *args) * dt
             field.value_tmp[1] += 0.5 * k
             field.value += k / 3
 
+        for field in list_field:
+            field.boundary_condition(time, tmp=1, *args)
         values = [field.value_tmp[1] for field in list_field] if is_list \
             else list_field[0].value_tmp[1]
         for field, rhs in zip(list_field, list_rhs):
@@ -281,15 +331,18 @@ def time_integrate(fields: Field | list[Field],
             field.value_tmp[2] += k
             field.value += k / 3
 
+        time += 0.5 * dt
+        for field in list_field:
+            field.boundary_condition(time, tmp=2, *args)
         values = [field.value_tmp[2] for field in list_field] if is_list \
             else list_field[0].value_tmp[2]
-        time += 0.5 * dt
         for field, rhs in zip(list_field, list_rhs):
             k = rhs(values, time, *args) * dt
             field.value += k / 6
 
         for field in list_field:
             field.time = time
+            field.boundary_condition(time, *args)
 
     else:
         under_construction_log()
