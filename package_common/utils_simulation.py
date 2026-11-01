@@ -8,7 +8,7 @@ from package_common.utils_debug import under_construction_log
 from package_common.utils_name import create_function_name_logger
 
 type Rhs = Callable[[
-    ArrayComplex | ArrayFloat | list[ArrayComplex | ArrayFloat], float, Any], 
+    ArrayComplex | ArrayFloat | list[ArrayComplex | ArrayFloat], float, Any],
     ArrayComplex | ArrayFloat]
 type Bc = Callable[[ArrayComplex | ArrayFloat, float, Any], None]
 
@@ -20,14 +20,18 @@ class Field:
     ----------
     name : str
         The name of the field.
-    time : float
-        The time.
     value : ArrayComplex | ArrayFloat
         The value of the field.
+    storage_value : list[ArrayComplex | ArrayFloat]
+        The list of storage for the field values.
     value_tmp : list[ArrayComplex | ArrayFloat]
         The temporary storage arrays.
     num_tmp : int
         The number of temporary storage arrays.
+    time : float
+        The current time. This is a class variable.
+    storage_time : list[float]
+        The list of storage for time. This is a class variable.
 
     Examples
     --------
@@ -38,7 +42,11 @@ class Field:
     array([[0., 0.],
            [0., 0.],
            [0., 0.]])
+    >>> field.store()
     """
+
+    time: float
+    storage_time: list[float]
 
     __num_dim1: int
     __num_dim2: int | None
@@ -51,7 +59,9 @@ class Field:
     def set_class_variable(cls,
                            num_dim1: int,
                            num_dim2: int | None = None,
-                           num_dim3: int | None = None) -> None:
+                           num_dim3: int | None = None,
+                           *,
+                           time: float = 0) -> None:
         """Set the class variables.
 
         Parameters
@@ -62,6 +72,8 @@ class Field:
             The number of elements of the second dimension.
         num_dim3 : int | None, optional, default None.
             The number of elements of the third dimension.
+        time : float, optional, default 0
+            The initial time.
 
         Warnings
         --------
@@ -80,6 +92,9 @@ class Field:
         cls.__num_dim3 = num_dim3
         cls.__flag = True
 
+        cls.time = time
+        cls.storage_time = [time]
+
         if (cls.__num_dim2 is None) and (cls.__num_dim3 is not None):
             cls.__logger.warning('`num_dim3` is interpreted as `num_dim2`')
             cls.__num_dim2 = cls.__num_dim3
@@ -87,7 +102,6 @@ class Field:
 
     def __init__(self,
                  name: str,
-                 time: float = 0,
                  *,
                  num_tmp: int = 3,
                  dtype: type = np.float64,
@@ -98,8 +112,6 @@ class Field:
         ----------
         name : str
             The name of the field.
-        time : float, optional, default 0
-            The time.
         dtype : type, optional, default np.float64
             The data type of the `value` array.
         num_tmp : int, optional, default 3
@@ -129,7 +141,6 @@ class Field:
             DefaultLogger(name).error('Invalid argument')
 
         self.name: str = name
-        self.time: float = time
         self.num_tmp: int = num_tmp
         self.bc: Bc | None = bc
 
@@ -144,13 +155,23 @@ class Field:
                 (Field.__num_dim1, Field.__num_dim2, Field.__num_dim3),
                 dtype=dtype)
 
+        self.storage_value: list[ArrayComplex | ArrayFloat] = []
         self.value_tmp: list[ArrayComplex | ArrayFloat] \
             = [np.zeros_like(self.value) for _ in range(self.num_tmp)]
+
+        self.store()
+
+    def store(self) -> None:
+        """Store the field values to the storage array for output."""
+
+        if not np.isclose(Field.time, Field.storage_time[-1]):
+            Field.storage_time.append(Field.time)
+        self.storage_value.append(self.value.copy())
 
     def copy_to_tmp(self,
                     *,
                     num_copy: int | None = None) -> None:
-        """Copy the values to the temporary storage arrays.
+        """Copy the field values to the temporary storage arrays.
 
         Parameters
         ----------
@@ -184,7 +205,7 @@ class Field:
                            *args: Any,
                            tmp: int | None = None) -> None:
         """Apply the boundary condition.
-        
+
         Parameters
         ----------
         time : float
@@ -306,7 +327,7 @@ def time_integrate(fields: Field | list[Field],
         values: ArrayComplex | ArrayFloat | list[ArrayComplex | ArrayFloat] \
             = [field.value_tmp[2] for field in list_field] if is_list \
             else list_field[0].value_tmp[2]
-        time: float = list_field[0].time
+        time: float = Field.time
         for field, rhs in zip(list_field, list_rhs):
             k = rhs(values, time, *args) * dt
             field.value_tmp[0] += 0.5 * k
@@ -341,7 +362,7 @@ def time_integrate(fields: Field | list[Field],
             field.value += k / 6
 
         for field in list_field:
-            field.time = time
+            Field.time = time
             field.boundary_condition(time, *args)
 
     else:
