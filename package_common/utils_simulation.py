@@ -174,7 +174,7 @@ class Field:
         len_time: int = len(Field.storage_time)
         len_value: int = len(self.storage_value)
 
-        if len_value - len_time not in (0, 1):
+        if (len_time-len_value) not in (0, 1):
             Field.__logger.error('Inconsistent storage')
 
         if len_time == len_value:
