@@ -157,8 +157,6 @@ class Field:
         self.value_tmp: list[ArrayComplex | ArrayFloat] \
             = [np.zeros_like(self.value) for _ in range(self.num_tmp)]
 
-        self.store()
-
     def store(self) -> None:
         """Store the field values to the storage array for output.
 
