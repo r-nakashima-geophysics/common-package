@@ -189,7 +189,7 @@ class ChebyshevGaussQuad:
                  *,
                  func_1: Func4Quad,
                  func_2: Func4Quad | None = None,
-                 weight: FuncComplex | FuncFloat = lambda x: 1.0) -> None:
+                 weight: FuncComplex | FuncFloat = lambda _: 1.0) -> None:
         """Initialize an instance of the ChebyshevGaussQuad class.
 
         Parameters
@@ -198,7 +198,7 @@ class ChebyshevGaussQuad:
             The function associated with the first vector.
         func_2 : Func4Quad | None, optional, default None
             The function associated with the second vector.
-        weight : FuncComplex | FuncFloat, optional, default lambda x: 1.0
+        weight : FuncComplex | FuncFloat, optional, default lambda _: 1.0
             The weight function for the quadrature of the first and second
             vectors.
 
