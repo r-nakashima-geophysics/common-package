@@ -96,7 +96,7 @@ def create_shared_arrays(*arrays: ArrayAny) \
     Warnings
     --------
     Invalid type of the argument
-        If the argument is not a np.ndarray.
+        If the argument is not a np.ndarray or is empty.
 
     Examples
     --------
@@ -110,18 +110,18 @@ def create_shared_arrays(*arrays: ArrayAny) \
     shms: list[SharedMemory] = []
     shared_info: SharedInfo = []
 
-    shm: SharedMemory
-    shared_array: ArrayAny
     for array in arrays:
-
-        if not isinstance(array, np.ndarray):
+        if (not isinstance(array, np.ndarray)) or (array.size == 0):
             logger: DefaultLogger = create_function_name_logger()
             logger.error('Invalid type of the argument')
 
+    shm: SharedMemory
+    shared_array: ArrayAny
+    for array in arrays:
         shm = shared_memory.SharedMemory(create=True, size=array.nbytes)
         shared_array = np.ndarray(shape=array.shape, dtype=array.dtype,
                                   buffer=shm.buf)
-        shared_array[:] = array
+        np.copyto(shared_array, array)
 
         shms.append(shm)
         shared_info.append((shm.name, shared_array.shape, shared_array.dtype))

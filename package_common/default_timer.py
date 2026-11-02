@@ -41,7 +41,6 @@ class DefaultTimer:
 
         if (sys.platform == 'darwin') and (not cls.__flag_import_caffeine):
             cls.__caffeine = importlib.import_module('caffeine')
-            cls.__caffeine.on(display=False)
             cls.__flag_import_caffeine = True
 
     def __init__(self,
@@ -66,6 +65,10 @@ class DefaultTimer:
 
     def start(self) -> None:
         """(Re)start the timer."""
+
+        if DefaultTimer.__flag_import_caffeine \
+                and (DefaultTimer.__num_active_timers == 0):
+            DefaultTimer.__caffeine.on(display=False)
 
         if self.__start_time is None:
             self.__logger.info('Start')
@@ -114,9 +117,9 @@ class DefaultTimer:
             DefaultTimer.__num_active_timers -= 1
             self.__counted = False
 
-        if (DefaultTimer.__flag_import_caffeine) \
-                and (DefaultTimer.__num_active_timers == 0):
-            DefaultTimer.__caffeine.off()
+            if DefaultTimer.__flag_import_caffeine \
+                    and (DefaultTimer.__num_active_timers == 0):
+                DefaultTimer.__caffeine.off()
 
     def stop(self) -> None:
         """Stop the timer.

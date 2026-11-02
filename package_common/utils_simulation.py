@@ -317,6 +317,8 @@ def time_integrate(fields: Field | list[Field] | tuple[Field, ...],
         list_field = list(fields)
     else:
         list_field = [fields]
+
+    list_rhs: list[Rhs]
     if isinstance(rhss, (list, tuple)):
         list_rhs = list(rhss)
     else:

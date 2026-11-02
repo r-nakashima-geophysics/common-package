@@ -83,8 +83,7 @@ class ProgressBar:
         Warnings
         --------
         Invalid argument
-            If `i_calc` and `num_process` are not positive or exceed the total
-            iteration number.
+            If `i_calc` is negative or exceeds the total iteration number, and `num_process` is not positive.
         Progress bar has not been started
             If `start()` has not been called before `update()` is called.
         """
