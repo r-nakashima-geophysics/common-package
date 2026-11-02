@@ -63,6 +63,50 @@ def input_value(default: TypeVarIntFloat,
     return default
 
 
+def input_str(default: str) -> str:
+    """Input a string from the command line or use a default value.
+
+    When there is a command line argument, it overrides the default value.
+
+    Parameters
+    ----------
+    default : str
+        The default value.
+
+    Returns
+    -------
+    str
+        The command line argument or the default value.
+
+    Warnings
+    --------
+    Too many input arguments
+        If the command line arguments are too many.
+
+    Examples
+    --------
+    Run a script without a command line argument:
+        >>> from package_common.utils_input import input_str
+        >>> input_str('string')
+        'string'
+    Run a script with a command line argument (say 'test'):
+        >>> from package_common.utils_input import input_str
+        >>> input_str('string')
+        'test'
+    """
+
+    logger: DefaultLogger
+
+    if len(sys.argv) == 2:
+        return sys.argv[1]
+
+    elif len(sys.argv) > 2:
+        logger = create_function_name_logger()
+        logger.error('Too many input arguments')
+
+    return default
+
+
 def input_value_within(min_value: TypeVarIntFloat,
                        max_value: TypeVarIntFloat,
                        cast: Callable[[str], TypeVarIntFloat]) \
