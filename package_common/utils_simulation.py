@@ -162,10 +162,24 @@ class Field:
         self.store()
 
     def store(self) -> None:
-        """Store the field values to the storage array for output."""
+        """Store the field values to the storage array for output.
 
-        if not np.isclose(Field.time, Field.storage_time[-1]):
+        Warnings
+        --------
+        Inconsistent storage
+            If `Field.storage_time` is not consistent with
+            `self.storage_value`.
+        """
+
+        len_time: int = len(Field.storage_time)
+        len_value: int = len(self.storage_value)
+
+        if len_value - len_time not in (0, 1):
+            Field.__logger.error('Inconsistent storage')
+
+        if len_time == len_value:
             Field.storage_time.append(Field.time)
+
         self.storage_value.append(self.value.copy())
 
     def copy_to_tmp(self,
