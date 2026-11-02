@@ -7,10 +7,8 @@ from package_common.default_logger import DefaultLogger
 from package_common.utils_debug import under_construction_log
 from package_common.utils_name import create_function_name_logger
 
-type Rhs = Callable[[
-    ArrayComplex | ArrayFloat | list[ArrayComplex | ArrayFloat], float, Any],
-    ArrayComplex | ArrayFloat]
-type Bc = Callable[[ArrayComplex | ArrayFloat, float, Any], None]
+type Rhs = Callable[..., ArrayComplex | ArrayFloat]
+type Bc = Callable[..., None]
 
 
 class Field:
@@ -68,9 +66,9 @@ class Field:
         ----------
         num_dim1 : int
             The number of elements of the first dimension.
-        num_dim2 : int | None, optional, default None.
+        num_dim2 : int | None, optional, default None
             The number of elements of the second dimension.
-        num_dim3 : int | None, optional, default None.
+        num_dim3 : int | None, optional, default None
             The number of elements of the third dimension.
         time : float, optional, default 0
             The initial time.
@@ -112,10 +110,10 @@ class Field:
         ----------
         name : str
             The name of the field.
-        dtype : type, optional, default np.float64
-            The data type of the `value` array.
         num_tmp : int, optional, default 3
             The number of temporary storage arrays.
+        dtype : type, optional, default np.float64
+            The data type of the `value` array.
         bc : Bc | None, optional, default None
             The boundary condition function.
 
@@ -224,12 +222,12 @@ class Field:
         ----------
         time : float
             The current time.
+        *args : Any
+            Additional arguments.
         tmp : int | None, optional, default None
             The index of the temporary storage array to which the boundary
             condition is applied. If None, the boundary condition is applied
             to the main value array.
-        args : Any
-            Additional arguments.
 
         Warnings
         --------
@@ -349,7 +347,7 @@ def time_integrate(fields: Field | list[Field],
 
         time += 0.5 * dt
         for field in list_field:
-            field.boundary_condition(time, tmp=0, *args)
+            field.boundary_condition(time, *args, tmp=0)
         values = [field.value_tmp[0] for field in list_field] if is_list \
             else list_field[0].value_tmp[0]
         for field, rhs in zip(list_field, list_rhs):
@@ -358,7 +356,7 @@ def time_integrate(fields: Field | list[Field],
             field.value += k / 3
 
         for field in list_field:
-            field.boundary_condition(time, tmp=1, *args)
+            field.boundary_condition(time, *args, tmp=1)
         values = [field.value_tmp[1] for field in list_field] if is_list \
             else list_field[0].value_tmp[1]
         for field, rhs in zip(list_field, list_rhs):
@@ -368,7 +366,7 @@ def time_integrate(fields: Field | list[Field],
 
         time += 0.5 * dt
         for field in list_field:
-            field.boundary_condition(time, tmp=2, *args)
+            field.boundary_condition(time, *args, tmp=2)
         values = [field.value_tmp[2] for field in list_field] if is_list \
             else list_field[0].value_tmp[2]
         for field, rhs in zip(list_field, list_rhs):

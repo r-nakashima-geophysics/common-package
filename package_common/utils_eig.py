@@ -113,6 +113,7 @@ def screening_eig(matrix_eig: ArrayComplex,
     invalid: ArrayBool = ~check.ravel()
     matrix_eig[:, invalid] = np.nan
     for phys_qty in phys_qtys:
+        phys_qty = phys_qty.ravel()
         phys_qty[invalid] = np.nan
 
     return matrix_eig, phys_qtys

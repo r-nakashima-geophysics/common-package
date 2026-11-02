@@ -41,9 +41,9 @@ class PlotterParent:
         The instance of the Figure class.
     axes : Axes | ArrayAxes
         (The array) of the instance of the Axes class.
-    leg : Legend | ArrayLegend
+    leg : Legend | ArrayLegend | None
         (The array) of the instance of the Legend class.
-    sc : PathCollection | ArrayPathCollection
+    sc : PathCollection | ArrayPathCollection | None
         (The array) of the instance of the PathCollection class.
     """
 
@@ -141,6 +141,7 @@ class DefaultPlotter(PlotterParent):
     Examples
     --------
     >>> import matplotlib.pyplot as plt
+    >>> from pathlib import Path
     >>> from package_common.default_plotter import DefaultPlotter
     >>> x = [1, 2]
     >>> y = [3, 4]
@@ -193,12 +194,13 @@ class DefaultGridPlotter(PlotterParent):
     Warnings
     --------
     Invalid argument
-        If `nrows` and `ncols` are not positive or if both are 1.
+        If `nrows` or `ncols` are not positive, or if both are 1.
 
     Examples
     --------
     Create a (1, 2) plot:
         >>> import matplotlib.pyplot as plt
+        >>> from pathlib import Path
         >>> from package_common.default_plotter import DefaultGridPlotter
         >>> x = [1, 2]
         >>> y = [3, 4]
@@ -249,13 +251,8 @@ class DefaultGridPlotter(PlotterParent):
 
 
 @overload
-def create_plotter() -> DefaultPlotter:
-    ...
-
-
-@overload
-def create_plotter(nrows: Literal[1],
-                   ncols: Literal[1],
+def create_plotter(nrows: Literal[1] = 1,
+                   ncols: Literal[1] = 1,
                    **kwargs: Any) -> DefaultPlotter:
     ...
 
@@ -291,7 +288,7 @@ def create_plotter(
     Warnings
     --------
     Invalid argument
-        If `nrows` and `ncols` are not positive.
+        If `nrows` or `ncols` are not positive.
 
     Examples
     --------

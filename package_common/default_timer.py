@@ -50,7 +50,7 @@ class DefaultTimer:
 
         Parameters
         ----------
-        name: str
+        name : str
             The name of the timer.
         """
 

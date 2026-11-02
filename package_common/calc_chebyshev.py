@@ -143,7 +143,7 @@ def _calc_chebyshev(n_degree: int,
     Returns
     -------
     tuple[complex | float, ...]
-        The value of the Chebyshev polynomial or its derivative at the point.
+        The value of the Chebyshev polynomial or its derivatives at the point.
 
     Notes
     -----

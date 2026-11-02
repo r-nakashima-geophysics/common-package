@@ -68,7 +68,8 @@ class ChebyshevGaussQuad:
             The number of the degree.
         y_complex : ComplexCoordinate
             The complex coordinate for the spectral deformation.
-        y_unuse_spectral_deform : ComplexCoordinate, optional, default None
+        y_unuse_spectral_deform : ComplexCoordinate | None, optional, default
+        None
             The coordinate without the spectral deformation.
         use_analytic_cont : bool, optional, default True
             The boolean value to switch whether the analytic continuation of
@@ -264,14 +265,16 @@ class ChebyshevGaussQuad:
         Warnings
         --------
         Inconsistent input
-            If `vec_2` is None, although `func_2` is not None.
+            If `vec_2` is None, although `func_2` is not None. Or, if `func_2`
+            is None, although `vec_2` is not None.
 
         Notes
         -----
         This method may run inside multiprocessing workers.
         """
 
-        if self.__flag_func_2 and (vec_2 is None):
+        if (self.__flag_func_2 and (vec_2 is None)) \
+                or (not self.__flag_func_2 and (vec_2 is not None)):
             self.__logger.error('Inconsistent input')
 
         field_1: ArrayComplex = vec_1.T @ self.__array_func_1

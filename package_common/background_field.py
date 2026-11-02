@@ -17,7 +17,7 @@ class BackgroundField:
         The first derivative of the profile of the background field.
     value_d2 : FuncComplex | None
         The second derivative of the profile of the background field.
-    tex : str | None
+    tex : str
         The LaTeX text of the background field.
 
     Examples
@@ -25,7 +25,7 @@ class BackgroundField:
     >>> from package_common.background_field import BackgroundField
     >>> linear = BackgroundField('linear', value=lambda x: x)
     >>> linear.r_value(1)
-    1.0
+    1
     >>> parabola = BackgroundField('parabola', value=lambda x: x**2,
     ...     value_d=lambda x: 2*x, value_d2=lambda x: 2.0)
     >>> parabola.r_value(1)

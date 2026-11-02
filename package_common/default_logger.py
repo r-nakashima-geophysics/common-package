@@ -58,7 +58,6 @@ class DefaultLogger:
             fmt: str = \
                 '/%(levelname)s/ [%(asctime)s] %(name)s: %(message)s'
             handler: logging.StreamHandler = logging.StreamHandler()
-            handler.setLevel(level)
             formatter: logging.Formatter = logging.Formatter(
                 fmt=fmt, datefmt='%Y-%m-%d %H:%M:%S')
             handler.setFormatter(formatter)
@@ -102,7 +101,7 @@ class DefaultLogger:
 
     def error(self,
               message: str) -> NoReturn:
-        """Log an error message.
+        """Log an error message and exit the program.
 
         Parameters
         ----------
@@ -115,7 +114,7 @@ class DefaultLogger:
 
     def critical(self,
                  message: str) -> NoReturn:
-        """Log a critical message.
+        """Log a critical message and exit the program.
 
         Parameters
         ----------

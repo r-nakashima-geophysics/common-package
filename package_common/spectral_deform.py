@@ -37,7 +37,7 @@ class ComplexCoordinate(BackgroundField):
     value_d2 : FuncComplex
         The second derivative of the profile of the complex coordinate
         transformation.
-    tex : str | None
+    tex : str
         The LaTeX text of the complex coordinate transformation.
     params : dict[str, float]
         The parameters for the complex coordinate transformation.
