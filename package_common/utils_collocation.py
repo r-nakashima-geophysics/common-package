@@ -247,7 +247,7 @@ class ChebyshevGaussQuad:
         the Chebyshev-Gauss quadrature for all eigenmodes, where field_1 =
         sum(vec_1 * func_1) and field_2 = sum(vec_2 * func_2). The weight
         1/sqrt(1-x^2) for the Chebyshev-Gauss quadrature is included in
-        self.__array_weight automatically.
+        `self.__array_weight` automatically.
 
         Parameters
         ----------
@@ -264,7 +264,7 @@ class ChebyshevGaussQuad:
         Warnings
         --------
         Inconsistent input
-            If vec_2 is None, although func_2 is not None.
+            If `vec_2` is None, although `func_2` is not None.
 
         Notes
         -----
@@ -346,7 +346,7 @@ def create_cheb_expan_mat(num_point: int) -> ArrayFloat:
     Warnings
     --------
     Invalid argument
-        If `num_point` is not positive.
+        If `num_point` is not larger than 1.
 
     References
     ----------
@@ -374,7 +374,7 @@ def create_cheb_expan_mat(num_point: int) -> ArrayFloat:
     array([ 1.00000000e+00,  2.00000000e+00, -4.44089210e-16,  5.55111512e-17])
     """
 
-    if num_point > 0:
+    if num_point > 1:
 
         expan_mat: ArrayFloat = np.empty(
             (num_point, num_point), dtype=np.float64)
@@ -413,7 +413,7 @@ def create_cheb_invexpan_mat(num_degree: int) -> ArrayFloat:
     Warnings
     --------
     Invalid argument
-        If `num_degree` is not positive.
+        If `num_degree` is not larger than 1.
 
     Notes
     -----
@@ -435,7 +435,7 @@ def create_cheb_invexpan_mat(num_degree: int) -> ArrayFloat:
     array([-1.00000000e+00, -2.22044605e-16,  2.00000000e+00,  3.00000000e+00])
     """
 
-    if num_degree > 0:
+    if num_degree > 1:
 
         invexpan_mat: ArrayFloat = np.empty(
             (num_degree, num_degree), dtype=np.float64)
@@ -471,7 +471,7 @@ def create_cheb_diff_mat(num_point: int) -> ArrayFloat:
     Warnings
     --------
     Invalid argument
-        If `num_point` is not positive.
+        If `num_point` is not larger than 1.
 
     References
     ----------
@@ -499,7 +499,7 @@ def create_cheb_diff_mat(num_point: int) -> ArrayFloat:
     array([-4., -2.,  2.,  4.])
     """
 
-    if num_point > 0:
+    if num_point > 1:
 
         diff_mat: ArrayFloat = np.empty(
             (num_point, num_point), dtype=np.float64)
@@ -550,7 +550,7 @@ def spherical_laplacian_heinrichs(
 
     Returns
     -------
-    complex | float
+    laplacian : complex | float
         The value of the spherical horizontal Laplacian of the Heinrichs basis
         at the point.
 
@@ -584,8 +584,17 @@ def spherical_laplacian_heinrichs(
     heinrichs_d2: complex | float
     heinrichs, heinrichs_d, heinrichs_d2 = _calc_heinrichs(n_degree, s_pos, 2)
 
-    return (
+    laplacian: complex | float = (
         sin_sq * heinrichs_d2 / (mu_d**2)
-        - (2*mu/mu_d + sin_sq*mu_d2/(mu_d**3))
-        * heinrichs_d - (m_order**2) * heinrichs / sin_sq
+        - (2*mu/mu_d + sin_sq*mu_d2/(mu_d**3)) * heinrichs_d
     )
+
+    if not np.isclose(sin_sq, 0):
+        laplacian -= (m_order**2) * heinrichs / sin_sq
+    else:
+        laplacian -= (m_order**2) * (
+            np.sign(s_pos) * chebyshev(n_degree, s_pos)
+            / (mu * mu_d)
+        )
+
+    return laplacian
