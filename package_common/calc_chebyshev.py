@@ -147,8 +147,8 @@ def _calc_chebyshev(n_degree: int,
 
     Notes
     -----
-    This function is a helper function for chebyshev, chebyshev_d,
-    chebyshev_d2, and chebyshev_d3.
+    This function is a helper function for `chebyshev`, `chebyshev_d`,
+    `chebyshev_d2`, and `chebyshev_d3`.
     """
 
     t: complex | float

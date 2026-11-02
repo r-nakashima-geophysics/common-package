@@ -126,11 +126,11 @@ def _calc_heinrichs(n_degree: int,
 
     Parameters
     ----------
-    n_degree: int
+    n_degree : int
         The degree of the Heinrichs basis.
-    s_pos: complex | float
+    s_pos : complex | float
         The position of the point.
-    order: int
+    order : int
         The order of the derivative.
 
     Returns
@@ -140,8 +140,8 @@ def _calc_heinrichs(n_degree: int,
 
     Notes
     -----
-    This function is a helper function for heinrichs, heinrichs_d,
-    heinrichs_d2, and heinrichs_d3.
+    This function is a helper function for `heinrichs`, `heinrichs_d`,
+    `heinrichs_d2`, and `heinrichs_d3`.
     """
 
     tuple_cheb: tuple[complex | float, ...] \

@@ -63,7 +63,7 @@ def input_value(default: TypeVarIntFloat,
     return default
 
 
-def input_str(default: str) -> str:
+def input_string(default: str) -> str:
     """Input a string from the command line or use a default value.
 
     When there is a command line argument, it overrides the default value.
@@ -86,12 +86,12 @@ def input_str(default: str) -> str:
     Examples
     --------
     Run a script without a command line argument:
-        >>> from package_common.utils_input import input_str
-        >>> input_str('string')
+        >>> from package_common.utils_input import input_string
+        >>> input_string('string')
         'string'
     Run a script with a command line argument (say 'test'):
-        >>> from package_common.utils_input import input_str
-        >>> input_str('string')
+        >>> from package_common.utils_input import input_string
+        >>> input_string('string')
         'test'
     """
 
@@ -100,7 +100,7 @@ def input_str(default: str) -> str:
     if len(sys.argv) == 2:
         return sys.argv[1]
 
-    elif len(sys.argv) > 2:
+    if len(sys.argv) > 2:
         logger = create_function_name_logger()
         logger.error('Too many input arguments')
 

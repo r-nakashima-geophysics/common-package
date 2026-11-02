@@ -204,7 +204,7 @@ class ChebyshevGaussQuad:
         Notes
         -----
         The weight 1/sqrt(1-x^2) for the Chebyshev-Gauss quadrature is included
-        in self.__array_weight automatically.
+        in `self.__array_weight` automatically.
         """
 
         if not ChebyshevGaussQuad.__flag:
@@ -307,8 +307,8 @@ def calc_collocation_point(i_l: int,
     Warnings
     --------
     Invalid argument
-        If `i_l` is not within [0, num_point], or if `num_point` is not
-        positive.
+        If `i_l` is not within [0, num_point-1], or if `num_point` is not
+        larger than 1.
 
     Notes
     -----
@@ -322,7 +322,7 @@ def calc_collocation_point(i_l: int,
     np.float64(-0.7071067811865476)
     """
 
-    if (0 <= i_l <= num_point) and (num_point > 0):
+    if (0 <= i_l < num_point) and (num_point > 1):
         return -np.cos(i_l*np.pi/(num_point-1))
 
     logger: DefaultLogger = create_function_name_logger()
