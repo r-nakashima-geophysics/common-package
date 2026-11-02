@@ -246,9 +246,9 @@ class Field:
                 self.bc(self.value_tmp[tmp], time, *args)
 
 
-def time_integrate(fields: Field | list[Field],
+def time_integrate(fields: Field | list[Field] | tuple[Field, ...],
                    dt: float,
-                   rhss: Rhs | list[Rhs],
+                   rhss: Rhs | list[Rhs] | tuple[Rhs, ...],
                    *,
                    method: str = 'RK4',
                    args: tuple[Any, ...] = ()) -> Field | list[Field]:
@@ -256,11 +256,11 @@ def time_integrate(fields: Field | list[Field],
 
     Parameters
     ----------
-    fields : Field | list[Field]
+    fields : Field | list[Field] | tuple[Field, ...]
         The field(s) before time integration.
     dt : float
         The time step.
-    rhss : Rhs | list[Rhs]
+    rhss : Rhs | list[Rhs] | tuple[Rhs, ...]
         The right-hand side(s) of the differential equation(s).
     method : str, optional, default 'RK4'
         The integration method.
@@ -314,11 +314,11 @@ def time_integrate(fields: Field | list[Field],
 
     list_field: list[Field]
     if isinstance(fields, (list, tuple)):
-        list_field = fields
+        list_field = list(fields)
     else:
         list_field = [fields]
     if isinstance(rhss, (list, tuple)):
-        list_rhs = rhss
+        list_rhs = list(rhss)
     else:
         list_rhs = [rhss]
 

@@ -103,7 +103,8 @@ def create_shared_arrays(*arrays: ArrayAny) \
     In the main process:
         >>> from package_common.utils_parallel import \
         ...     create_shared_arrays
-        >>> shm, info = create_shared_arrays(np.array([1, 2, 3]))
+        >>> import numpy as np
+        >>> shms, info = create_shared_arrays(np.array([1, 2, 3]))
     """
 
     shms: list[SharedMemory] = []
@@ -152,7 +153,7 @@ def attach_shared_arrays(shared_info: SharedInfo) \
     In a subprocess:
         >>> from package_common.utils_parallel import \
         ...     attach_shared_arrays
-        >>> shm, array = attach_shared_arrays(info)
+        >>> shms, arrays = attach_shared_arrays(info)
     """
 
     shms: list[SharedMemory] = []
@@ -195,11 +196,11 @@ def detach_shared_arrays(*shms: SharedMemory,
     In a subprocess:
         >>> from package_common.utils_parallel import \
         ...     detach_shared_arrays
-        >>> detach_shared_arrays(shm)
+        >>> detach_shared_arrays(*shms)
     In the main process:
         >>> from package_common.utils_parallel import \
         ...     detach_shared_arrays
-        >>> detach_shared_arrays(shm, unlink=True)
+        >>> detach_shared_arrays(*shms, unlink=True)
     """
 
     logger: DefaultLogger = create_function_name_logger()

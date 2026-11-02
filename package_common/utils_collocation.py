@@ -80,6 +80,8 @@ class ChebyshevGaussQuad:
         `set_class_variable` class method has already been executed
             If `set_class_variable` class method is called after it has already
             been executed.
+        Invalid argument
+            If `num_degree` is not positive.
         `y_unuse_spectral_deform` is necessary
             If `y_unuse_spectral_deform` is None when the spectral deformation
             method is used.
@@ -89,6 +91,9 @@ class ChebyshevGaussQuad:
             cls.__logger.warning(
                 '`set_class_variable` class method has already been executed')
             return
+
+        if num_degree <= 0:
+            cls.__logger.error('Invalid argument')
 
         cls.__cache_dict_array.clear()
 

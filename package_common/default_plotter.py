@@ -258,9 +258,9 @@ def create_plotter(nrows: Literal[1] = 1,
 
 
 @overload
-def create_plotter(nrows: int,
-                   ncols: int,
-                   **kwargs: Any) -> DefaultGridPlotter:
+def create_plotter(nrows: int = 1,
+                   ncols: int = 1,
+                   **kwargs: Any) -> DefaultPlotter | DefaultGridPlotter:
     ...
 
 
