@@ -210,7 +210,10 @@ class ChebyshevGaussQuad:
         Notes
         -----
         The weight 1/sqrt(1-x^2) for the Chebyshev-Gauss quadrature is included
-        in `self.__array_weight` automatically.
+        in `self.__array_weight` automatically. The arrays of function values
+        for `func_1` and `func_2` are cached in the class variable
+        `__cache_dict_array` and reused when the same function object is passed
+        again as `func_1` or `func_2`.
         """
 
         if not ChebyshevGaussQuad.__flag:
