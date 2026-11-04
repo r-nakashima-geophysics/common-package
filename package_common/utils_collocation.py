@@ -45,6 +45,7 @@ class ChebyshevGaussQuad:
     __point_array: ArrayFloat
     __point_analytic_cont: ArrayComplex
     __jacobian: ArrayComplex | ArrayFloat
+    __invexpan_mat: ArrayFloat | None = None
 
     __cache_dict_array: dict[Func4Quad, ArrayComplex | ArrayFloat] = {}
 
@@ -184,6 +185,52 @@ class ChebyshevGaussQuad:
         cls.__cache_dict_array[func] = array_func
 
         return array_func
+
+    @classmethod
+    def cheb_coeff2func(cls,
+                        vec: ArrayComplex | ArrayFloat) \
+            -> FuncComplex | FuncFloat:
+        """Convert Chebyshev expansion coefficients to a function called in
+        `func_1` or `func_2`.
+
+        Parameters
+        ----------
+        vec : ArrayComplex | ArrayFloat
+            The Chebyshev expansion coefficients.
+
+        Returns
+        -------
+        FuncComplex | FuncFloat
+            The function corresponding to the Chebyshev expansion coefficients.
+
+        Warnings
+        --------
+        `set_class_variable` class method has not been executed yet
+            If `set_class_variable` class method has not been executed yet.
+        Invalid argument
+            If `vec` is not 1-dimensional array.
+        """
+
+        if not ChebyshevGaussQuad.__flag:
+            ChebyshevGaussQuad.__logger.error(
+                '`set_class_variable` class method has not been executed yet')
+
+        if vec.ndim != 1:
+            ChebyshevGaussQuad.__logger.error('Invalid argument')
+
+        if cls.__invexpan_mat is None:
+            cls.__invexpan_mat \
+                = create_cheb_invexpan_mat(2*cls.__num_point+1)[1::2, :]
+
+        invexpan_mat: ArrayFloat = cls.__invexpan_mat[:, :vec.size]
+
+        def func(s_pos: complex | float) -> complex | float:
+            i_pos: int = int(np.argmin(np.abs(cls.__point_array - s_pos)))
+            value: complex | float \
+                = cast(complex | float, invexpan_mat[i_pos, :] @ vec)
+            return value
+
+        return func
 
     def __init__(self,
                  *,
